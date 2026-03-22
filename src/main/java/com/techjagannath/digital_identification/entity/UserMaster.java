@@ -30,12 +30,26 @@ public class UserMaster {
     @Column(name = "mobile_number")
     private String mobileNumber;
 
+    @Column(name = "alternate_number")
+    private String alternateNumber;
+
     @Column(name = "email_id")
     private String emailId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role")
     private RoleMaster role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address")
+    private AddressMaster address;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approval_status")
+    private AccountApprovalStatus approvalStatus;
 
     /** logging details */
     @ManyToOne(fetch = FetchType.LAZY)
