@@ -12,6 +12,8 @@ import com.techjagannath.digital_identification.service.usermanagement.UserManag
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class UserManagementServiceImpl implements UserManagementService {
 
@@ -38,7 +40,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         addressMaster.setCountry(requestModel.getCountry());
         addressMaster.setState(requestModel.getState());
         addressMaster.setPinCode(requestModel.getPinCode());
-        AddressMaster savedAddress = this.addressMasterRepository.saveAndFlush(addressMaster);
+        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
 
         UserMaster user = new UserMaster();
         user.setFirstName(requestModel.getFirstName());
@@ -47,12 +49,13 @@ public class UserManagementServiceImpl implements UserManagementService {
         user.setMobileNumber(requestModel.getPhoneNumber());
         user.setAlternateNumber(requestModel.getAlternateNumber());
         user.setAddress(savedAddress);
+        user.setCreatedAt(LocalDateTime.now());
         user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default role not configured")));
         user.setIsActive(true);
         user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default approval status not configured")));
-        UserMaster savedUser = this.userMasterRepository.saveAndFlush(user);
+        UserMaster savedUser = this.userMasterRepository.save(user);
         return new RegisterUserResultModel(savedUser.getId());
     }
 }
