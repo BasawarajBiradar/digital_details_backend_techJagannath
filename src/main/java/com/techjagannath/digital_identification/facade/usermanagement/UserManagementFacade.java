@@ -2,9 +2,12 @@ package com.techjagannath.digital_identification.facade.usermanagement;
 
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 
 public interface UserManagementFacade {
 
     RegisterUserResultModel facadeEntryPointForRegisterUser(RegisterUserRequestModel requestModel);
 
+    SaveUserChildProfileDetailsResultModel facadeEntryPointForSaveUserChildProfileDetails(Long userId, SaveUserChildProfileDetailsRequestModel requestModel);
 }

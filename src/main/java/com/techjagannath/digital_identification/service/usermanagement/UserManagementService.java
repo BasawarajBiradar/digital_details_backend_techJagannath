@@ -3,8 +3,12 @@ package com.techjagannath.digital_identification.service.usermanagement;
 
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 
 public interface UserManagementService {
 
     RegisterUserResultModel serviceEntryPointForRegisterUser(RegisterUserRequestModel requestModel);
+
+    SaveUserChildProfileDetailsResultModel serviceEntryPointForSaveUserChildProfileDetails(Long userId, SaveUserChildProfileDetailsRequestModel requestModel);
 }

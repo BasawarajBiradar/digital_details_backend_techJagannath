@@ -2,12 +2,17 @@ package com.techjagannath.digital_identification.service.usermanagement.impl;
 
 import com.techjagannath.digital_identification.entity.AddressMaster;
 import com.techjagannath.digital_identification.entity.UserMaster;
+import com.techjagannath.digital_identification.entity.profiles.ChildProfile;
+import com.techjagannath.digital_identification.exception.ResourceNotFoundException;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.repository.AccountApprovalStatusRepository;
 import com.techjagannath.digital_identification.repository.AddressMasterRepository;
 import com.techjagannath.digital_identification.repository.RoleMasterRepository;
 import com.techjagannath.digital_identification.repository.UserMasterRepository;
+import com.techjagannath.digital_identification.repository.profiles.ChildProfileRepository;
 import com.techjagannath.digital_identification.service.usermanagement.UserManagementService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -21,13 +26,16 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final RoleMasterRepository roleMasterRepository;
     private final AccountApprovalStatusRepository accountApprovalStatusRepository;
     private final UserMasterRepository userMasterRepository;
+    private final ChildProfileRepository childProfileRepository;
 
     public UserManagementServiceImpl(AddressMasterRepository addressMasterRepository, RoleMasterRepository roleMasterRepository,
-                                     AccountApprovalStatusRepository accountApprovalStatusRepository, UserMasterRepository userMasterRepository) {
+                                     AccountApprovalStatusRepository accountApprovalStatusRepository, UserMasterRepository userMasterRepository,
+                                     ChildProfileRepository childProfileRepository) {
         this.addressMasterRepository = addressMasterRepository;
         this.roleMasterRepository = roleMasterRepository;
         this.accountApprovalStatusRepository = accountApprovalStatusRepository;
         this.userMasterRepository = userMasterRepository;
+        this.childProfileRepository = childProfileRepository;
     }
 
     @Override
@@ -57,5 +65,21 @@ public class UserManagementServiceImpl implements UserManagementService {
                 new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
         return new RegisterUserResultModel(savedUser.getId());
+    }
+
+    @Override
+    public SaveUserChildProfileDetailsResultModel serviceEntryPointForSaveUserChildProfileDetails(Long userId, SaveUserChildProfileDetailsRequestModel requestModel) {
+        ChildProfile childProfile = new ChildProfile();
+        childProfile.setChildName(requestModel.getChildName());
+        childProfile.setDateOfBirth(requestModel.getDateOfBirth());
+        childProfile.setGender(requestModel.getGender());
+        childProfile.setBloodGroup(requestModel.getBloodGroup());
+        childProfile.setSchoolName(requestModel.getSchoolName());
+        childProfile.setSchoolAddress(requestModel.getSchoolAddress());
+        childProfile.setAllergies(requestModel.getAllergies());
+        childProfile.setMedicalCondition(requestModel.getMedicalConditions());
+        childProfile.setLinkedAccount(this.userMasterRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user not found")));
+        ChildProfile savedChild = this.childProfileRepository.save(childProfile);
+        return new SaveUserChildProfileDetailsResultModel(savedChild.getId());
     }
 }
