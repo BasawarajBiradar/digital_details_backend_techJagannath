@@ -30,6 +30,8 @@ public class UserMaster {
     @Column(name = "mobile_number", unique = true)
     private String mobileNumber;
 
+    private String password;
+
     @Column(name = "alternate_number")
     private String alternateNumber;
 

@@ -15,6 +15,9 @@ import com.techjagannath.digital_identification.repository.UserMasterRepository;
 import com.techjagannath.digital_identification.repository.profiles.ChildProfileRepository;
 import com.techjagannath.digital_identification.service.usermanagement.UserManagementService;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,6 +30,9 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final AccountApprovalStatusRepository accountApprovalStatusRepository;
     private final UserMasterRepository userMasterRepository;
     private final ChildProfileRepository childProfileRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserManagementServiceImpl(AddressMasterRepository addressMasterRepository, RoleMasterRepository roleMasterRepository,
                                      AccountApprovalStatusRepository accountApprovalStatusRepository, UserMasterRepository userMasterRepository,
@@ -51,6 +57,8 @@ public class UserManagementServiceImpl implements UserManagementService {
         AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
 
         UserMaster user = new UserMaster();
+        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
+            throw new DataIntegrityViolationException("Email already exists");
         user.setFirstName(requestModel.getFirstName());
         user.setLastName(requestModel.getLastName());
         user.setEmailId(requestModel.getEmailId());
@@ -58,6 +66,9 @@ public class UserManagementServiceImpl implements UserManagementService {
         user.setAlternateNumber(requestModel.getAlternateNumber());
         user.setAddress(savedAddress);
         user.setCreatedAt(LocalDateTime.now());
+        user.setPassword(
+                passwordEncoder.encode(requestModel.getPassword())
+        );
         user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default role not configured")));
         user.setIsActive(true);
