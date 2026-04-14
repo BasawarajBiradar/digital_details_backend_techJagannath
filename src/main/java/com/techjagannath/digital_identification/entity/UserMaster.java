@@ -27,13 +27,13 @@ public class UserMaster {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "mobile_number")
+    @Column(name = "mobile_number", unique = true)
     private String mobileNumber;
 
     @Column(name = "alternate_number")
     private String alternateNumber;
 
-    @Column(name = "email_id")
+    @Column(name = "email_id",  unique = true)
     private String emailId;
 
     @ManyToOne(fetch = FetchType.LAZY)

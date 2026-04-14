@@ -7,6 +7,7 @@ import com.techjagannath.digital_identification.utils.apiresponse.ResponseBuilde
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -148,6 +149,24 @@ public class GlobalExceptionHandler {
         return ResponseBuilder.error(
                 "You do not have permission to access this resource",
                 "FORBIDDEN", HttpStatus.FORBIDDEN);
+    }
+
+// ─── Data Integrity Violation Exception ───────────────────────────────────
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolationException(
+            DataIntegrityViolationException ex, HttpServletRequest request) {
+
+        log.error("Data integrity violation on request [{} {}]: {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                ex.getMostSpecificCause().getMessage());
+
+        return ResponseBuilder.error(
+                "Database constraint violation. Please check your input.",
+                "DATA_INTEGRITY_VIOLATION",
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     // ─── Fallback ────────────────────────────────────────────────────────────

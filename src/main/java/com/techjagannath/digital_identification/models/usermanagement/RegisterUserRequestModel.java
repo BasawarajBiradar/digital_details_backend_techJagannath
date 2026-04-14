@@ -17,6 +17,9 @@ public class RegisterUserRequestModel {
     @NotBlank(message = "Email id is required")
     private String emailId;
 
+    @NotBlank(message = "Password is required")
+    private String password;
+
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
