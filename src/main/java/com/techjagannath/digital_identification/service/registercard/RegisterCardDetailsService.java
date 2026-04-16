@@ -1,0 +1,8 @@
+package com.techjagannath.digital_identification.service.registercard;
+
+import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
+
+public interface RegisterCardDetailsService {
+    RegisterCardUserKidsDetailsResultModel serviceEntryPointForRegisterCardUserKidsDetails(RegisterCardUserKidsDetailsRequestModel requestModel);
+}
