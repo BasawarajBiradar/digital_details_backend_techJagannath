@@ -5,6 +5,8 @@ import com.techjagannath.digital_identification.models.registerCards.businessPro
 import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
@@ -43,5 +45,11 @@ public class RegisterCardDetailsFacadeImpl implements RegisterCardDetailsFacade 
     public RegisterCardUserVehicleDetailsResultModel facadeEntryPointForRegisterCardUserVehicleDetails(
             RegisterCardUserVehicleDetailsRequestModel requestModel) {
         return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserVehicleDetails(requestModel);
+    }
+
+    @Override
+    public RegisterCardUserPetsDetailsResultModel facadeEntryPointForRegisterCardUserPetsDetails(
+            RegisterCardUserPetsDetailsRequestModel requestModel) {
+        return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserPetDetails(requestModel);
     }
 }

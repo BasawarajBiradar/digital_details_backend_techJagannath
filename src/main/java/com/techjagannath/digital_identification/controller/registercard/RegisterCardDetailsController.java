@@ -5,6 +5,8 @@ import com.techjagannath.digital_identification.models.registerCards.businessPro
 import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
@@ -55,6 +57,13 @@ public class RegisterCardDetailsController {
             @RequestBody RegisterCardUserVehicleDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserVehicleDetails(requestModel), "created Vehicle profile for card user");
+    }
+
+    @PostMapping("/pets")
+    private ResponseEntity<ApiResponse<RegisterCardUserPetsDetailsResultModel>> registerCardUserPetsDetails(
+            @RequestBody RegisterCardUserPetsDetailsRequestModel requestModel) {
+        return ResponseBuilder.success(this.registerCardDetailsFacade
+                .facadeEntryPointForRegisterCardUserPetsDetails(requestModel), "created Pets profile for card user");
     }
 
 

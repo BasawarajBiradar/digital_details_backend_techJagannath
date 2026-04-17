@@ -8,6 +8,8 @@ import com.techjagannath.digital_identification.models.registerCards.businessPro
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsGuardianDetails;
+import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorCaretakerDetails;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
@@ -20,7 +22,6 @@ import com.techjagannath.digital_identification.repository.UserMasterRepository;
 import com.techjagannath.digital_identification.repository.profiles.*;
 import com.techjagannath.digital_identification.service.registercard.RegisterCardDetailsService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,17 +44,18 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     private final SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository;
     private final BusinessProfileRepository businessProfileRepository;
     private final VehicleProfileRepository vehicleProfileRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final PetProfileRepository petProfileRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public RegisterCardDetailsServiceImpl(UserMasterRepository userMasterRepository, ChildProfileRepository childProfileRepository,
+    public RegisterCardDetailsServiceImpl(UserMasterRepository userMasterRepository, ChildProfileRepository childProfileRepository, PasswordEncoder passwordEncoder,
                                           ChildGuardianDetailsRepository childGuardianDetailsRepository, AddressMasterRepository addressMasterRepository,
                                           RoleMasterRepository roleMasterRepository, AccountApprovalStatusRepository accountApprovalStatusRepository,
                                           SeniorProfileRepository seniorProfileRepository, SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository,
-                                          BusinessProfileRepository businessProfileRepository, VehicleProfileRepository vehicleProfileRepository) {
+                                          BusinessProfileRepository businessProfileRepository, VehicleProfileRepository vehicleProfileRepository,
+                                          PetProfileRepository petProfileRepository) {
         this.userMasterRepository = userMasterRepository;
         this.childGuardianDetailsRepository = childGuardianDetailsRepository;
+        this.passwordEncoder = passwordEncoder;
         this.childProfileRepository = childProfileRepository;
         this.addressMasterRepository = addressMasterRepository;
         this.roleMasterRepository = roleMasterRepository;
@@ -62,6 +64,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         this.seniorCareTakerDetailsRepository = seniorCareTakerDetailsRepository;
         this.businessProfileRepository = businessProfileRepository;
         this.vehicleProfileRepository = vehicleProfileRepository;
+        this.petProfileRepository = petProfileRepository;
     }
 
     @Override
@@ -292,5 +295,59 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         VehicleProfile savedVehicleProfile = this.vehicleProfileRepository.save(vehicleProfile);
 
         return new RegisterCardUserVehicleDetailsResultModel(savedVehicleProfile.getVehicleNumber());
+    }
+
+    @Override
+    public RegisterCardUserPetsDetailsResultModel serviceEntryPointForRegisterCardUserPetDetails(RegisterCardUserPetsDetailsRequestModel requestModel) {
+        /* user details */
+        AddressMaster addressMaster = new AddressMaster();
+        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
+        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
+        addressMaster.setCity(requestModel.getCity());
+        addressMaster.setCountry(requestModel.getCountry());
+        addressMaster.setState(requestModel.getState());
+        addressMaster.setPinCode(requestModel.getPinCode());
+        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
+
+        UserMaster user = new UserMaster();
+        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
+            throw new DataIntegrityViolationException("Email already exists");
+        user.setFirstName(requestModel.getFirstName());
+        user.setLastName(requestModel.getLastName());
+        user.setEmailId(requestModel.getEmailId());
+        user.setMobileNumber(requestModel.getPhoneNumber());
+        user.setAlternateNumber(requestModel.getAlternateNumber());
+        user.setAddress(savedAddress);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setPassword(
+                passwordEncoder.encode(requestModel.getPassword())
+        );
+        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Default role not configured")));
+        user.setIsActive(true);
+        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Default approval status not configured")));
+        UserMaster savedUser = this.userMasterRepository.save(user);
+
+        /* pet details */
+        PetProfile petProfile = new PetProfile();
+        petProfile.setPetName(requestModel.getPetName());
+        petProfile.setSpecies(requestModel.getSpecies());
+        petProfile.setBreed(requestModel.getBreed());
+        petProfile.setGender(requestModel.getGender());
+        petProfile.setAge(requestModel.getAge());
+        petProfile.setColour(requestModel.getColor());
+        petProfile.setMicroChipId(requestModel.getMicrochipId());
+        petProfile.setVaccinationStatus(requestModel.getVaccinationStatus());
+        petProfile.setVetName(requestModel.getVetName());
+        petProfile.setVetContact(requestModel.getVetContact());
+        petProfile.setMedicalNotes(requestModel.getMedialNotes());
+        petProfile.setOwnerName(requestModel.getOwnerName());
+        petProfile.setOwnerContact(requestModel.getOwnerContact());
+        petProfile.setAlternateContact(requestModel.getAlternateContact());
+        petProfile.setLinkedAccount(savedUser);
+        PetProfile savedPetProfile = this.petProfileRepository.save(petProfile);
+
+        return new RegisterCardUserPetsDetailsResultModel(savedPetProfile.getPetName());
     }
 }
