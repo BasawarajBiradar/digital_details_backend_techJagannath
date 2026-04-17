@@ -9,6 +9,8 @@ import com.techjagannath.digital_identification.models.registerCards.petsProfile
 import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.utils.apiresponse.ApiResponse;
@@ -28,8 +30,6 @@ public class RegisterCardDetailsController {
     public RegisterCardDetailsController(RegisterCardDetailsFacade registerCardDetailsFacade) {
         this.registerCardDetailsFacade = registerCardDetailsFacade;
     }
-
-    // 'kids' | 'senior' | 'business' | 'vehicle' | 'pets' | 'social';
 
     @PostMapping("/kids")
     private ResponseEntity<ApiResponse<RegisterCardUserKidsDetailsResultModel>> registerCardUserKidsDetails(
@@ -64,6 +64,13 @@ public class RegisterCardDetailsController {
             @RequestBody RegisterCardUserPetsDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserPetsDetails(requestModel), "created Pets profile for card user");
+    }
+
+    @PostMapping("/social")
+    private ResponseEntity<ApiResponse<RegisterCardUserSocialDetailsResultModel>> registerCardUserSocialDetails(
+            @RequestBody RegisterCardUserSocialDetailsRequestModel requestModel) {
+        return ResponseBuilder.success(this.registerCardDetailsFacade
+                .facadeEntryPointForRegisterCardUserSocialDetails(requestModel), "created Social profile for card user");
     }
 
 

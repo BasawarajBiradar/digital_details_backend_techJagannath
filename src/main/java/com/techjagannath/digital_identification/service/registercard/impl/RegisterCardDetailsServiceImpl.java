@@ -13,6 +13,8 @@ import com.techjagannath.digital_identification.models.registerCards.petsProfile
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorCaretakerDetails;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.repository.AccountApprovalStatusRepository;
@@ -46,13 +48,14 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     private final VehicleProfileRepository vehicleProfileRepository;
     private final PasswordEncoder passwordEncoder;
     private final PetProfileRepository petProfileRepository;
+    private final SocialProfileRepository socialProfileRepository;
 
     public RegisterCardDetailsServiceImpl(UserMasterRepository userMasterRepository, ChildProfileRepository childProfileRepository, PasswordEncoder passwordEncoder,
                                           ChildGuardianDetailsRepository childGuardianDetailsRepository, AddressMasterRepository addressMasterRepository,
                                           RoleMasterRepository roleMasterRepository, AccountApprovalStatusRepository accountApprovalStatusRepository,
                                           SeniorProfileRepository seniorProfileRepository, SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository,
                                           BusinessProfileRepository businessProfileRepository, VehicleProfileRepository vehicleProfileRepository,
-                                          PetProfileRepository petProfileRepository) {
+                                          PetProfileRepository petProfileRepository, SocialProfileRepository socialProfileRepository) {
         this.userMasterRepository = userMasterRepository;
         this.childGuardianDetailsRepository = childGuardianDetailsRepository;
         this.passwordEncoder = passwordEncoder;
@@ -65,6 +68,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         this.businessProfileRepository = businessProfileRepository;
         this.vehicleProfileRepository = vehicleProfileRepository;
         this.petProfileRepository = petProfileRepository;
+        this.socialProfileRepository = socialProfileRepository;
     }
 
     @Override
@@ -349,5 +353,53 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         PetProfile savedPetProfile = this.petProfileRepository.save(petProfile);
 
         return new RegisterCardUserPetsDetailsResultModel(savedPetProfile.getPetName());
+    }
+
+    @Override
+    public RegisterCardUserSocialDetailsResultModel serviceEntryPointForRegisterCardUserSocialDetails(RegisterCardUserSocialDetailsRequestModel requestModel) {
+        /* user details */
+        AddressMaster addressMaster = new AddressMaster();
+        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
+        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
+        addressMaster.setCity(requestModel.getCity());
+        addressMaster.setCountry(requestModel.getCountry());
+        addressMaster.setState(requestModel.getState());
+        addressMaster.setPinCode(requestModel.getPinCode());
+        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
+
+        UserMaster user = new UserMaster();
+        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
+            throw new DataIntegrityViolationException("Email already exists");
+        user.setFirstName(requestModel.getFirstName());
+        user.setLastName(requestModel.getLastName());
+        user.setEmailId(requestModel.getEmailId());
+        user.setMobileNumber(requestModel.getPhoneNumber());
+        user.setAlternateNumber(requestModel.getAlternateNumber());
+        user.setAddress(savedAddress);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setPassword(
+                passwordEncoder.encode(requestModel.getPassword())
+        );
+        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Default role not configured")));
+        user.setIsActive(true);
+        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Default approval status not configured")));
+        UserMaster savedUser = this.userMasterRepository.save(user);
+
+        /* social profile */
+        SocialProfile socialProfile = new SocialProfile();
+        socialProfile.setFullName(requestModel.getFullName());
+        socialProfile.setNickName(requestModel.getNickname());
+        socialProfile.setInstagram(requestModel.getInstagramHandle());
+        socialProfile.setFacebook(requestModel.getFacebookProfile());
+        socialProfile.setLinkedIn(requestModel.getLinkedinProfile());
+        socialProfile.setTwitter(requestModel.getTwitterHandle());
+        socialProfile.setEmergencyContactName(requestModel.getEmergencyContactName());
+        socialProfile.setEmergencyContactNumber(requestModel.getEmergencyContactNumber());
+        socialProfile.setMessageToFinder(requestModel.getMessageToFinder());
+        socialProfile.setLinkedAccount(savedUser);
+        SocialProfile savedSocialProfile = this.socialProfileRepository.save(socialProfile);
+        return new RegisterCardUserSocialDetailsResultModel(savedSocialProfile.getFullName());
     }
 }
