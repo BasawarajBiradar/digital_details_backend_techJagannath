@@ -7,6 +7,8 @@ import com.techjagannath.digital_identification.models.registerCards.kidsProfile
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.service.registercard.RegisterCardDetailsService;
 import org.springframework.stereotype.Component;
 
@@ -20,17 +22,26 @@ public class RegisterCardDetailsFacadeImpl implements RegisterCardDetailsFacade 
     }
 
     @Override
-    public RegisterCardUserKidsDetailsResultModel facadeEntryPointForRegisterCardUserKidsDetails(RegisterCardUserKidsDetailsRequestModel requestModel) {
+    public RegisterCardUserKidsDetailsResultModel facadeEntryPointForRegisterCardUserKidsDetails(
+            RegisterCardUserKidsDetailsRequestModel requestModel) {
         return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserKidsDetails(requestModel);
     }
 
     @Override
-    public RegisterCardUserSeniorDetailsResultModel facadeEntryPointForRegisterCardUserSeniorDetails(RegisterCardUserSeniorDetailsRequestModel requestModel) {
+    public RegisterCardUserSeniorDetailsResultModel facadeEntryPointForRegisterCardUserSeniorDetails(
+            RegisterCardUserSeniorDetailsRequestModel requestModel) {
         return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserSeniorDetails(requestModel);
     }
 
     @Override
-    public RegisterCardUserBusinessDetailsResultModel facadeEntryPointForRegisterCardUserBusinessDetails(RegisterCardUserBusinessDetailsRequestModel requestModel) {
+    public RegisterCardUserBusinessDetailsResultModel facadeEntryPointForRegisterCardUserBusinessDetails(
+            RegisterCardUserBusinessDetailsRequestModel requestModel) {
         return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserBusinessDetails(requestModel);
+    }
+
+    @Override
+    public RegisterCardUserVehicleDetailsResultModel facadeEntryPointForRegisterCardUserVehicleDetails(
+            RegisterCardUserVehicleDetailsRequestModel requestModel) {
+        return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserVehicleDetails(requestModel);
     }
 }

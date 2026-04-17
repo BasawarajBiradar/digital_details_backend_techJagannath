@@ -11,6 +11,8 @@ import com.techjagannath.digital_identification.models.registerCards.kidsProfile
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorCaretakerDetails;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.repository.AccountApprovalStatusRepository;
 import com.techjagannath.digital_identification.repository.AddressMasterRepository;
 import com.techjagannath.digital_identification.repository.RoleMasterRepository;
@@ -23,6 +25,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     private final SeniorProfileRepository seniorProfileRepository;
     private final SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository;
     private final BusinessProfileRepository businessProfileRepository;
+    private final VehicleProfileRepository vehicleProfileRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,7 +51,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
                                           ChildGuardianDetailsRepository childGuardianDetailsRepository, AddressMasterRepository addressMasterRepository,
                                           RoleMasterRepository roleMasterRepository, AccountApprovalStatusRepository accountApprovalStatusRepository,
                                           SeniorProfileRepository seniorProfileRepository, SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository,
-                                          BusinessProfileRepository businessProfileRepository) {
+                                          BusinessProfileRepository businessProfileRepository, VehicleProfileRepository vehicleProfileRepository) {
         this.userMasterRepository = userMasterRepository;
         this.childGuardianDetailsRepository = childGuardianDetailsRepository;
         this.childProfileRepository = childProfileRepository;
@@ -57,6 +61,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         this.seniorProfileRepository = seniorProfileRepository;
         this.seniorCareTakerDetailsRepository = seniorCareTakerDetailsRepository;
         this.businessProfileRepository = businessProfileRepository;
+        this.vehicleProfileRepository = vehicleProfileRepository;
     }
 
     @Override
@@ -234,5 +239,58 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         BusinessProfile savedBusinessProfile = this.businessProfileRepository.save(businessProfile);
 
         return new RegisterCardUserBusinessDetailsResultModel(savedBusinessProfile.getBusinessName());
+    }
+
+    @Override
+    public RegisterCardUserVehicleDetailsResultModel serviceEntryPointForRegisterCardUserVehicleDetails(RegisterCardUserVehicleDetailsRequestModel requestModel) {
+        /* user details */
+        AddressMaster addressMaster = new AddressMaster();
+        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
+        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
+        addressMaster.setCity(requestModel.getCity());
+        addressMaster.setCountry(requestModel.getCountry());
+        addressMaster.setState(requestModel.getState());
+        addressMaster.setPinCode(requestModel.getPinCode());
+        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
+
+        UserMaster user = new UserMaster();
+        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
+            throw new DataIntegrityViolationException("Email already exists");
+        user.setFirstName(requestModel.getFirstName());
+        user.setLastName(requestModel.getLastName());
+        user.setEmailId(requestModel.getEmailId());
+        user.setMobileNumber(requestModel.getPhoneNumber());
+        user.setAlternateNumber(requestModel.getAlternateNumber());
+        user.setAddress(savedAddress);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setPassword(
+                passwordEncoder.encode(requestModel.getPassword())
+        );
+        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Default role not configured")));
+        user.setIsActive(true);
+        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Default approval status not configured")));
+        UserMaster savedUser = this.userMasterRepository.save(user);
+
+        /* vehicle details */
+        VehicleProfile vehicleProfile = new VehicleProfile();
+        vehicleProfile.setVehicleNumber(requestModel.getVehicleNumber());
+        vehicleProfile.setVehicleType(requestModel.getVehicleType());
+        vehicleProfile.setBrand(requestModel.getBrand());
+        vehicleProfile.setModel(requestModel.getModel());
+        vehicleProfile.setColour(requestModel.getColor());
+        vehicleProfile.setYearOfManufacturing(LocalDate.parse(requestModel.getYearOfManufacture()));
+        vehicleProfile.setOwnerName(requestModel.getOwnerName());
+        vehicleProfile.setOwnerContact(requestModel.getOwnerContact());
+        vehicleProfile.setAlternateContact(requestModel.getAlternateContact());
+        vehicleProfile.setRcNumber(requestModel.getRcNumber());
+        vehicleProfile.setInsuranceNumber(requestModel.getInsuranceNumber());
+        vehicleProfile.setInsuranceExpiry(LocalDate.parse(requestModel.getInsuranceExpiry()));
+        vehicleProfile.setChassisNumber(requestModel.getChassisNumber());
+        vehicleProfile.setLinkedAccount(savedUser);
+        VehicleProfile savedVehicleProfile = this.vehicleProfileRepository.save(vehicleProfile);
+
+        return new RegisterCardUserVehicleDetailsResultModel(savedVehicleProfile.getVehicleNumber());
     }
 }

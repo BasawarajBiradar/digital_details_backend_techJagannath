@@ -7,6 +7,8 @@ import com.techjagannath.digital_identification.models.registerCards.kidsProfile
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digital_identification.utils.apiresponse.ResponseBuilder;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,13 @@ public class RegisterCardDetailsController {
             @RequestBody RegisterCardUserBusinessDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserBusinessDetails(requestModel), "created Business profile for card user");
+    }
+
+    @PostMapping("/vehicle")
+    private ResponseEntity<ApiResponse<RegisterCardUserVehicleDetailsResultModel>> registerCardUserVehicleDetails(
+            @RequestBody RegisterCardUserVehicleDetailsRequestModel requestModel) {
+        return ResponseBuilder.success(this.registerCardDetailsFacade
+                .facadeEntryPointForRegisterCardUserVehicleDetails(requestModel), "created Vehicle profile for card user");
     }
 
 
