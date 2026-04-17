@@ -1,5 +1,7 @@
 package com.techjagannath.digital_identification.facade.registercard;
 
+import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
@@ -9,4 +11,6 @@ public interface RegisterCardDetailsFacade {
     RegisterCardUserKidsDetailsResultModel facadeEntryPointForRegisterCardUserKidsDetails(RegisterCardUserKidsDetailsRequestModel requestModel);
 
     RegisterCardUserSeniorDetailsResultModel facadeEntryPointForRegisterCardUserSeniorDetails(RegisterCardUserSeniorDetailsRequestModel requestModel);
+
+    RegisterCardUserBusinessDetailsResultModel facadeEntryPointForRegisterCardUserBusinessDetails(RegisterCardUserBusinessDetailsRequestModel requestModel);
 }

@@ -1,6 +1,8 @@
 package com.techjagannath.digital_identification.facade.registercard.impl;
 
 import com.techjagannath.digital_identification.facade.registercard.RegisterCardDetailsFacade;
+import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
@@ -25,5 +27,10 @@ public class RegisterCardDetailsFacadeImpl implements RegisterCardDetailsFacade 
     @Override
     public RegisterCardUserSeniorDetailsResultModel facadeEntryPointForRegisterCardUserSeniorDetails(RegisterCardUserSeniorDetailsRequestModel requestModel) {
         return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserSeniorDetails(requestModel);
+    }
+
+    @Override
+    public RegisterCardUserBusinessDetailsResultModel facadeEntryPointForRegisterCardUserBusinessDetails(RegisterCardUserBusinessDetailsRequestModel requestModel) {
+        return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserBusinessDetails(requestModel);
     }
 }

@@ -2,10 +2,9 @@ package com.techjagannath.digital_identification.service.registercard.impl;
 
 import com.techjagannath.digital_identification.entity.AddressMaster;
 import com.techjagannath.digital_identification.entity.UserMaster;
-import com.techjagannath.digital_identification.entity.profiles.ChildGuardianDetails;
-import com.techjagannath.digital_identification.entity.profiles.ChildProfile;
-import com.techjagannath.digital_identification.entity.profiles.SeniorCareTakerDetails;
-import com.techjagannath.digital_identification.entity.profiles.SeniorProfile;
+import com.techjagannath.digital_identification.entity.profiles.*;
+import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsGuardianDetails;
@@ -16,10 +15,7 @@ import com.techjagannath.digital_identification.repository.AccountApprovalStatus
 import com.techjagannath.digital_identification.repository.AddressMasterRepository;
 import com.techjagannath.digital_identification.repository.RoleMasterRepository;
 import com.techjagannath.digital_identification.repository.UserMasterRepository;
-import com.techjagannath.digital_identification.repository.profiles.ChildGuardianDetailsRepository;
-import com.techjagannath.digital_identification.repository.profiles.ChildProfileRepository;
-import com.techjagannath.digital_identification.repository.profiles.SeniorCareTakerDetailsRepository;
-import com.techjagannath.digital_identification.repository.profiles.SeniorProfileRepository;
+import com.techjagannath.digital_identification.repository.profiles.*;
 import com.techjagannath.digital_identification.service.registercard.RegisterCardDetailsService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +38,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     private final AccountApprovalStatusRepository accountApprovalStatusRepository;
     private final SeniorProfileRepository seniorProfileRepository;
     private final SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository;
+    private final BusinessProfileRepository businessProfileRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -49,7 +46,8 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     public RegisterCardDetailsServiceImpl(UserMasterRepository userMasterRepository, ChildProfileRepository childProfileRepository,
                                           ChildGuardianDetailsRepository childGuardianDetailsRepository, AddressMasterRepository addressMasterRepository,
                                           RoleMasterRepository roleMasterRepository, AccountApprovalStatusRepository accountApprovalStatusRepository,
-                                          SeniorProfileRepository seniorProfileRepository, SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository) {
+                                          SeniorProfileRepository seniorProfileRepository, SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository,
+                                          BusinessProfileRepository businessProfileRepository) {
         this.userMasterRepository = userMasterRepository;
         this.childGuardianDetailsRepository = childGuardianDetailsRepository;
         this.childProfileRepository = childProfileRepository;
@@ -58,6 +56,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         this.accountApprovalStatusRepository = accountApprovalStatusRepository;
         this.seniorProfileRepository = seniorProfileRepository;
         this.seniorCareTakerDetailsRepository = seniorCareTakerDetailsRepository;
+        this.businessProfileRepository = businessProfileRepository;
     }
 
     @Override
@@ -186,5 +185,54 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         }
         this.seniorCareTakerDetailsRepository.saveAll(careTakersDetails);
         return new RegisterCardUserSeniorDetailsResultModel(savedSeniorProfile.getFullName());
+    }
+
+    @Override
+    public RegisterCardUserBusinessDetailsResultModel serviceEntryPointForRegisterCardUserBusinessDetails(RegisterCardUserBusinessDetailsRequestModel requestModel) {
+        /* user details */
+        AddressMaster addressMaster = new AddressMaster();
+        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
+        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
+        addressMaster.setCity(requestModel.getCity());
+        addressMaster.setCountry(requestModel.getCountry());
+        addressMaster.setState(requestModel.getState());
+        addressMaster.setPinCode(requestModel.getPinCode());
+        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
+
+        UserMaster user = new UserMaster();
+        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
+            throw new DataIntegrityViolationException("Email already exists");
+        user.setFirstName(requestModel.getFirstName());
+        user.setLastName(requestModel.getLastName());
+        user.setEmailId(requestModel.getEmailId());
+        user.setMobileNumber(requestModel.getPhoneNumber());
+        user.setAlternateNumber(requestModel.getAlternateNumber());
+        user.setAddress(savedAddress);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setPassword(
+                passwordEncoder.encode(requestModel.getPassword())
+        );
+        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Default role not configured")));
+        user.setIsActive(true);
+        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Default approval status not configured")));
+        UserMaster savedUser = this.userMasterRepository.save(user);
+
+        /* business details */
+        BusinessProfile businessProfile = new BusinessProfile();
+        businessProfile.setBusinessName(requestModel.getBusinessName());
+        businessProfile.setBusinessDescription(null);
+        businessProfile.setBusinessType(requestModel.getBusinessType());
+        businessProfile.setRegistrationNumber(requestModel.getRegistrationNumber());
+        businessProfile.setGstNumber(requestModel.getGstNumber());
+        businessProfile.setBusinessEmail(requestModel.getBusinessEmail());
+        businessProfile.setBusinessPhone(requestModel.getBusinessPhone());
+        businessProfile.setWebsiteUrl(requestModel.getWebsiteUrl());
+        businessProfile.setBusinessAddress(requestModel.getBusinessAddress());
+        businessProfile.setLinkedAccount(savedUser);
+        BusinessProfile savedBusinessProfile = this.businessProfileRepository.save(businessProfile);
+
+        return new RegisterCardUserBusinessDetailsResultModel(savedBusinessProfile.getBusinessName());
     }
 }

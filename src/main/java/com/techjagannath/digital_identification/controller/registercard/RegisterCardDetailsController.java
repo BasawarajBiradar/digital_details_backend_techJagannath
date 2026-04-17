@@ -1,6 +1,8 @@
 package com.techjagannath.digital_identification.controller.registercard;
 
 import com.techjagannath.digital_identification.facade.registercard.RegisterCardDetailsFacade;
+import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
@@ -37,6 +39,13 @@ public class RegisterCardDetailsController {
             @RequestBody RegisterCardUserSeniorDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserSeniorDetails(requestModel), "created senior profile for card user");
+    }
+
+    @PostMapping("/business")
+    private ResponseEntity<ApiResponse<RegisterCardUserBusinessDetailsResultModel>> registerCardUserBusinessDetails(
+            @RequestBody RegisterCardUserBusinessDetailsRequestModel requestModel) {
+        return ResponseBuilder.success(this.registerCardDetailsFacade
+                .facadeEntryPointForRegisterCardUserBusinessDetails(requestModel), "created Business profile for card user");
     }
 
 
