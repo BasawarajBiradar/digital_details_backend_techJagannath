@@ -16,13 +16,11 @@ import com.techjagannath.digital_identification.models.registerCards.vehicleProf
 import com.techjagannath.digital_identification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digital_identification.utils.apiresponse.ResponseBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/register-card")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class RegisterCardDetailsController {
 
     private RegisterCardDetailsFacade registerCardDetailsFacade;
@@ -32,42 +30,42 @@ public class RegisterCardDetailsController {
     }
 
     @PostMapping("/kids")
-    private ResponseEntity<ApiResponse<RegisterCardUserKidsDetailsResultModel>> registerCardUserKidsDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserKidsDetailsResultModel>> registerCardUserKidsDetails(
             @RequestBody RegisterCardUserKidsDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserKidsDetails(requestModel), "created kid profile for card user");
     }
 
     @PostMapping("/senior")
-    private ResponseEntity<ApiResponse<RegisterCardUserSeniorDetailsResultModel>> registerCardUserSeniorDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserSeniorDetailsResultModel>> registerCardUserSeniorDetails(
             @RequestBody RegisterCardUserSeniorDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserSeniorDetails(requestModel), "created senior profile for card user");
     }
 
     @PostMapping("/business")
-    private ResponseEntity<ApiResponse<RegisterCardUserBusinessDetailsResultModel>> registerCardUserBusinessDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserBusinessDetailsResultModel>> registerCardUserBusinessDetails(
             @RequestBody RegisterCardUserBusinessDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserBusinessDetails(requestModel), "created Business profile for card user");
     }
 
     @PostMapping("/vehicle")
-    private ResponseEntity<ApiResponse<RegisterCardUserVehicleDetailsResultModel>> registerCardUserVehicleDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserVehicleDetailsResultModel>> registerCardUserVehicleDetails(
             @RequestBody RegisterCardUserVehicleDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserVehicleDetails(requestModel), "created Vehicle profile for card user");
     }
 
     @PostMapping("/pets")
-    private ResponseEntity<ApiResponse<RegisterCardUserPetsDetailsResultModel>> registerCardUserPetsDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserPetsDetailsResultModel>> registerCardUserPetsDetails(
             @RequestBody RegisterCardUserPetsDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserPetsDetails(requestModel), "created Pets profile for card user");
     }
 
     @PostMapping("/social")
-    private ResponseEntity<ApiResponse<RegisterCardUserSocialDetailsResultModel>> registerCardUserSocialDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserSocialDetailsResultModel>> registerCardUserSocialDetails(
             @RequestBody RegisterCardUserSocialDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
                 .facadeEntryPointForRegisterCardUserSocialDetails(requestModel), "created Social profile for card user");
