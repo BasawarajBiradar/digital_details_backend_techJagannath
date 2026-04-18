@@ -439,6 +439,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         UserProfileNfcMapping mapping = this.userProfileNfcMappingRepository.findByUid(requestModel.getUid());
         if (mapping == null)
             return new RetrieveUserCardDetailsResultModel();
+
         RetrieveUserCardDetailsResultModel resultModel = new RetrieveUserCardDetailsResultModel();
         resultModel.setAccountType(mapping.getProfileType().getProfileType());
 
