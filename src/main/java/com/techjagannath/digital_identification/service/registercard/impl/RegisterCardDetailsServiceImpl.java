@@ -437,6 +437,8 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     @Override
     public RetrieveUserCardDetailsResultModel serviceEntryPointForRetrieveUserDetails(RetrieveUserCardDetailsRequestModel requestModel) {
         UserProfileNfcMapping mapping = this.userProfileNfcMappingRepository.findByUid(requestModel.getUid());
+        if (mapping == null)
+            return new RetrieveUserCardDetailsResultModel();
         RetrieveUserCardDetailsResultModel resultModel = new RetrieveUserCardDetailsResultModel();
         resultModel.setAccountType(mapping.getProfileType().getProfileType());
 
