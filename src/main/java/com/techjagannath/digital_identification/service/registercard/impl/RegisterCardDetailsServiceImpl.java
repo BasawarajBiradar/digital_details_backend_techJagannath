@@ -147,6 +147,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
+    @Transactional
     public RegisterCardUserSeniorDetailsResultModel serviceEntryPointForRegisterCardUserSeniorDetails(String uid, RegisterCardUserSeniorDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
@@ -215,6 +216,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
+    @Transactional
     public RegisterCardUserBusinessDetailsResultModel serviceEntryPointForRegisterCardUserBusinessDetails(String uid, RegisterCardUserBusinessDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
@@ -268,6 +270,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
+    @Transactional
     public RegisterCardUserVehicleDetailsResultModel serviceEntryPointForRegisterCardUserVehicleDetails(String uid, RegisterCardUserVehicleDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
@@ -325,6 +328,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
+    @Transactional
     public RegisterCardUserPetsDetailsResultModel serviceEntryPointForRegisterCardUserPetDetails(String uid, RegisterCardUserPetsDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
@@ -383,6 +387,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
+    @Transactional
     public RegisterCardUserSocialDetailsResultModel serviceEntryPointForRegisterCardUserSocialDetails(String uid, RegisterCardUserSocialDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();

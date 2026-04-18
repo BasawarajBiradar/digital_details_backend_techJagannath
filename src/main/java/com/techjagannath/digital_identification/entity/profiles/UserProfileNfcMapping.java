@@ -25,6 +25,7 @@ public class UserProfileNfcMapping {
     @JoinColumn(name = "profile_type")
     private ProfileTypesMaster profileType;
 
+    @Column(unique = true)
     private String uid;
 
 }
