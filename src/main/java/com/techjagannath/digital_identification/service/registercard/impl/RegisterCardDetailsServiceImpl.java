@@ -1,8 +1,10 @@
 package com.techjagannath.digital_identification.service.registercard.impl;
 
 import com.techjagannath.digital_identification.entity.AddressMaster;
+import com.techjagannath.digital_identification.entity.ProfileTypesMaster;
 import com.techjagannath.digital_identification.entity.UserMaster;
 import com.techjagannath.digital_identification.entity.profiles.*;
+import com.techjagannath.digital_identification.exception.ResourceNotFoundException;
 import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
@@ -10,6 +12,9 @@ import com.techjagannath.digital_identification.models.registerCards.kidsProfile
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsGuardianDetails;
 import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.retrieveCardsDetails.RetrieveUserCardDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.retrieveCardsDetails.RetrieveUserCardDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.retrieveCardsDetails.profiles.*;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorCaretakerDetails;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
@@ -17,10 +22,7 @@ import com.techjagannath.digital_identification.models.registerCards.socialProfi
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
-import com.techjagannath.digital_identification.repository.AccountApprovalStatusRepository;
-import com.techjagannath.digital_identification.repository.AddressMasterRepository;
-import com.techjagannath.digital_identification.repository.RoleMasterRepository;
-import com.techjagannath.digital_identification.repository.UserMasterRepository;
+import com.techjagannath.digital_identification.repository.*;
 import com.techjagannath.digital_identification.repository.profiles.*;
 import com.techjagannath.digital_identification.service.registercard.RegisterCardDetailsService;
 import jakarta.transaction.Transactional;
@@ -49,13 +51,16 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     private final PasswordEncoder passwordEncoder;
     private final PetProfileRepository petProfileRepository;
     private final SocialProfileRepository socialProfileRepository;
+    private final UserProfileNfcMappingRepository userProfileNfcMappingRepository;
+    private final ProfileTypesMasterRepository profileTypesMasterRepository;
 
     public RegisterCardDetailsServiceImpl(UserMasterRepository userMasterRepository, ChildProfileRepository childProfileRepository, PasswordEncoder passwordEncoder,
                                           ChildGuardianDetailsRepository childGuardianDetailsRepository, AddressMasterRepository addressMasterRepository,
                                           RoleMasterRepository roleMasterRepository, AccountApprovalStatusRepository accountApprovalStatusRepository,
                                           SeniorProfileRepository seniorProfileRepository, SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository,
                                           BusinessProfileRepository businessProfileRepository, VehicleProfileRepository vehicleProfileRepository,
-                                          PetProfileRepository petProfileRepository, SocialProfileRepository socialProfileRepository) {
+                                          PetProfileRepository petProfileRepository, SocialProfileRepository socialProfileRepository,
+                                          UserProfileNfcMappingRepository userProfileNfcMappingRepository, ProfileTypesMasterRepository profileTypesMasterRepository) {
         this.userMasterRepository = userMasterRepository;
         this.childGuardianDetailsRepository = childGuardianDetailsRepository;
         this.passwordEncoder = passwordEncoder;
@@ -69,11 +74,13 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         this.vehicleProfileRepository = vehicleProfileRepository;
         this.petProfileRepository = petProfileRepository;
         this.socialProfileRepository = socialProfileRepository;
+        this.userProfileNfcMappingRepository = userProfileNfcMappingRepository;
+        this.profileTypesMasterRepository = profileTypesMasterRepository;
     }
 
     @Override
     @Transactional
-    public RegisterCardUserKidsDetailsResultModel serviceEntryPointForRegisterCardUserKidsDetails(RegisterCardUserKidsDetailsRequestModel requestModel) {
+    public RegisterCardUserKidsDetailsResultModel serviceEntryPointForRegisterCardUserKidsDetails(String uid, RegisterCardUserKidsDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
         addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
@@ -103,6 +110,10 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
+
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(1).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
+        this.userProfileNfcMappingRepository.save(mapping);
 
         /* child details */
         ChildProfile childProfile = new ChildProfile();
@@ -136,7 +147,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
-    public RegisterCardUserSeniorDetailsResultModel serviceEntryPointForRegisterCardUserSeniorDetails(RegisterCardUserSeniorDetailsRequestModel requestModel) {
+    public RegisterCardUserSeniorDetailsResultModel serviceEntryPointForRegisterCardUserSeniorDetails(String uid, RegisterCardUserSeniorDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
         addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
@@ -166,6 +177,10 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
+
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(2).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
+        this.userProfileNfcMappingRepository.save(mapping);
 
         /* senior details */
         SeniorProfile seniorProfile = new SeniorProfile();
@@ -200,7 +215,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
-    public RegisterCardUserBusinessDetailsResultModel serviceEntryPointForRegisterCardUserBusinessDetails(RegisterCardUserBusinessDetailsRequestModel requestModel) {
+    public RegisterCardUserBusinessDetailsResultModel serviceEntryPointForRegisterCardUserBusinessDetails(String uid, RegisterCardUserBusinessDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
         addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
@@ -230,6 +245,10 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
+
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
+        this.userProfileNfcMappingRepository.save(mapping);
 
         /* business details */
         BusinessProfile businessProfile = new BusinessProfile();
@@ -249,7 +268,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
-    public RegisterCardUserVehicleDetailsResultModel serviceEntryPointForRegisterCardUserVehicleDetails(RegisterCardUserVehicleDetailsRequestModel requestModel) {
+    public RegisterCardUserVehicleDetailsResultModel serviceEntryPointForRegisterCardUserVehicleDetails(String uid, RegisterCardUserVehicleDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
         addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
@@ -279,6 +298,10 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
+
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(4).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
+        this.userProfileNfcMappingRepository.save(mapping);
 
         /* vehicle details */
         VehicleProfile vehicleProfile = new VehicleProfile();
@@ -302,7 +325,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
-    public RegisterCardUserPetsDetailsResultModel serviceEntryPointForRegisterCardUserPetDetails(RegisterCardUserPetsDetailsRequestModel requestModel) {
+    public RegisterCardUserPetsDetailsResultModel serviceEntryPointForRegisterCardUserPetDetails(String uid, RegisterCardUserPetsDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
         addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
@@ -332,6 +355,10 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
+
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(5).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
+        this.userProfileNfcMappingRepository.save(mapping);
 
         /* pet details */
         PetProfile petProfile = new PetProfile();
@@ -356,7 +383,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
-    public RegisterCardUserSocialDetailsResultModel serviceEntryPointForRegisterCardUserSocialDetails(RegisterCardUserSocialDetailsRequestModel requestModel) {
+    public RegisterCardUserSocialDetailsResultModel serviceEntryPointForRegisterCardUserSocialDetails(String uid, RegisterCardUserSocialDetailsRequestModel requestModel) {
         /* user details */
         AddressMaster addressMaster = new AddressMaster();
         addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
@@ -387,6 +414,10 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
                 new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
 
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(6).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
+        this.userProfileNfcMappingRepository.save(mapping);
+
         /* social profile */
         SocialProfile socialProfile = new SocialProfile();
         socialProfile.setFullName(requestModel.getFullName());
@@ -401,5 +432,71 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         socialProfile.setLinkedAccount(savedUser);
         SocialProfile savedSocialProfile = this.socialProfileRepository.save(socialProfile);
         return new RegisterCardUserSocialDetailsResultModel(savedSocialProfile.getFullName());
+    }
+
+    @Override
+    public RetrieveUserCardDetailsResultModel serviceEntryPointForRetrieveUserDetails(RetrieveUserCardDetailsRequestModel requestModel) {
+        UserProfileNfcMapping mapping = this.userProfileNfcMappingRepository.findByUid(requestModel.getUid());
+        RetrieveUserCardDetailsResultModel resultModel = new RetrieveUserCardDetailsResultModel();
+        resultModel.setAccountType(mapping.getProfileType().getProfileType());
+
+        if (mapping.getProfileType().getId() == 1) {
+            ChildProfile childProfile = this.childProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            List<ChildGuardianDetails> guardianDetailsResultList = this.childGuardianDetailsRepository.findAllByChildProfile(childProfile);
+            List<RetrieveUserCardGuardianDetailsResultModel> guardianList = new ArrayList<>();
+            for (ChildGuardianDetails model : guardianDetailsResultList)
+                guardianList.add(new RetrieveUserCardGuardianDetailsResultModel(
+                        model.getEmail(), model.getAlternatePhone(), model.getGuardianName(), model.getIdProofNumber(), model.getIdProofType(),
+                        model.getIsPrimary(), model.getPrimaryPhone(), model.getRelation()));
+            resultModel.setChildProfile(new ChildProfileResultModel(childProfile.getChildName(), childProfile.getDateOfBirth(),
+                    childProfile.getGender(), childProfile.getBloodGroup(), childProfile.getSchoolName(), childProfile.getSchoolAddress(), childProfile.getAllergies(), childProfile.getMedicalCondition(),
+                    guardianList));
+        }
+
+        else if (mapping.getProfileType().getId() == 2) {
+            SeniorProfile seniorProfile = this.seniorProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            List<SeniorCareTakerDetails> careTakerResultList = this.seniorCareTakerDetailsRepository.findAllBySeniorProfile(seniorProfile);
+            List<RetrieveUserCardCareTakerDetailsResultModel> caretakerList = new ArrayList<>();
+            for (SeniorCareTakerDetails model : careTakerResultList)
+                caretakerList.add(new RetrieveUserCardCareTakerDetailsResultModel(model.getCareTakerName(), model.getRelation(),
+                        model.getPrimaryPhone(), model.getAlternatePhone(), model.getIsPrimary()));
+            resultModel.setSeniorProfile(new SeniorProfileResultModel(seniorProfile.getFullName(), seniorProfile.getDateOfBirth(),
+                    seniorProfile.getGender(), seniorProfile.getBloodGroup(), seniorProfile.getMedicalConditions(), seniorProfile.getCurrentMedications(),
+                    seniorProfile.getDoctorName(), seniorProfile.getDoctorContact(), seniorProfile.getHospitalPreference(), seniorProfile.getInsuranceProvider(),
+                    seniorProfile.getInsuranceNumber(), caretakerList));
+
+        }
+
+        else if (mapping.getProfileType().getId() == 3) {
+            BusinessProfile businessProfile = this.businessProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            resultModel.setBusinessProfile(new BusinessProfileResultModel(businessProfile.getBusinessName(), businessProfile.getBusinessType(),
+                    businessProfile.getRegistrationNumber(), businessProfile.getGstNumber(), businessProfile.getBusinessEmail(),
+                    businessProfile.getBusinessPhone(), businessProfile.getBusinessAddress(), businessProfile.getWebsiteUrl(),
+                    null, null, null
+                    ));
+        }
+
+        else if (mapping.getProfileType().getId() == 4) {
+            VehicleProfile vehicleProfile = this.vehicleProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            resultModel.setVehicleProfile(new VehicleProfileResultModel(vehicleProfile.getVehicleNumber(), vehicleProfile.getVehicleType(),
+                    vehicleProfile.getBrand(), vehicleProfile.getModel(), vehicleProfile.getColour(), vehicleProfile.getYearOfManufacturing().toString(),
+                    vehicleProfile.getOwnerName(), vehicleProfile.getOwnerContact(), vehicleProfile.getAlternateContact(), vehicleProfile.getRcNumber(),
+                    vehicleProfile.getInsuranceNumber(), vehicleProfile.getInsuranceExpiry().toString(), vehicleProfile.getChassisNumber()));
+        }
+
+        else if (mapping.getProfileType().getId() == 5) {
+            PetProfile petProfile = this.petProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            resultModel.setPetProfile(new PetProfileResultModel(petProfile.getPetName(), petProfile.getSpecies(), petProfile.getBreed(),
+                    petProfile.getGender(), petProfile.getAge(), petProfile.getColour(), petProfile.getMicroChipId(), petProfile.getVaccinationStatus(),
+                    petProfile.getVetName(), petProfile.getVetContact(), petProfile.getMedicalNotes(), petProfile.getOwnerName(), petProfile.getOwnerContact(),
+                    petProfile.getAlternateContact()));
+        }
+        else if (mapping.getProfileType().getId() == 6) {
+            SocialProfile socialProfile = this.socialProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            resultModel.setSocialProfile(new SocialProfileResultModel(socialProfile.getFullName(), socialProfile.getNickName(),
+                    socialProfile.getInstagram(), socialProfile.getFacebook(), socialProfile.getLinkedIn(), socialProfile.getTwitter(),
+                    socialProfile.getEmergencyContactName(), socialProfile.getEmergencyContactNumber(), socialProfile.getMessageToFinder()));
+        }
+        return resultModel;
     }
 }

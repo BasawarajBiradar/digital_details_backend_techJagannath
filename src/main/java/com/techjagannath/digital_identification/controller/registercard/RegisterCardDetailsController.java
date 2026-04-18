@@ -7,6 +7,8 @@ import com.techjagannath.digital_identification.models.registerCards.kidsProfile
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.retrieveCardsDetails.RetrieveUserCardDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.retrieveCardsDetails.RetrieveUserCardDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsRequestModel;
@@ -29,46 +31,52 @@ public class RegisterCardDetailsController {
         this.registerCardDetailsFacade = registerCardDetailsFacade;
     }
 
-    @PostMapping("/kids")
-    public ResponseEntity<ApiResponse<RegisterCardUserKidsDetailsResultModel>> registerCardUserKidsDetails(
+    @PostMapping("/kids/{uid}")
+    public ResponseEntity<ApiResponse<RegisterCardUserKidsDetailsResultModel>> registerCardUserKidsDetails(@PathVariable("uid") String uid,
             @RequestBody RegisterCardUserKidsDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
-                .facadeEntryPointForRegisterCardUserKidsDetails(requestModel), "created kid profile for card user");
+                .facadeEntryPointForRegisterCardUserKidsDetails(uid, requestModel), "created kid profile for card user");
     }
 
     @PostMapping("/senior")
-    public ResponseEntity<ApiResponse<RegisterCardUserSeniorDetailsResultModel>> registerCardUserSeniorDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserSeniorDetailsResultModel>> registerCardUserSeniorDetails(@PathVariable("uid") String uid,
             @RequestBody RegisterCardUserSeniorDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
-                .facadeEntryPointForRegisterCardUserSeniorDetails(requestModel), "created senior profile for card user");
+                .facadeEntryPointForRegisterCardUserSeniorDetails(uid, requestModel), "created senior profile for card user");
     }
 
     @PostMapping("/business")
-    public ResponseEntity<ApiResponse<RegisterCardUserBusinessDetailsResultModel>> registerCardUserBusinessDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserBusinessDetailsResultModel>> registerCardUserBusinessDetails(@PathVariable("uid") String uid,
             @RequestBody RegisterCardUserBusinessDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
-                .facadeEntryPointForRegisterCardUserBusinessDetails(requestModel), "created Business profile for card user");
+                .facadeEntryPointForRegisterCardUserBusinessDetails(uid, requestModel), "created Business profile for card user");
     }
 
     @PostMapping("/vehicle")
-    public ResponseEntity<ApiResponse<RegisterCardUserVehicleDetailsResultModel>> registerCardUserVehicleDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserVehicleDetailsResultModel>> registerCardUserVehicleDetails(@PathVariable("uid") String uid,
             @RequestBody RegisterCardUserVehicleDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
-                .facadeEntryPointForRegisterCardUserVehicleDetails(requestModel), "created Vehicle profile for card user");
+                .facadeEntryPointForRegisterCardUserVehicleDetails(uid, requestModel), "created Vehicle profile for card user");
     }
 
     @PostMapping("/pets")
-    public ResponseEntity<ApiResponse<RegisterCardUserPetsDetailsResultModel>> registerCardUserPetsDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserPetsDetailsResultModel>> registerCardUserPetsDetails(@PathVariable("uid") String uid,
             @RequestBody RegisterCardUserPetsDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
-                .facadeEntryPointForRegisterCardUserPetsDetails(requestModel), "created Pets profile for card user");
+                .facadeEntryPointForRegisterCardUserPetsDetails(uid, requestModel), "created Pets profile for card user");
     }
 
     @PostMapping("/social")
-    public ResponseEntity<ApiResponse<RegisterCardUserSocialDetailsResultModel>> registerCardUserSocialDetails(
+    public ResponseEntity<ApiResponse<RegisterCardUserSocialDetailsResultModel>> registerCardUserSocialDetails(@PathVariable("uid") String uid,
             @RequestBody RegisterCardUserSocialDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.registerCardDetailsFacade
-                .facadeEntryPointForRegisterCardUserSocialDetails(requestModel), "created Social profile for card user");
+                .facadeEntryPointForRegisterCardUserSocialDetails(uid, requestModel), "created Social profile for card user");
+    }
+
+    @PostMapping("/retrieve")
+    public ResponseEntity<ApiResponse<RetrieveUserCardDetailsResultModel>> registerCardUserSocialDetails(
+            @RequestBody RetrieveUserCardDetailsRequestModel requestModel) {
+        return ResponseBuilder.success(this.registerCardDetailsFacade.facadeEntryPointForRetrieveUserCardDetails(requestModel), "retireve card details");
     }
 
 
