@@ -132,15 +132,16 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         List<ChildGuardianDetails> guardianDetails = new ArrayList<>();
         for (RegisterCardUserKidsGuardianDetails model : requestModel.getGuardians()) {
             ChildGuardianDetails guardian = new ChildGuardianDetails();
-            guardian.setGuardianName(model.getGuardian_name());
+            guardian.setGuardianName(model.getGuardianName());
             guardian.setRelation(model.getRelationship());
-            guardian.setPrimaryPhone(model.getPrimary_phone());
-            guardian.setAlternatePhone(model.getAlternate_phone());
+            guardian.setPrimaryPhone(model.getPrimaryPhone());
+            guardian.setAlternatePhone(model.getAlternatePhone());
             guardian.setEmail(model.getEmail());
             guardian.setIsPrimary(false);
-            guardian.setIdProofType(model.getId_proof_type());
-            guardian.setIdProofNumber(model.getId_proof_number());
+            guardian.setIdProofType(model.getIdProofType());
+            guardian.setIdProofNumber(model.getIdProofNumber());
             guardian.setChildProfile(savedChildProfile);
+            guardianDetails.add(guardian);
         }
         this.childGuardianDetailsRepository.saveAll(guardianDetails);
         return new RegisterCardUserKidsDetailsResultModel(childProfile.getChildName());
@@ -210,6 +211,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
             careTakerDetails.setEmail(null);
             careTakerDetails.setIsPrimary(false);
             careTakerDetails.setSeniorProfile(savedSeniorProfile);
+            careTakersDetails.add(careTakerDetails);
         }
         this.seniorCareTakerDetailsRepository.saveAll(careTakersDetails);
         return new RegisterCardUserSeniorDetailsResultModel(savedSeniorProfile.getFullName());

@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 public class RegisterCardUserKidsGuardianDetails {
     private String address;
     private String email;
-    private String alternate_phone;
-    private String guardian_name;
-    private String id_proof_number;
-    private String id_proof_type;
-    private String is_primary;
-    private String primary_phone;
+    private String alternatePhone;
+    private String guardianName;
+    private String idProofNumber;
+    private String idProofType;
+    private String isPrimary;
+    private String primaryPhone;
     private String relationship;
 }
