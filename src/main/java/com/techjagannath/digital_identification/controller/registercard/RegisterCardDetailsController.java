@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/register-card")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class RegisterCardDetailsController {
 
     private RegisterCardDetailsFacade registerCardDetailsFacade;
