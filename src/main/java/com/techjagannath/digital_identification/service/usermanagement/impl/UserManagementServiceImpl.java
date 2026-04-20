@@ -18,6 +18,8 @@ import com.techjagannath.digital_identification.models.usermanagement.saveChildP
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorCaretakerDetails;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.socialProfile.RegisterCardUserSocialDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.socialProfile.RegisterCardUserSocialDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.repository.*;
@@ -262,5 +264,24 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         return new RegisterCardUserPetsDetailsResultModel(savedPetProfile.getPetName());
+    }
+
+    @Override
+    public RegisterCardUserSocialDetailsResultModel serviceEntryPointForSaveuserSocialProfileDetails(HttpServletRequest request, RegisterCardUserSocialDetailsRequestModel requestModel) {
+        String email = this.extractUser(request);
+        UserMaster user = this.userMasterRepository.findByEmailId(email);
+
+        SocialProfile socialProfile = new SocialProfile(null, requestModel.getFullName(), requestModel.getNickname(), requestModel.getInstagramHandle(),
+                requestModel.getFacebookProfile(), requestModel.getLinkedinProfile(), requestModel.getTwitterHandle(), requestModel.getEmergencyContactName(),
+                requestModel.getEmergencyContactNumber(), requestModel.getEmergencyContactNumber(), requestModel.getMessageToFinder(), user);
+
+        SocialProfile savedSocialProfile = this.socialProfileRepository.save(socialProfile);
+
+        String uid = generateUid();
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(6).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        this.userProfileNfcMappingRepository.save(uidMapping);
+
+        return new RegisterCardUserSocialDetailsResultModel(savedSocialProfile.getFullName());
     }
 }

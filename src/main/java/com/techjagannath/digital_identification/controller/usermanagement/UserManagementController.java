@@ -1,6 +1,7 @@
 package com.techjagannath.digital_identification.controller.usermanagement;
 
 import com.techjagannath.digital_identification.facade.usermanagement.UserManagementFacade;
+import com.techjagannath.digital_identification.models.usermanagement.socialProfile.RegisterCardUserSocialDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.petsProfile.RegisterCardUserPetsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
@@ -11,6 +12,7 @@ import com.techjagannath.digital_identification.models.usermanagement.saveChildP
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.socialProfile.RegisterCardUserSocialDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.utils.apiresponse.ApiResponse;
@@ -67,10 +69,10 @@ public class UserManagementController {
                 "New user registered");
     }
 
-    // senior
-    // pets
-    // business
-    // vehicle
-    // social
+    @PostMapping("/save/social")
+    public ResponseEntity<ApiResponse<RegisterCardUserSocialDetailsResultModel>> saveUserSocialProfileDetails(HttpServletRequest request, @Valid @RequestBody RegisterCardUserSocialDetailsRequestModel requestModel) {
+        return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForSaveUserSocialProfileDetails(request, requestModel),
+                "New user registered");
+    }
 
 }
