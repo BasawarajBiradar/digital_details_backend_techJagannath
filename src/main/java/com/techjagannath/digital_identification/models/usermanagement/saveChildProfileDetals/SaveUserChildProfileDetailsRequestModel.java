@@ -3,6 +3,7 @@ package com.techjagannath.digital_identification.models.usermanagement.saveChild
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class SaveUserChildProfileDetailsRequestModel {
@@ -14,4 +15,5 @@ public class SaveUserChildProfileDetailsRequestModel {
     private String schoolAddress;
     private String allergies;
     private String medicalConditions;
+    List<RegisterCardUserKidsGuardianDetails> guardians;
 }

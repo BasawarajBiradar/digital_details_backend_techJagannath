@@ -4,14 +4,17 @@ import com.techjagannath.digital_identification.config.JwtUtil;
 import com.techjagannath.digital_identification.entity.AddressMaster;
 import com.techjagannath.digital_identification.entity.ProfileTypesMaster;
 import com.techjagannath.digital_identification.entity.UserMaster;
+import com.techjagannath.digital_identification.entity.profiles.ChildGuardianDetails;
 import com.techjagannath.digital_identification.entity.profiles.ChildProfile;
 import com.techjagannath.digital_identification.entity.profiles.UserProfileNfcMapping;
 import com.techjagannath.digital_identification.exception.ResourceNotFoundException;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.RegisterCardUserKidsGuardianDetails;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.repository.*;
+import com.techjagannath.digital_identification.repository.profiles.ChildGuardianDetailsRepository;
 import com.techjagannath.digital_identification.repository.profiles.ChildProfileRepository;
 import com.techjagannath.digital_identification.repository.profiles.UserProfileNfcMappingRepository;
 import com.techjagannath.digital_identification.service.usermanagement.UserManagementService;
@@ -25,6 +28,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserManagementServiceImpl implements UserManagementService {
@@ -37,6 +42,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final UserProfileNfcMappingRepository userProfileNfcMappingRepository;
     private final ProfileTypesMasterRepository profileTypesMasterRepository;
     private final JwtUtil jwtUtil;
+    private final ChildGuardianDetailsRepository childGuardianDetailsRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -44,7 +50,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     public UserManagementServiceImpl(AddressMasterRepository addressMasterRepository, RoleMasterRepository roleMasterRepository,
                                      AccountApprovalStatusRepository accountApprovalStatusRepository, UserMasterRepository userMasterRepository,
                                      ChildProfileRepository childProfileRepository, UserProfileNfcMappingRepository userProfileNfcMappingRepository,
-                                     ProfileTypesMasterRepository profileTypesMasterRepository, JwtUtil jwtUtil) {
+                                     ProfileTypesMasterRepository profileTypesMasterRepository, JwtUtil jwtUtil,
+                                     ChildGuardianDetailsRepository childGuardianDetailsRepository) {
         this.addressMasterRepository = addressMasterRepository;
         this.roleMasterRepository = roleMasterRepository;
         this.accountApprovalStatusRepository = accountApprovalStatusRepository;
@@ -53,6 +60,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.userProfileNfcMappingRepository = userProfileNfcMappingRepository;
         this.profileTypesMasterRepository = profileTypesMasterRepository;
         this.jwtUtil = jwtUtil;
+        this.childGuardianDetailsRepository = childGuardianDetailsRepository;
     }
 
     @Override
@@ -130,10 +138,27 @@ public class UserManagementServiceImpl implements UserManagementService {
         childProfile.setMedicalCondition(requestModel.getMedicalConditions());
         childProfile.setLinkedAccount(user);
         ChildProfile savedChild = this.childProfileRepository.save(childProfile);
+
         String uid = generateUid();
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(1).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
         UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
         this.userProfileNfcMappingRepository.save(uidMapping);
+        List<ChildGuardianDetails> guardianDetails = new ArrayList<>();
+
+        for (RegisterCardUserKidsGuardianDetails model : requestModel.getGuardians()) {
+            ChildGuardianDetails guardian = new ChildGuardianDetails();
+            guardian.setGuardianName(model.getGuardianName());
+            guardian.setRelation(model.getRelationship());
+            guardian.setPrimaryPhone(model.getPrimaryPhone());
+            guardian.setAlternatePhone(model.getAlternatePhone());
+            guardian.setEmail(model.getEmail());
+            guardian.setIsPrimary(false);
+            guardian.setIdProofType(model.getIdProofType());
+            guardian.setIdProofNumber(model.getIdProofNumber());
+            guardian.setChildProfile(savedChild);
+            guardianDetails.add(guardian);
+        }
+        this.childGuardianDetailsRepository.saveAll(guardianDetails);
         return new SaveUserChildProfileDetailsResultModel(savedChild.getId());
     }
 }
