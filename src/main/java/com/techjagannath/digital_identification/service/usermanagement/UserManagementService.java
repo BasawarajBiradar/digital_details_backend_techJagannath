@@ -9,6 +9,8 @@ import com.techjagannath.digital_identification.models.usermanagement.saveChildP
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface UserManagementService {
@@ -20,4 +22,6 @@ public interface UserManagementService {
     RegisterCardUserSeniorDetailsResultModel serviceEntryPointForSaveSeniorProfileDetails(HttpServletRequest request, RegisterCardUserSeniorDetailsRequestModel requestModel);
 
     RegisterCardUserBusinessDetailsResultModel serviceEntryPointForSaveUserBusinessProfileDetails(HttpServletRequest request, RegisterCardUserBusinessDetailsRequestModel requestModel);
+
+    RegisterCardUserVehicleDetailsResultModel serviceEntryPointForSaveUserVehicleProfileDetails(HttpServletRequest request, RegisterCardUserVehicleDetailsRequestModel requestModel);
 }

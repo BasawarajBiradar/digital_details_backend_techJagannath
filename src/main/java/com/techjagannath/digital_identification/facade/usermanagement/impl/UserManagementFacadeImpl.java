@@ -9,6 +9,8 @@ import com.techjagannath.digital_identification.models.usermanagement.saveChildP
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.service.usermanagement.UserManagementService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
@@ -40,5 +42,10 @@ public class UserManagementFacadeImpl implements UserManagementFacade {
     @Override
     public RegisterCardUserBusinessDetailsResultModel facadeEntryPointForSaveUserBusinessProfileDetails(HttpServletRequest request, RegisterCardUserBusinessDetailsRequestModel requestModel) {
         return this.userManagementService.serviceEntryPointForSaveUserBusinessProfileDetails(request, requestModel);
+    }
+
+    @Override
+    public RegisterCardUserVehicleDetailsResultModel facadeEntryPointForSaveUserVehicleProfileDetails(HttpServletRequest request, RegisterCardUserVehicleDetailsRequestModel requestModel) {
+        return this.userManagementService.serviceEntryPointForSaveUserVehicleProfileDetails(request, requestModel);
     }
 }

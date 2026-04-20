@@ -9,6 +9,8 @@ import com.techjagannath.digital_identification.models.usermanagement.saveChildP
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digital_identification.utils.apiresponse.ResponseBuilder;
 
@@ -48,6 +50,12 @@ public class UserManagementController {
     @PostMapping("/save/business")
     public ResponseEntity<ApiResponse<RegisterCardUserBusinessDetailsResultModel>> saveUserBusinessProfileDetails(HttpServletRequest request, @Valid @RequestBody RegisterCardUserBusinessDetailsRequestModel requestModel) {
         return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForSaveUserBusinessProfileDetails(request, requestModel),
+                "New user registered");
+    }
+
+    @PostMapping("/save/vehicle")
+    public ResponseEntity<ApiResponse<RegisterCardUserVehicleDetailsResultModel>> saveUserVehicleProfileDetails(HttpServletRequest request, @Valid @RequestBody RegisterCardUserVehicleDetailsRequestModel requestModel) {
+        return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForSaveUserVehicleProfileDetails(request, requestModel),
                 "New user registered");
     }
 

@@ -16,6 +16,8 @@ import com.techjagannath.digital_identification.models.usermanagement.saveChildP
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorCaretakerDetails;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.repository.*;
 import com.techjagannath.digital_identification.repository.profiles.*;
 import com.techjagannath.digital_identification.service.usermanagement.UserManagementService;
@@ -208,9 +210,10 @@ public class UserManagementServiceImpl implements UserManagementService {
         String email = this.extractUser(request);
         UserMaster user = this.userMasterRepository.findByEmailId(email);
 
-        BusinessProfile savedBusinessProfile = new BusinessProfile(null, requestModel.getBusinessName(), null, requestModel.getBusinessType(),
+        BusinessProfile businessProfile = new BusinessProfile(null, requestModel.getBusinessName(), null, requestModel.getBusinessType(),
                 requestModel.getRegistrationNumber(),  requestModel.getGstNumber(), requestModel.getBusinessEmail(), requestModel.getBusinessPhone(),
                 requestModel.getWebsiteUrl(), requestModel.getBusinessAddress(), user);
+        BusinessProfile savedBusinessProfile = this.businessProfileRepository.save(businessProfile);
 
         String uid = generateUid();
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
@@ -218,5 +221,25 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         return new RegisterCardUserBusinessDetailsResultModel(savedBusinessProfile.getBusinessName());
+    }
+
+    @Override
+    public RegisterCardUserVehicleDetailsResultModel serviceEntryPointForSaveUserVehicleProfileDetails(HttpServletRequest request, RegisterCardUserVehicleDetailsRequestModel requestModel) {
+        String email = this.extractUser(request);
+        UserMaster user = this.userMasterRepository.findByEmailId(email);
+
+        VehicleProfile vehicleProfile = new VehicleProfile(null, requestModel.getVehicleNumber(), requestModel.getVehicleType(),
+                requestModel.getBrand(), requestModel.getModel(), requestModel.getColor(), LocalDate.parse(requestModel.getYearOfManufacture()),
+                requestModel.getOwnerName(), requestModel.getOwnerContact(), requestModel.getAlternateContact(),
+                requestModel.getRcNumber(), requestModel.getInsuranceNumber(), LocalDate.parse(requestModel.getInsuranceExpiry()),
+                requestModel.getChassisNumber(), user);
+        VehicleProfile savedVehicleProfile = this.vehicleProfileRepository.save(vehicleProfile);
+
+        String uid = generateUid();
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(4).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        this.userProfileNfcMappingRepository.save(uidMapping);
+
+        return new RegisterCardUserVehicleDetailsResultModel(savedVehicleProfile.getVehicleNumber());
     }
 }
