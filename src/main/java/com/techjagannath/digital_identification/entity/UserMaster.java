@@ -42,7 +42,7 @@ public class UserMaster {
     @JoinColumn(name = "role")
     private RoleMaster role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address")
     private AddressMaster address;
 
