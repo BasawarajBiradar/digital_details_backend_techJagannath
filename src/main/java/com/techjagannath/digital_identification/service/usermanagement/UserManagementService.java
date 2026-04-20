@@ -5,6 +5,8 @@ import com.techjagannath.digital_identification.models.usermanagement.RegisterUs
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface UserManagementService {
@@ -12,4 +14,6 @@ public interface UserManagementService {
     RegisterUserResultModel serviceEntryPointForRegisterUser(RegisterUserRequestModel requestModel);
 
     SaveUserChildProfileDetailsResultModel serviceEntryPointForSaveUserChildProfileDetails(HttpServletRequest request, SaveUserChildProfileDetailsRequestModel requestModel);
+
+    RegisterCardUserSeniorDetailsResultModel serviceEntryPointForSaveSeniorProfileDetails(HttpServletRequest request, RegisterCardUserSeniorDetailsRequestModel requestModel);
 }

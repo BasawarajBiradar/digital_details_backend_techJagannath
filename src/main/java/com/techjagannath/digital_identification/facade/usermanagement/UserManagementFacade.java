@@ -4,11 +4,16 @@ import com.techjagannath.digital_identification.models.usermanagement.RegisterUs
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 public interface UserManagementFacade {
 
     RegisterUserResultModel facadeEntryPointForRegisterUser(RegisterUserRequestModel requestModel);
 
     SaveUserChildProfileDetailsResultModel facadeEntryPointForSaveUserChildProfileDetails(HttpServletRequest request, SaveUserChildProfileDetailsRequestModel requestModel);
+
+    RegisterCardUserSeniorDetailsResultModel facadeEntryPointForSaveUserSeniorProfileDetails(HttpServletRequest request, @Valid RegisterCardUserSeniorDetailsRequestModel requestModel);
 }
