@@ -10,6 +10,8 @@ import com.techjagannath.digital_identification.models.usermanagement.RegisterUs
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.petsProfile.RegisterCardUserPetsDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.petsProfile.RegisterCardUserPetsDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.RegisterCardUserKidsGuardianDetails;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
@@ -241,5 +243,24 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         return new RegisterCardUserVehicleDetailsResultModel(savedVehicleProfile.getVehicleNumber());
+    }
+
+    @Override
+    public RegisterCardUserPetsDetailsResultModel serviceEntryPointForSaveuserPetsProfileDetails(HttpServletRequest request, RegisterCardUserPetsDetailsRequestModel requestModel) {
+        String email = this.extractUser(request);
+        UserMaster user = this.userMasterRepository.findByEmailId(email);
+
+        PetProfile petProfile = new PetProfile(null, requestModel.getPetName(), requestModel.getSpecies(), requestModel.getBreed(),
+                requestModel.getGender(), requestModel.getAge(), requestModel.getColor(), requestModel.getMicrochipId(), requestModel.getVaccinationStatus(),
+                requestModel.getVetName(), requestModel.getVetContact(), requestModel.getMedialNotes(), requestModel.getOwnerName(),
+                requestModel.getOwnerContact(), requestModel.getAlternateContact(), user);
+        PetProfile savedPetProfile = this.petProfileRepository.save(petProfile);
+
+        String uid = generateUid();
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(5).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        this.userProfileNfcMappingRepository.save(uidMapping);
+
+        return new RegisterCardUserPetsDetailsResultModel(savedPetProfile.getPetName());
     }
 }

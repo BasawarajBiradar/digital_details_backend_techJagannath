@@ -1,10 +1,12 @@
 package com.techjagannath.digital_identification.controller.usermanagement;
 
 import com.techjagannath.digital_identification.facade.usermanagement.UserManagementFacade;
+import com.techjagannath.digital_identification.models.usermanagement.petsProfile.RegisterCardUserPetsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.petsProfile.RegisterCardUserPetsDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
@@ -56,6 +58,12 @@ public class UserManagementController {
     @PostMapping("/save/vehicle")
     public ResponseEntity<ApiResponse<RegisterCardUserVehicleDetailsResultModel>> saveUserVehicleProfileDetails(HttpServletRequest request, @Valid @RequestBody RegisterCardUserVehicleDetailsRequestModel requestModel) {
         return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForSaveUserVehicleProfileDetails(request, requestModel),
+                "New user registered");
+    }
+
+    @PostMapping("/save/pets")
+    public ResponseEntity<ApiResponse<RegisterCardUserPetsDetailsResultModel>> saveUserPetsProfileDetails(HttpServletRequest request, @Valid @RequestBody RegisterCardUserPetsDetailsRequestModel requestModel) {
+        return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForSaveUserPetsProfileDetails(request, requestModel),
                 "New user registered");
     }
 

@@ -5,6 +5,8 @@ import com.techjagannath.digital_identification.models.usermanagement.RegisterUs
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.petsProfile.RegisterCardUserPetsDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.petsProfile.RegisterCardUserPetsDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
@@ -47,5 +49,10 @@ public class UserManagementFacadeImpl implements UserManagementFacade {
     @Override
     public RegisterCardUserVehicleDetailsResultModel facadeEntryPointForSaveUserVehicleProfileDetails(HttpServletRequest request, RegisterCardUserVehicleDetailsRequestModel requestModel) {
         return this.userManagementService.serviceEntryPointForSaveUserVehicleProfileDetails(request, requestModel);
+    }
+
+    @Override
+    public RegisterCardUserPetsDetailsResultModel facadeEntryPointForSaveUserPetsProfileDetails(HttpServletRequest request, RegisterCardUserPetsDetailsRequestModel requestModel) {
+        return this.userManagementService.serviceEntryPointForSaveuserPetsProfileDetails(request, requestModel);
     }
 }
