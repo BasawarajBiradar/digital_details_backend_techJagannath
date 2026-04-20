@@ -11,7 +11,6 @@ public class RegisterCardUserSeniorDetailsRequestModel {
     /* senior profile */
     @NotBlank(message = "full name is required")
     private String fullName;
-    @NotBlank(message = "date of birth is required")
     private LocalDate dateOfBirth;
     @NotBlank(message = "gender is required")
     private String gender;
