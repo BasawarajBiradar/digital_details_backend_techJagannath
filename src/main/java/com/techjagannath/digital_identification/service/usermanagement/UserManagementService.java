@@ -3,6 +3,8 @@ package com.techjagannath.digital_identification.service.usermanagement;
 
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
@@ -16,4 +18,6 @@ public interface UserManagementService {
     SaveUserChildProfileDetailsResultModel serviceEntryPointForSaveUserChildProfileDetails(HttpServletRequest request, SaveUserChildProfileDetailsRequestModel requestModel);
 
     RegisterCardUserSeniorDetailsResultModel serviceEntryPointForSaveSeniorProfileDetails(HttpServletRequest request, RegisterCardUserSeniorDetailsRequestModel requestModel);
+
+    RegisterCardUserBusinessDetailsResultModel serviceEntryPointForSaveUserBusinessProfileDetails(HttpServletRequest request, RegisterCardUserBusinessDetailsRequestModel requestModel);
 }

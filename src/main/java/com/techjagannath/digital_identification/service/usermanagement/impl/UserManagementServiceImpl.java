@@ -8,6 +8,8 @@ import com.techjagannath.digital_identification.entity.profiles.*;
 import com.techjagannath.digital_identification.exception.ResourceNotFoundException;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.RegisterCardUserKidsGuardianDetails;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
@@ -199,5 +201,22 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.seniorCareTakerDetailsRepository.saveAll(careTakerDetails);
 
         return new RegisterCardUserSeniorDetailsResultModel(savedSeniorProfile.getFullName());
+    }
+
+    @Override
+    public RegisterCardUserBusinessDetailsResultModel serviceEntryPointForSaveUserBusinessProfileDetails(HttpServletRequest request, RegisterCardUserBusinessDetailsRequestModel requestModel) {
+        String email = this.extractUser(request);
+        UserMaster user = this.userMasterRepository.findByEmailId(email);
+
+        BusinessProfile savedBusinessProfile = new BusinessProfile(null, requestModel.getBusinessName(), null, requestModel.getBusinessType(),
+                requestModel.getRegistrationNumber(),  requestModel.getGstNumber(), requestModel.getBusinessEmail(), requestModel.getBusinessPhone(),
+                requestModel.getWebsiteUrl(), requestModel.getBusinessAddress(), user);
+
+        String uid = generateUid();
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        this.userProfileNfcMappingRepository.save(uidMapping);
+
+        return new RegisterCardUserBusinessDetailsResultModel(savedBusinessProfile.getBusinessName());
     }
 }

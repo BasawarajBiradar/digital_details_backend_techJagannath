@@ -3,6 +3,8 @@ package com.techjagannath.digital_identification.controller.usermanagement;
 import com.techjagannath.digital_identification.facade.usermanagement.UserManagementFacade;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
@@ -43,9 +45,16 @@ public class UserManagementController {
                 "New user registered");
     }
 
+    @PostMapping("/save/business")
+    public ResponseEntity<ApiResponse<RegisterCardUserBusinessDetailsResultModel>> saveUserBusinessProfileDetails(HttpServletRequest request, @Valid @RequestBody RegisterCardUserBusinessDetailsRequestModel requestModel) {
+        return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForSaveUserBusinessProfileDetails(request, requestModel),
+                "New user registered");
+    }
+
     // senior
     // pets
     // business
     // vehicle
     // social
+
 }

@@ -2,6 +2,8 @@ package com.techjagannath.digital_identification.facade.usermanagement;
 
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
+import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsRequestModel;
+import com.techjagannath.digital_identification.models.usermanagement.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
@@ -16,4 +18,6 @@ public interface UserManagementFacade {
     SaveUserChildProfileDetailsResultModel facadeEntryPointForSaveUserChildProfileDetails(HttpServletRequest request, SaveUserChildProfileDetailsRequestModel requestModel);
 
     RegisterCardUserSeniorDetailsResultModel facadeEntryPointForSaveUserSeniorProfileDetails(HttpServletRequest request, @Valid RegisterCardUserSeniorDetailsRequestModel requestModel);
+
+    RegisterCardUserBusinessDetailsResultModel facadeEntryPointForSaveUserBusinessProfileDetails(HttpServletRequest request, @Valid RegisterCardUserBusinessDetailsRequestModel requestModel);
 }
