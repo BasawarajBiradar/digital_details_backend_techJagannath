@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class CardsToShowResultModel {
     private String id;
     private Boolean isActive;
+    private String uid;
 }

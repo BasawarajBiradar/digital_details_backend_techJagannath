@@ -2,23 +2,29 @@ package com.techjagannath.digital_identification.service.homepage.impl;
 
 import com.techjagannath.digital_identification.config.JwtUtil;
 import com.techjagannath.digital_identification.entity.UserMaster;
+import com.techjagannath.digital_identification.entity.profiles.UserProfileNfcMapping;
+import com.techjagannath.digital_identification.models.homePage.retrieve.CardsToShowResultModel;
 import com.techjagannath.digital_identification.models.homePage.retrieve.RetrieveHomePageDetailsResultModel;
 import com.techjagannath.digital_identification.repository.UserMasterRepository;
+import com.techjagannath.digital_identification.repository.profiles.UserProfileNfcMappingRepository;
 import com.techjagannath.digital_identification.service.homepage.HomePageService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class HomePageServiceImpl implements HomePageService {
 
     private final JwtUtil jwtUtil;
     private final UserMasterRepository userMasterRepository;
+    private final UserProfileNfcMappingRepository userProfileNfcMappingRepository;
 
-    public HomePageServiceImpl(JwtUtil jwtUtil, UserMasterRepository userMasterRepository) {
+    public HomePageServiceImpl(JwtUtil jwtUtil, UserMasterRepository userMasterRepository, UserProfileNfcMappingRepository userProfileNfcMappingRepository) {
         this.jwtUtil = jwtUtil;
         this.userMasterRepository = userMasterRepository;
+        this.userProfileNfcMappingRepository = userProfileNfcMappingRepository;
     }
 
     private String extractUser(HttpServletRequest request) {
@@ -34,12 +40,15 @@ public class HomePageServiceImpl implements HomePageService {
     public RetrieveHomePageDetailsResultModel serviceEntryPointForRetrieveHomePageDetails(HttpServletRequest request) {
         String emailId = this.extractUser(request);
         UserMaster user = this.userMasterRepository.findByEmailId(emailId);
-        // fetch what cards are present -- create a custom repository method, -- uid mapping table -- addd entry in uid tabe by creating insertin in every card
-        //
+        List<UserProfileNfcMapping> cardsResultList = this.userProfileNfcMappingRepository.findAllByUserMaster(user);
+        List<CardsToShowResultModel> cards = new ArrayList<>();
+        for (UserProfileNfcMapping card: cardsResultList)
+            cards.add(new CardsToShowResultModel(card.getProfileType().getProfileType(), true, card.getUid()));
+
         return new RetrieveHomePageDetailsResultModel(
                 user.getFirstName(), user.getLastName(), user.getEmailId(), user.getMobileNumber(), user.getAlternateNumber(),
                 user.getAddress().getAddressLineOne(), user.getAddress().getAddressLineTwo(), user.getAddress().getCity(),
-                user.getAddress().getState(), user.getAddress().getCountry(), user.getAddress().getPinCode(), null, null, new ArrayList<>()
+                user.getAddress().getState(), user.getAddress().getCountry(), user.getAddress().getPinCode(), null, null, cards
         );
     }
 }
