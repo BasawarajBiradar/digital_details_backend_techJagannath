@@ -8,6 +8,7 @@ import com.techjagannath.digital_identification.models.usermanagement.saveChildP
 import com.techjagannath.digital_identification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digital_identification.utils.apiresponse.ResponseBuilder;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +29,9 @@ public class UserManagementController {
         return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForRegisterUser(requestModel), "New user registered");
     }
 
-    @PostMapping("/save/{userId}/kids")
-    public ResponseEntity<ApiResponse<SaveUserChildProfileDetailsResultModel>> saveUserChildProfileDetails(
-            @PathVariable Long userId, @Valid @RequestBody SaveUserChildProfileDetailsRequestModel requestModel) {
-        return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForSaveUserChildProfileDetails(userId, requestModel),
+    @PostMapping("/save/kids")
+    public ResponseEntity<ApiResponse<SaveUserChildProfileDetailsResultModel>> saveUserChildProfileDetails(HttpServletRequest request, @Valid @RequestBody SaveUserChildProfileDetailsRequestModel requestModel) {
+        return ResponseBuilder.created(this.userManagementFacade.facadeEntryPointForSaveUserChildProfileDetails(request, requestModel),
                 "New user registered");
     }
 

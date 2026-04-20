@@ -6,6 +6,7 @@ import com.techjagannath.digital_identification.models.usermanagement.RegisterUs
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
 import com.techjagannath.digital_identification.service.usermanagement.UserManagementService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,7 +24,7 @@ public class UserManagementFacadeImpl implements UserManagementFacade {
     }
 
     @Override
-    public SaveUserChildProfileDetailsResultModel facadeEntryPointForSaveUserChildProfileDetails(Long userId, SaveUserChildProfileDetailsRequestModel requestModel) {
-        return this.userManagementService.serviceEntryPointForSaveUserChildProfileDetails(userId, requestModel);
+    public SaveUserChildProfileDetailsResultModel facadeEntryPointForSaveUserChildProfileDetails(HttpServletRequest request, SaveUserChildProfileDetailsRequestModel requestModel) {
+        return this.userManagementService.serviceEntryPointForSaveUserChildProfileDetails(request, requestModel);
     }
 }

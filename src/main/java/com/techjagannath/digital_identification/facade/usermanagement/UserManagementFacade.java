@@ -4,10 +4,11 @@ import com.techjagannath.digital_identification.models.usermanagement.RegisterUs
 import com.techjagannath.digital_identification.models.usermanagement.RegisterUserResultModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsRequestModel;
 import com.techjagannath.digital_identification.models.usermanagement.saveChildProfileDetals.SaveUserChildProfileDetailsResultModel;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface UserManagementFacade {
 
     RegisterUserResultModel facadeEntryPointForRegisterUser(RegisterUserRequestModel requestModel);
 
-    SaveUserChildProfileDetailsResultModel facadeEntryPointForSaveUserChildProfileDetails(Long userId, SaveUserChildProfileDetailsRequestModel requestModel);
+    SaveUserChildProfileDetailsResultModel facadeEntryPointForSaveUserChildProfileDetails(HttpServletRequest request, SaveUserChildProfileDetailsRequestModel requestModel);
 }

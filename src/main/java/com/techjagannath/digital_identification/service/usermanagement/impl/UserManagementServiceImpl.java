@@ -1,5 +1,6 @@
 package com.techjagannath.digital_identification.service.usermanagement.impl;
 
+import com.techjagannath.digital_identification.config.JwtUtil;
 import com.techjagannath.digital_identification.entity.AddressMaster;
 import com.techjagannath.digital_identification.entity.ProfileTypesMaster;
 import com.techjagannath.digital_identification.entity.UserMaster;
@@ -14,6 +15,7 @@ import com.techjagannath.digital_identification.repository.*;
 import com.techjagannath.digital_identification.repository.profiles.ChildProfileRepository;
 import com.techjagannath.digital_identification.repository.profiles.UserProfileNfcMappingRepository;
 import com.techjagannath.digital_identification.service.usermanagement.UserManagementService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -34,6 +36,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final ChildProfileRepository childProfileRepository;
     private final UserProfileNfcMappingRepository userProfileNfcMappingRepository;
     private final ProfileTypesMasterRepository profileTypesMasterRepository;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -41,7 +44,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     public UserManagementServiceImpl(AddressMasterRepository addressMasterRepository, RoleMasterRepository roleMasterRepository,
                                      AccountApprovalStatusRepository accountApprovalStatusRepository, UserMasterRepository userMasterRepository,
                                      ChildProfileRepository childProfileRepository, UserProfileNfcMappingRepository userProfileNfcMappingRepository,
-                                     ProfileTypesMasterRepository profileTypesMasterRepository) {
+                                     ProfileTypesMasterRepository profileTypesMasterRepository, JwtUtil jwtUtil) {
         this.addressMasterRepository = addressMasterRepository;
         this.roleMasterRepository = roleMasterRepository;
         this.accountApprovalStatusRepository = accountApprovalStatusRepository;
@@ -49,6 +52,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.childProfileRepository = childProfileRepository;
         this.userProfileNfcMappingRepository = userProfileNfcMappingRepository;
         this.profileTypesMasterRepository = profileTypesMasterRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -102,9 +106,19 @@ public class UserManagementServiceImpl implements UserManagementService {
         return prefix + formattedNumber;
     }
 
+    private String extractUser(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid Authorization header");
+        }
+        String token = authHeader.substring(7);
+        return jwtUtil.extractUsername(token);
+    }
+
     @Override
-    public SaveUserChildProfileDetailsResultModel serviceEntryPointForSaveUserChildProfileDetails(Long userId, SaveUserChildProfileDetailsRequestModel requestModel) {
-        UserMaster user = this.userMasterRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user not found"));
+    public SaveUserChildProfileDetailsResultModel serviceEntryPointForSaveUserChildProfileDetails(HttpServletRequest request, SaveUserChildProfileDetailsRequestModel requestModel) {
+        String email = this.extractUser(request);
+        UserMaster user = this.userMasterRepository.findByEmailId(email);
         ChildProfile childProfile = new ChildProfile();
         childProfile.setChildName(requestModel.getChildName());
         childProfile.setDateOfBirth(requestModel.getDateOfBirth());
