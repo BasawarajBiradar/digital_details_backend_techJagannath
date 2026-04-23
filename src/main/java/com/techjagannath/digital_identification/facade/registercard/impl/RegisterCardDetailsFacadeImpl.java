@@ -13,6 +13,8 @@ import com.techjagannath.digital_identification.models.registerCards.seniorProfi
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.validateUserDetails.ValidateUserDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.validateUserDetails.ValidateUserDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.service.registercard.RegisterCardDetailsService;
@@ -66,5 +68,10 @@ public class RegisterCardDetailsFacadeImpl implements RegisterCardDetailsFacade 
     @Override
     public RetrieveUserCardDetailsResultModel facadeEntryPointForRetrieveUserCardDetails(RetrieveUserCardDetailsRequestModel requestModel) {
         return this.registerCardDetailsService.serviceEntryPointForRetrieveUserDetails(requestModel);
+    }
+
+    @Override
+    public ValidateUserDetailsResultModel facadeEntryPointForValidateUserDetails(String uid, ValidateUserDetailsRequestModel   requestModel) {
+        return this.registerCardDetailsService.serviceEntryPointForValidateUserDetails(uid, requestModel);
     }
 }

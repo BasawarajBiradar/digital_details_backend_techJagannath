@@ -12,6 +12,8 @@ import com.techjagannath.digital_identification.models.registerCards.seniorProfi
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.validateUserDetails.ValidateUserDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.validateUserDetails.ValidateUserDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 
@@ -29,4 +31,6 @@ public interface RegisterCardDetailsService {
     RegisterCardUserSocialDetailsResultModel serviceEntryPointForRegisterCardUserSocialDetails(String uid, RegisterCardUserSocialDetailsRequestModel requestModel);
 
     RetrieveUserCardDetailsResultModel serviceEntryPointForRetrieveUserDetails(RetrieveUserCardDetailsRequestModel requestModel);
+
+    ValidateUserDetailsResultModel serviceEntryPointForValidateUserDetails(String uid, ValidateUserDetailsRequestModel requestModel);
 }

@@ -13,6 +13,8 @@ import com.techjagannath.digital_identification.models.registerCards.seniorProfi
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.validateUserDetails.ValidateUserDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.validateUserDetails.ValidateUserDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.utils.apiresponse.ApiResponse;
@@ -78,6 +80,10 @@ public class RegisterCardDetailsController {
         return ResponseBuilder.success(this.registerCardDetailsFacade.facadeEntryPointForRetrieveUserCardDetails(requestModel), "retireve card details");
     }
 
-
+    @PostMapping("/validate/{uid}")
+    public ResponseEntity<ApiResponse<ValidateUserDetailsResultModel>> ValidateUserDetails(@PathVariable("uid") String uid,
+            @RequestBody ValidateUserDetailsRequestModel requestModel) {
+        return ResponseBuilder.success(this.registerCardDetailsFacade.facadeEntryPointForValidateUserDetails(uid, requestModel), "success validated user details");
+    }
 
 }

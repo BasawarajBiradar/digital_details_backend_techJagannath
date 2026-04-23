@@ -20,13 +20,18 @@ import com.techjagannath.digital_identification.models.registerCards.seniorProfi
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsResultModel;
+import com.techjagannath.digital_identification.models.registerCards.validateUserDetails.ValidateUserDetailsRequestModel;
+import com.techjagannath.digital_identification.models.registerCards.validateUserDetails.ValidateUserDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.repository.*;
 import com.techjagannath.digital_identification.repository.profiles.*;
 import com.techjagannath.digital_identification.service.registercard.RegisterCardDetailsService;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +58,8 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     private final SocialProfileRepository socialProfileRepository;
     private final UserProfileNfcMappingRepository userProfileNfcMappingRepository;
     private final ProfileTypesMasterRepository profileTypesMasterRepository;
+    @Autowired
+    private AuthenticationManager authManager;
 
     public RegisterCardDetailsServiceImpl(UserMasterRepository userMasterRepository, ChildProfileRepository childProfileRepository, PasswordEncoder passwordEncoder,
                                           ChildGuardianDetailsRepository childGuardianDetailsRepository, AddressMasterRepository addressMasterRepository,
@@ -79,9 +86,20 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     }
 
     @Override
-    @Transactional
-    public RegisterCardUserKidsDetailsResultModel serviceEntryPointForRegisterCardUserKidsDetails(String uid, RegisterCardUserKidsDetailsRequestModel requestModel) {
-        /* user details */
+    public ValidateUserDetailsResultModel serviceEntryPointForValidateUserDetails(String uid, ValidateUserDetailsRequestModel requestModel) {
+        if (this.userProfileNfcMappingRepository.findByUid(uid) != null)
+            throw new DataIntegrityViolationException("uid already exists mapped to a profile");
+        UserMaster isPresentUser = this.userMasterRepository.findByEmailId(requestModel.getEmailId());
+        if (isPresentUser != null) {
+            authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            requestModel.getEmailId(),
+                            requestModel.getPassword()
+                    )
+            );
+            return new ValidateUserDetailsResultModel(isPresentUser.getId());
+        }
+
         AddressMaster addressMaster = new AddressMaster();
         addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
         addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
@@ -110,6 +128,14 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
+        return new ValidateUserDetailsResultModel(savedUser.getId());
+    }
+
+    @Override
+    @Transactional
+    public RegisterCardUserKidsDetailsResultModel serviceEntryPointForRegisterCardUserKidsDetails(String uid, RegisterCardUserKidsDetailsRequestModel requestModel) {
+        /* user details */
+        UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(1).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
         UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
@@ -151,34 +177,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     @Transactional
     public RegisterCardUserSeniorDetailsResultModel serviceEntryPointForRegisterCardUserSeniorDetails(String uid, RegisterCardUserSeniorDetailsRequestModel requestModel) {
         /* user details */
-        AddressMaster addressMaster = new AddressMaster();
-        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
-        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
-        addressMaster.setCity(requestModel.getCity());
-        addressMaster.setCountry(requestModel.getCountry());
-        addressMaster.setState(requestModel.getState());
-        addressMaster.setPinCode(requestModel.getPinCode());
-        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
-
-        UserMaster user = new UserMaster();
-        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
-            throw new DataIntegrityViolationException("Email already exists");
-        user.setFirstName(requestModel.getFirstName());
-        user.setLastName(requestModel.getLastName());
-        user.setEmailId(requestModel.getEmailId());
-        user.setMobileNumber(requestModel.getPhoneNumber());
-        user.setAlternateNumber(requestModel.getAlternateNumber());
-        user.setAddress(savedAddress);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setPassword(
-                passwordEncoder.encode(requestModel.getPassword())
-        );
-        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default role not configured")));
-        user.setIsActive(true);
-        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default approval status not configured")));
-        UserMaster savedUser = this.userMasterRepository.save(user);
+        UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(2).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
         UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
@@ -221,34 +220,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     @Transactional
     public RegisterCardUserBusinessDetailsResultModel serviceEntryPointForRegisterCardUserBusinessDetails(String uid, RegisterCardUserBusinessDetailsRequestModel requestModel) {
         /* user details */
-        AddressMaster addressMaster = new AddressMaster();
-        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
-        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
-        addressMaster.setCity(requestModel.getCity());
-        addressMaster.setCountry(requestModel.getCountry());
-        addressMaster.setState(requestModel.getState());
-        addressMaster.setPinCode(requestModel.getPinCode());
-        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
-
-        UserMaster user = new UserMaster();
-        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
-            throw new DataIntegrityViolationException("Email already exists");
-        user.setFirstName(requestModel.getFirstName());
-        user.setLastName(requestModel.getLastName());
-        user.setEmailId(requestModel.getEmailId());
-        user.setMobileNumber(requestModel.getPhoneNumber());
-        user.setAlternateNumber(requestModel.getAlternateNumber());
-        user.setAddress(savedAddress);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setPassword(
-                passwordEncoder.encode(requestModel.getPassword())
-        );
-        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default role not configured")));
-        user.setIsActive(true);
-        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default approval status not configured")));
-        UserMaster savedUser = this.userMasterRepository.save(user);
+        UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
         UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
@@ -275,34 +247,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     @Transactional
     public RegisterCardUserVehicleDetailsResultModel serviceEntryPointForRegisterCardUserVehicleDetails(String uid, RegisterCardUserVehicleDetailsRequestModel requestModel) {
         /* user details */
-        AddressMaster addressMaster = new AddressMaster();
-        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
-        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
-        addressMaster.setCity(requestModel.getCity());
-        addressMaster.setCountry(requestModel.getCountry());
-        addressMaster.setState(requestModel.getState());
-        addressMaster.setPinCode(requestModel.getPinCode());
-        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
-
-        UserMaster user = new UserMaster();
-        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
-            throw new DataIntegrityViolationException("Email already exists");
-        user.setFirstName(requestModel.getFirstName());
-        user.setLastName(requestModel.getLastName());
-        user.setEmailId(requestModel.getEmailId());
-        user.setMobileNumber(requestModel.getPhoneNumber());
-        user.setAlternateNumber(requestModel.getAlternateNumber());
-        user.setAddress(savedAddress);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setPassword(
-                passwordEncoder.encode(requestModel.getPassword())
-        );
-        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default role not configured")));
-        user.setIsActive(true);
-        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default approval status not configured")));
-        UserMaster savedUser = this.userMasterRepository.save(user);
+        UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(4).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
         UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
@@ -333,34 +278,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     @Transactional
     public RegisterCardUserPetsDetailsResultModel serviceEntryPointForRegisterCardUserPetDetails(String uid, RegisterCardUserPetsDetailsRequestModel requestModel) {
         /* user details */
-        AddressMaster addressMaster = new AddressMaster();
-        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
-        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
-        addressMaster.setCity(requestModel.getCity());
-        addressMaster.setCountry(requestModel.getCountry());
-        addressMaster.setState(requestModel.getState());
-        addressMaster.setPinCode(requestModel.getPinCode());
-        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
-
-        UserMaster user = new UserMaster();
-        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
-            throw new DataIntegrityViolationException("Email already exists");
-        user.setFirstName(requestModel.getFirstName());
-        user.setLastName(requestModel.getLastName());
-        user.setEmailId(requestModel.getEmailId());
-        user.setMobileNumber(requestModel.getPhoneNumber());
-        user.setAlternateNumber(requestModel.getAlternateNumber());
-        user.setAddress(savedAddress);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setPassword(
-                passwordEncoder.encode(requestModel.getPassword())
-        );
-        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default role not configured")));
-        user.setIsActive(true);
-        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default approval status not configured")));
-        UserMaster savedUser = this.userMasterRepository.save(user);
+        UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(5).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
         UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
@@ -392,34 +310,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     @Transactional
     public RegisterCardUserSocialDetailsResultModel serviceEntryPointForRegisterCardUserSocialDetails(String uid, RegisterCardUserSocialDetailsRequestModel requestModel) {
         /* user details */
-        AddressMaster addressMaster = new AddressMaster();
-        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
-        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
-        addressMaster.setCity(requestModel.getCity());
-        addressMaster.setCountry(requestModel.getCountry());
-        addressMaster.setState(requestModel.getState());
-        addressMaster.setPinCode(requestModel.getPinCode());
-        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
-
-        UserMaster user = new UserMaster();
-        if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
-            throw new DataIntegrityViolationException("Email already exists");
-        user.setFirstName(requestModel.getFirstName());
-        user.setLastName(requestModel.getLastName());
-        user.setEmailId(requestModel.getEmailId());
-        user.setMobileNumber(requestModel.getPhoneNumber());
-        user.setAlternateNumber(requestModel.getAlternateNumber());
-        user.setAddress(savedAddress);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setPassword(
-                passwordEncoder.encode(requestModel.getPassword())
-        );
-        user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default role not configured")));
-        user.setIsActive(true);
-        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default approval status not configured")));
-        UserMaster savedUser = this.userMasterRepository.save(user);
+        UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(6).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
         UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
