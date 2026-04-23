@@ -19,6 +19,8 @@ import com.techjagannath.digital_identification.models.registerCards.vehicleProf
 import com.techjagannath.digital_identification.models.registerCards.vehicleProfile.RegisterCardUserVehicleDetailsResultModel;
 import com.techjagannath.digital_identification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digital_identification.utils.apiresponse.ResponseBuilder;
+import com.techjagannath.digital_identification.utils.qrGenerator.QRCodeGenerator;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,4 +88,8 @@ public class RegisterCardDetailsController {
         return ResponseBuilder.success(this.registerCardDetailsFacade.facadeEntryPointForValidateUserDetails(uid, requestModel), "success validated user details");
     }
 
+    @GetMapping(value = "/qr-generate", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] generateQR(@RequestParam String url) throws Exception {
+        return QRCodeGenerator.generateQRCode(url, 250, 250);
+    }
 }
