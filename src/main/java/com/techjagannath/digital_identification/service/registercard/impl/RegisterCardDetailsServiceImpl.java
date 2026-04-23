@@ -137,10 +137,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         /* user details */
         UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
-        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(1).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
-        this.userProfileNfcMappingRepository.save(mapping);
-
         /* child details */
         ChildProfile childProfile = new ChildProfile();
         childProfile.setChildName(requestModel.getChildName());
@@ -153,6 +149,11 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         childProfile.setMedicalCondition(requestModel.getMedicalCondition());
         childProfile.setLinkedAccount(savedUser);
         ChildProfile savedChildProfile = this.childProfileRepository.save(childProfile);
+
+        /* update profile user mapping */
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(1).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid, savedChildProfile.getId());
+        this.userProfileNfcMappingRepository.save(mapping);
 
         /* multiple guardian details */
         List<ChildGuardianDetails> guardianDetails = new ArrayList<>();
@@ -179,10 +180,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         /* user details */
         UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
-        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(2).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
-        this.userProfileNfcMappingRepository.save(mapping);
-
         /* senior details */
         SeniorProfile seniorProfile = new SeniorProfile();
         seniorProfile.setFullName(requestModel.getFullName());
@@ -198,6 +195,11 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         seniorProfile.setInsuranceNumber(requestModel.getInsuranceNumber());
         seniorProfile.setLinkedAccount(savedUser);
         SeniorProfile savedSeniorProfile = this.seniorProfileRepository.save(seniorProfile);
+
+        /* updated profile user mapping */
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(2).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid, savedSeniorProfile.getId());
+        this.userProfileNfcMappingRepository.save(mapping);
 
         /* multiple care taker details */
         List<SeniorCareTakerDetails> careTakersDetails = new ArrayList<>();
@@ -222,10 +224,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         /* user details */
         UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
-        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
-        this.userProfileNfcMappingRepository.save(mapping);
-
         /* business details */
         BusinessProfile businessProfile = new BusinessProfile();
         businessProfile.setBusinessName(requestModel.getBusinessName());
@@ -240,6 +238,11 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         businessProfile.setLinkedAccount(savedUser);
         BusinessProfile savedBusinessProfile = this.businessProfileRepository.save(businessProfile);
 
+        /* updated user profile mapping  */
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid, savedBusinessProfile.getId());
+        this.userProfileNfcMappingRepository.save(mapping);
+
         return new RegisterCardUserBusinessDetailsResultModel(savedBusinessProfile.getBusinessName());
     }
 
@@ -248,10 +251,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     public RegisterCardUserVehicleDetailsResultModel serviceEntryPointForRegisterCardUserVehicleDetails(String uid, RegisterCardUserVehicleDetailsRequestModel requestModel) {
         /* user details */
         UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
-
-        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(4).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
-        this.userProfileNfcMappingRepository.save(mapping);
 
         /* vehicle details */
         VehicleProfile vehicleProfile = new VehicleProfile();
@@ -271,6 +270,11 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         vehicleProfile.setLinkedAccount(savedUser);
         VehicleProfile savedVehicleProfile = this.vehicleProfileRepository.save(vehicleProfile);
 
+        /* updated user profile mapping */
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(4).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid, savedVehicleProfile.getId());
+        this.userProfileNfcMappingRepository.save(mapping);
+
         return new RegisterCardUserVehicleDetailsResultModel(savedVehicleProfile.getVehicleNumber());
     }
 
@@ -279,10 +283,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     public RegisterCardUserPetsDetailsResultModel serviceEntryPointForRegisterCardUserPetDetails(String uid, RegisterCardUserPetsDetailsRequestModel requestModel) {
         /* user details */
         UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
-
-        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(5).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
-        this.userProfileNfcMappingRepository.save(mapping);
 
         /* pet details */
         PetProfile petProfile = new PetProfile();
@@ -303,6 +303,11 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         petProfile.setLinkedAccount(savedUser);
         PetProfile savedPetProfile = this.petProfileRepository.save(petProfile);
 
+        /* udpdated user profile mapping */
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(5).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid, savedPetProfile.getId());
+        this.userProfileNfcMappingRepository.save(mapping);
+
         return new RegisterCardUserPetsDetailsResultModel(savedPetProfile.getPetName());
     }
 
@@ -311,10 +316,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     public RegisterCardUserSocialDetailsResultModel serviceEntryPointForRegisterCardUserSocialDetails(String uid, RegisterCardUserSocialDetailsRequestModel requestModel) {
         /* user details */
         UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
-
-        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(6).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid);
-        this.userProfileNfcMappingRepository.save(mapping);
 
         /* social profile */
         SocialProfile socialProfile = new SocialProfile();
@@ -329,6 +330,12 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         socialProfile.setMessageToFinder(requestModel.getMessageToFinder());
         socialProfile.setLinkedAccount(savedUser);
         SocialProfile savedSocialProfile = this.socialProfileRepository.save(socialProfile);
+
+        /* updated user profile mapping */
+        ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(6).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
+        UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid, savedSocialProfile.getId());
+        this.userProfileNfcMappingRepository.save(mapping);
+
         return new RegisterCardUserSocialDetailsResultModel(savedSocialProfile.getFullName());
     }
 
@@ -342,7 +349,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         resultModel.setAccountType(mapping.getProfileType().getProfileType());
 
         if (mapping.getProfileType().getId() == 1) {
-            ChildProfile childProfile = this.childProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            ChildProfile childProfile = this.childProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
             List<ChildGuardianDetails> guardianDetailsResultList = this.childGuardianDetailsRepository.findAllByChildProfile(childProfile);
             List<RetrieveUserCardGuardianDetailsResultModel> guardianList = new ArrayList<>();
             for (ChildGuardianDetails model : guardianDetailsResultList)
@@ -355,7 +362,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         }
 
         else if (mapping.getProfileType().getId() == 2) {
-            SeniorProfile seniorProfile = this.seniorProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            SeniorProfile seniorProfile = this.seniorProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
             List<SeniorCareTakerDetails> careTakerResultList = this.seniorCareTakerDetailsRepository.findAllBySeniorProfile(seniorProfile);
             List<RetrieveUserCardCareTakerDetailsResultModel> caretakerList = new ArrayList<>();
             for (SeniorCareTakerDetails model : careTakerResultList)
@@ -369,7 +376,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         }
 
         else if (mapping.getProfileType().getId() == 3) {
-            BusinessProfile businessProfile = this.businessProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            BusinessProfile businessProfile = this.businessProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
             resultModel.setBusinessProfile(new BusinessProfileResultModel(businessProfile.getBusinessName(), businessProfile.getBusinessType(),
                     businessProfile.getRegistrationNumber(), businessProfile.getGstNumber(), businessProfile.getBusinessEmail(),
                     businessProfile.getBusinessPhone(), businessProfile.getBusinessAddress(), businessProfile.getWebsiteUrl(),
@@ -378,7 +385,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         }
 
         else if (mapping.getProfileType().getId() == 4) {
-            VehicleProfile vehicleProfile = this.vehicleProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            VehicleProfile vehicleProfile = this.vehicleProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
             resultModel.setVehicleProfile(new VehicleProfileResultModel(vehicleProfile.getVehicleNumber(), vehicleProfile.getVehicleType(),
                     vehicleProfile.getBrand(), vehicleProfile.getModel(), vehicleProfile.getColour(), vehicleProfile.getYearOfManufacturing().toString(),
                     vehicleProfile.getOwnerName(), vehicleProfile.getOwnerContact(), vehicleProfile.getAlternateContact(), vehicleProfile.getRcNumber(),
@@ -386,14 +393,14 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         }
 
         else if (mapping.getProfileType().getId() == 5) {
-            PetProfile petProfile = this.petProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            PetProfile petProfile = this.petProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
             resultModel.setPetProfile(new PetProfileResultModel(petProfile.getPetName(), petProfile.getSpecies(), petProfile.getBreed(),
                     petProfile.getGender(), petProfile.getAge(), petProfile.getColour(), petProfile.getMicroChipId(), petProfile.getVaccinationStatus(),
                     petProfile.getVetName(), petProfile.getVetContact(), petProfile.getMedicalNotes(), petProfile.getOwnerName(), petProfile.getOwnerContact(),
                     petProfile.getAlternateContact()));
         }
         else if (mapping.getProfileType().getId() == 6) {
-            SocialProfile socialProfile = this.socialProfileRepository.findByLinkedAccount(mapping.getUserMaster());
+            SocialProfile socialProfile = this.socialProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
             resultModel.setSocialProfile(new SocialProfileResultModel(socialProfile.getFullName(), socialProfile.getNickName(),
                     socialProfile.getInstagram(), socialProfile.getFacebook(), socialProfile.getLinkedIn(), socialProfile.getTwitter(),
                     socialProfile.getEmergencyContactName(), socialProfile.getEmergencyContactNumber(), socialProfile.getMessageToFinder()));

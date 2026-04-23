@@ -163,7 +163,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         String uid = generateUid();
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(1).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid, savedChild.getId());
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         List<ChildGuardianDetails> guardianDetails = new ArrayList<>();
@@ -197,7 +197,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         String uid = generateUid();
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(2).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid, savedSeniorProfile.getId());
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         List<SeniorCareTakerDetails> careTakerDetails = new ArrayList<>();
@@ -221,7 +221,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         String uid = generateUid();
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid, savedBusinessProfile.getId());
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         return new RegisterCardUserBusinessDetailsResultModel(savedBusinessProfile.getBusinessName());
@@ -241,7 +241,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         String uid = generateUid();
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(4).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid, savedVehicleProfile.getId());
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         return new RegisterCardUserVehicleDetailsResultModel(savedVehicleProfile.getVehicleNumber());
@@ -260,7 +260,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         String uid = generateUid();
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(5).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid, savedPetProfile.getId());
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         return new RegisterCardUserPetsDetailsResultModel(savedPetProfile.getPetName());
@@ -279,7 +279,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         String uid = generateUid();
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(6).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
-        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid);
+        UserProfileNfcMapping uidMapping = new UserProfileNfcMapping(null, user, profileType, uid, savedSocialProfile.getId());
         this.userProfileNfcMappingRepository.save(uidMapping);
 
         return new RegisterCardUserSocialDetailsResultModel(savedSocialProfile.getFullName());

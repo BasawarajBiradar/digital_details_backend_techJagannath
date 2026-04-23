@@ -28,4 +28,6 @@ public class UserProfileNfcMapping {
     @Column(unique = true)
     private String uid;
 
+    private Long profileId;
+
 }
