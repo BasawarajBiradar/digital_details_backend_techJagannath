@@ -44,6 +44,15 @@ public class BusinessProfile {
     @Column(name = "business_address", length = 1000)
     private String businessAddress;
 
+    @Column(name = "owner_name")
+    private String ownerName;
+
+    @Column(name = "owner_contact")
+    private String ownerContact;
+
+    @Column(name = "owner_email")
+    private String ownerEmail;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "linked_account")
     private UserMaster linkedAccount;

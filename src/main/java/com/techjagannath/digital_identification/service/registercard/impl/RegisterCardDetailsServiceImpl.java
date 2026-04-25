@@ -236,6 +236,9 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         businessProfile.setWebsiteUrl(requestModel.getWebsiteUrl());
         businessProfile.setBusinessAddress(requestModel.getBusinessAddress());
         businessProfile.setLinkedAccount(savedUser);
+        businessProfile.setOwnerName(requestModel.getOwnerName());
+        businessProfile.setOwnerContact(requestModel.getOwnerContact());
+        businessProfile.setOwnerEmail(requestModel.getOwnerEmail());
         BusinessProfile savedBusinessProfile = this.businessProfileRepository.save(businessProfile);
 
         /* updated user profile mapping  */
@@ -380,7 +383,7 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
             resultModel.setBusinessProfile(new BusinessProfileResultModel(businessProfile.getBusinessName(), businessProfile.getBusinessType(),
                     businessProfile.getRegistrationNumber(), businessProfile.getGstNumber(), businessProfile.getBusinessEmail(),
                     businessProfile.getBusinessPhone(), businessProfile.getBusinessAddress(), businessProfile.getWebsiteUrl(),
-                    null, null, null
+                    businessProfile.getOwnerName(), businessProfile.getOwnerContact(), businessProfile.getOwnerEmail()
                     ));
         }
 

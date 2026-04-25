@@ -216,7 +216,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         BusinessProfile businessProfile = new BusinessProfile(null, requestModel.getBusinessName(), null, requestModel.getBusinessType(),
                 requestModel.getRegistrationNumber(),  requestModel.getGstNumber(), requestModel.getBusinessEmail(), requestModel.getBusinessPhone(),
-                requestModel.getWebsiteUrl(), requestModel.getBusinessAddress(), user);
+                requestModel.getWebsiteUrl(), requestModel.getBusinessAddress(), requestModel.getOwnerName(), requestModel.getOwnerContact(), requestModel.getOwnerEmail(), user);
         BusinessProfile savedBusinessProfile = this.businessProfileRepository.save(businessProfile);
 
         String uid = generateUid();
