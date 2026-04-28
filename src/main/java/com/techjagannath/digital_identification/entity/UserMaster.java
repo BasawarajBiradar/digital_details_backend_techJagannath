@@ -21,9 +21,6 @@ public class UserMaster {
     @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "middle_name")
-    private String middleName;
-
     @Column(name = "last_name")
     private String lastName;
 
@@ -32,9 +29,6 @@ public class UserMaster {
 
     private String password;
 
-    @Column(name = "alternate_number")
-    private String alternateNumber;
-
     @Column(name = "email_id",  unique = true)
     private String emailId;
 
@@ -42,16 +36,8 @@ public class UserMaster {
     @JoinColumn(name = "role")
     private RoleMaster role;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "address")
-    private AddressMaster address;
-
     @Column(name = "is_active")
     private Boolean isActive;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "approval_status")
-    private AccountApprovalStatus approvalStatus;
 
     /** logging details */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,11 +46,4 @@ public class UserMaster {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "last_updated_at")
-    private LocalDateTime lastUpdatedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updated_by")
-    private UserMaster updatedBy;
 }

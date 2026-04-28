@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -12,9 +11,9 @@ import java.util.List;
 public class ChildProfileResultModel {
     private String childName;
     private String gender;
+    private String studentAddress;
     private String schoolName;
     private String schoolAddress;
     private String schoolPhone;
     private String emergencyContactNumber;
-    private List<RetrieveUserCardGuardianDetailsResultModel> guardians;
 }

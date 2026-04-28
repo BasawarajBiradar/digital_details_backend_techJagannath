@@ -9,14 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BusinessProfileResultModel {
     private String businessName;
-    private String businessType;
-    private String registrationNumber;
+    private String businessDescription;
+    private String ownerName;
     private String gstNumber;
-    private String businessEmail;
     private String businessPhone;
     private String businessAddress;
+    private String businessEmail;
     private String websiteUrl;
-    private String ownerName;
-    private String ownerContact;
-    private String ownerEmail;
 }

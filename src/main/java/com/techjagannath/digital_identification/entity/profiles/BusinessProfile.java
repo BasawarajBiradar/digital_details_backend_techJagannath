@@ -17,41 +17,34 @@ public class BusinessProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // business logo
+
     @Column(name = "business_name")
     private String businessName;
 
     @Column(name = "business_description", length = 1000)
     private String businessDescription;
 
-    @Column(name = "business_type")
-    private String businessType;
-
-    @Column(name = "registration_number")
-    private String registrationNumber;
+    @Column(name = "owner_name")
+    private String ownerName;
 
     @Column(name = "gst_number")
     private String gstNumber;
 
-    @Column(name = "business_email")
-    private String businessEmail;
-
     @Column(name = "business_phone")
     private String businessPhone;
-
-    @Column(name = "website_url")
-    private String websiteUrl;
 
     @Column(name = "business_address", length = 1000)
     private String businessAddress;
 
-    @Column(name = "owner_name")
-    private String ownerName;
+    @Column(name = "social_media_links")
+    private String socialMediaLinks;
 
-    @Column(name = "owner_contact")
-    private String ownerContact;
+    @Column(name = "business_email")
+    private String businessEmail;
 
-    @Column(name = "owner_email")
-    private String ownerEmail;
+    @Column(name = "website_url")
+    private String websiteUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "linked_account")

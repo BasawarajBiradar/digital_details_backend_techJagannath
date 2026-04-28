@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,11 +27,6 @@ public class VehicleProfile {
 
     private String model;
 
-    private String colour;
-
-    @Column(name = "year_of_manufacturing")
-    private LocalDate yearOfManufacturing;
-
     @Column(name = "owner_name")
     private String ownerName;
 
@@ -42,18 +35,6 @@ public class VehicleProfile {
 
     @Column(name = "alternate_contact")
     private String alternateContact;
-
-    @Column(name = "rc_number")
-    private String rcNumber;
-
-    @Column(name = "insurance_number")
-    private String insuranceNumber;
-
-    @Column(name = "insurance_expiry")
-    private LocalDate insuranceExpiry;
-
-    @Column(name = "chassis_number")
-    private String chassisNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "linked_account")

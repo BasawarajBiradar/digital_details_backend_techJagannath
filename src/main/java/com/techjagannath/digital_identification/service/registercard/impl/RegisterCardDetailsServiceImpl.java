@@ -1,6 +1,5 @@
 package com.techjagannath.digital_identification.service.registercard.impl;
 
-import com.techjagannath.digital_identification.entity.AddressMaster;
 import com.techjagannath.digital_identification.entity.ProfileTypesMaster;
 import com.techjagannath.digital_identification.entity.UserMaster;
 import com.techjagannath.digital_identification.entity.profiles.*;
@@ -9,13 +8,11 @@ import com.techjagannath.digital_identification.models.registerCards.businessPro
 import com.techjagannath.digital_identification.models.registerCards.businessProfile.RegisterCardUserBusinessDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsDetailsResultModel;
-import com.techjagannath.digital_identification.models.registerCards.kidsProfile.RegisterCardUserKidsGuardianDetails;
 import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.petsProfile.RegisterCardUserPetsDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.retrieveCardsDetails.RetrieveUserCardDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.retrieveCardsDetails.RetrieveUserCardDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.retrieveCardsDetails.profiles.*;
-import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorCaretakerDetails;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsRequestModel;
 import com.techjagannath.digital_identification.models.registerCards.seniorProfile.RegisterCardUserSeniorDetailsResultModel;
 import com.techjagannath.digital_identification.models.registerCards.socialProfile.RegisterCardUserSocialDetailsRequestModel;
@@ -34,23 +31,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsService {
 
     private final UserMasterRepository userMasterRepository;
     private final ChildProfileRepository childProfileRepository;
-    private final ChildGuardianDetailsRepository childGuardianDetailsRepository;
-    private final AddressMasterRepository addressMasterRepository;
     private final RoleMasterRepository roleMasterRepository;
-    private final AccountApprovalStatusRepository accountApprovalStatusRepository;
     private final SeniorProfileRepository seniorProfileRepository;
-    private final SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository;
     private final BusinessProfileRepository businessProfileRepository;
     private final VehicleProfileRepository vehicleProfileRepository;
     private final PasswordEncoder passwordEncoder;
@@ -61,22 +50,16 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     @Autowired
     private AuthenticationManager authManager;
 
-    public RegisterCardDetailsServiceImpl(UserMasterRepository userMasterRepository, ChildProfileRepository childProfileRepository, PasswordEncoder passwordEncoder,
-                                          ChildGuardianDetailsRepository childGuardianDetailsRepository, AddressMasterRepository addressMasterRepository,
-                                          RoleMasterRepository roleMasterRepository, AccountApprovalStatusRepository accountApprovalStatusRepository,
-                                          SeniorProfileRepository seniorProfileRepository, SeniorCareTakerDetailsRepository seniorCareTakerDetailsRepository,
+    public RegisterCardDetailsServiceImpl(UserMasterRepository userMasterRepository, ChildProfileRepository childProfileRepository, PasswordEncoder passwordEncoder
+                                          , RoleMasterRepository roleMasterRepository, SeniorProfileRepository seniorProfileRepository,
                                           BusinessProfileRepository businessProfileRepository, VehicleProfileRepository vehicleProfileRepository,
                                           PetProfileRepository petProfileRepository, SocialProfileRepository socialProfileRepository,
                                           UserProfileNfcMappingRepository userProfileNfcMappingRepository, ProfileTypesMasterRepository profileTypesMasterRepository) {
         this.userMasterRepository = userMasterRepository;
-        this.childGuardianDetailsRepository = childGuardianDetailsRepository;
         this.passwordEncoder = passwordEncoder;
         this.childProfileRepository = childProfileRepository;
-        this.addressMasterRepository = addressMasterRepository;
         this.roleMasterRepository = roleMasterRepository;
-        this.accountApprovalStatusRepository = accountApprovalStatusRepository;
         this.seniorProfileRepository = seniorProfileRepository;
-        this.seniorCareTakerDetailsRepository = seniorCareTakerDetailsRepository;
         this.businessProfileRepository = businessProfileRepository;
         this.vehicleProfileRepository = vehicleProfileRepository;
         this.petProfileRepository = petProfileRepository;
@@ -89,6 +72,8 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     public ValidateUserDetailsResultModel serviceEntryPointForValidateUserDetails(String uid, ValidateUserDetailsRequestModel requestModel) {
         if (this.userProfileNfcMappingRepository.findByUid(uid) != null)
             throw new DataIntegrityViolationException("uid already exists mapped to a profile");
+
+        /* change this to email verification */
         UserMaster isPresentUser = this.userMasterRepository.findByEmailId(requestModel.getEmailId());
         if (isPresentUser != null) {
             authManager.authenticate(
@@ -100,15 +85,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
             return new ValidateUserDetailsResultModel(isPresentUser.getId());
         }
 
-        AddressMaster addressMaster = new AddressMaster();
-        addressMaster.setAddressLineOne(requestModel.getAddressLineOne());
-        addressMaster.setAddressLineTwo(requestModel.getAddressLineTwo());
-        addressMaster.setCity(requestModel.getCity());
-        addressMaster.setCountry(requestModel.getCountry());
-        addressMaster.setState(requestModel.getState());
-        addressMaster.setPinCode(requestModel.getPinCode());
-        AddressMaster savedAddress = this.addressMasterRepository.save(addressMaster);
-
         UserMaster user = new UserMaster();
         if (userMasterRepository.findByEmailId(requestModel.getEmailId()) != null)
             throw new DataIntegrityViolationException("Email already exists");
@@ -116,8 +92,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         user.setLastName(requestModel.getLastName());
         user.setEmailId(requestModel.getEmailId());
         user.setMobileNumber(requestModel.getPhoneNumber());
-        user.setAlternateNumber(requestModel.getAlternateNumber());
-        user.setAddress(savedAddress);
         user.setCreatedAt(LocalDateTime.now());
         user.setPassword(
                 passwordEncoder.encode(requestModel.getPassword())
@@ -125,8 +99,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         user.setRole(this.roleMasterRepository.findById(1).orElseThrow(() ->
                 new RuntimeException("Default role not configured")));
         user.setIsActive(true);
-        user.setApprovalStatus(this.accountApprovalStatusRepository.findById(1).orElseThrow(() ->
-                new RuntimeException("Default approval status not configured")));
         UserMaster savedUser = this.userMasterRepository.save(user);
         return new ValidateUserDetailsResultModel(savedUser.getId());
     }
@@ -136,43 +108,21 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
     public RegisterCardUserKidsDetailsResultModel serviceEntryPointForRegisterCardUserKidsDetails(String uid, RegisterCardUserKidsDetailsRequestModel requestModel) {
         /* user details */
         UserMaster savedUser = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
-
         /* child details */
         ChildProfile childProfile = new ChildProfile();
         childProfile.setChildName(requestModel.getChildName());
-        childProfile.setDateOfBirth(requestModel.getDateOfBirth());
         childProfile.setGender(requestModel.getGender());
-        childProfile.setBloodGroup(requestModel.getBloodGroup());
         childProfile.setSchoolName(requestModel.getSchoolName());
         childProfile.setSchoolAddress(requestModel.getSchoolAddress());
-        childProfile.setAllergies(requestModel.getAllergies());
-        childProfile.setMedicalCondition(requestModel.getMedicalCondition());
         childProfile.setEmergencyContactNumber(requestModel.getEmergencyContactNumber());
         childProfile.setSchoolPhone(requestModel.getSchoolPhone());
+        childProfile.setStudentAddress(requestModel.getStudentAddress());
         childProfile.setLinkedAccount(savedUser);
         ChildProfile savedChildProfile = this.childProfileRepository.save(childProfile);
-
         /* update profile user mapping */
         ProfileTypesMaster profileType = this.profileTypesMasterRepository.findById(1).orElseThrow(() -> new ResourceNotFoundException("Profile type not found"));
         UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid, savedChildProfile.getId());
         this.userProfileNfcMappingRepository.save(mapping);
-
-        /* multiple guardian details */
-        List<ChildGuardianDetails> guardianDetails = new ArrayList<>();
-        for (RegisterCardUserKidsGuardianDetails model : requestModel.getGuardians()) {
-            ChildGuardianDetails guardian = new ChildGuardianDetails();
-            guardian.setGuardianName(model.getGuardianName());
-            guardian.setRelation(model.getRelationship());
-            guardian.setPrimaryPhone(model.getPrimaryPhone());
-            guardian.setAlternatePhone(model.getAlternatePhone());
-            guardian.setEmail(model.getEmail());
-            guardian.setIsPrimary(false);
-            guardian.setIdProofType(model.getIdProofType());
-            guardian.setIdProofNumber(model.getIdProofNumber());
-            guardian.setChildProfile(savedChildProfile);
-            guardianDetails.add(guardian);
-        }
-        this.childGuardianDetailsRepository.saveAll(guardianDetails);
         return new RegisterCardUserKidsDetailsResultModel(childProfile.getChildName());
     }
 
@@ -185,16 +135,11 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         /* senior details */
         SeniorProfile seniorProfile = new SeniorProfile();
         seniorProfile.setFullName(requestModel.getFullName());
-        seniorProfile.setDateOfBirth(requestModel.getDateOfBirth());
         seniorProfile.setGender(requestModel.getGender());
+        seniorProfile.setContactNumber(requestModel.getContactNumber());
+        seniorProfile.setAlternateNumber(requestModel.getAlternateNumber());
         seniorProfile.setBloodGroup(requestModel.getBloodGroup());
         seniorProfile.setMedicalConditions(requestModel.getMedicalCondition());
-        seniorProfile.setCurrentMedications(requestModel.getMedications());
-        seniorProfile.setDoctorName(requestModel.getDoctorName());
-        seniorProfile.setDoctorContact(requestModel.getDoctorContact());
-        seniorProfile.setHospitalPreference(requestModel.getHospitalPreference());
-        seniorProfile.setInsuranceProvider(requestModel.getInsuranceProvider());
-        seniorProfile.setInsuranceNumber(requestModel.getInsuranceNumber());
         seniorProfile.setLinkedAccount(savedUser);
         SeniorProfile savedSeniorProfile = this.seniorProfileRepository.save(seniorProfile);
 
@@ -203,20 +148,6 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         UserProfileNfcMapping mapping = new UserProfileNfcMapping(null, savedUser, profileType, uid, savedSeniorProfile.getId());
         this.userProfileNfcMappingRepository.save(mapping);
 
-        /* multiple care taker details */
-        List<SeniorCareTakerDetails> careTakersDetails = new ArrayList<>();
-        for(RegisterCardUserSeniorCaretakerDetails model : requestModel.getCaretakers()) {
-            SeniorCareTakerDetails careTakerDetails = new SeniorCareTakerDetails();
-            careTakerDetails.setCareTakerName(model.getCareTakerName());
-            careTakerDetails.setRelation(model.getRelationship());
-            careTakerDetails.setPrimaryPhone(model.getPhone());
-            careTakerDetails.setAlternatePhone(model.getAlternateNumber());
-            careTakerDetails.setEmail(null);
-            careTakerDetails.setIsPrimary(false);
-            careTakerDetails.setSeniorProfile(savedSeniorProfile);
-            careTakersDetails.add(careTakerDetails);
-        }
-        this.seniorCareTakerDetailsRepository.saveAll(careTakersDetails);
         return new RegisterCardUserSeniorDetailsResultModel(savedSeniorProfile.getFullName());
     }
 
@@ -229,18 +160,15 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         /* business details */
         BusinessProfile businessProfile = new BusinessProfile();
         businessProfile.setBusinessName(requestModel.getBusinessName());
-        businessProfile.setBusinessDescription(null);
-        businessProfile.setBusinessType(requestModel.getBusinessType());
-        businessProfile.setRegistrationNumber(requestModel.getRegistrationNumber());
-        businessProfile.setGstNumber(requestModel.getGstNumber());
-        businessProfile.setBusinessEmail(requestModel.getBusinessEmail());
-        businessProfile.setBusinessPhone(requestModel.getBusinessPhone());
-        businessProfile.setWebsiteUrl(requestModel.getWebsiteUrl());
-        businessProfile.setBusinessAddress(requestModel.getBusinessAddress());
-        businessProfile.setLinkedAccount(savedUser);
+        businessProfile.setBusinessDescription(requestModel.getBusinessDescription());
         businessProfile.setOwnerName(requestModel.getOwnerName());
-        businessProfile.setOwnerContact(requestModel.getOwnerContact());
-        businessProfile.setOwnerEmail(requestModel.getOwnerEmail());
+        businessProfile.setGstNumber(requestModel.getGstNumber());
+        businessProfile.setBusinessPhone(requestModel.getBusinessPhone());
+        businessProfile.setBusinessAddress(requestModel.getBusinessAddress());
+        businessProfile.setSocialMediaLinks(requestModel.getSocialMediaLink());
+        businessProfile.setBusinessEmail(requestModel.getBusinessEmail());
+        businessProfile.setWebsiteUrl(requestModel.getWebsiteUrl());
+        businessProfile.setLinkedAccount(savedUser);
         BusinessProfile savedBusinessProfile = this.businessProfileRepository.save(businessProfile);
 
         /* updated user profile mapping  */
@@ -263,15 +191,9 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         vehicleProfile.setVehicleType(requestModel.getVehicleType());
         vehicleProfile.setBrand(requestModel.getBrand());
         vehicleProfile.setModel(requestModel.getModel());
-        vehicleProfile.setColour(requestModel.getColor());
-        vehicleProfile.setYearOfManufacturing(LocalDate.parse(requestModel.getYearOfManufacture()));
         vehicleProfile.setOwnerName(requestModel.getOwnerName());
         vehicleProfile.setOwnerContact(requestModel.getOwnerContact());
         vehicleProfile.setAlternateContact(requestModel.getAlternateContact());
-        vehicleProfile.setRcNumber(requestModel.getRcNumber());
-        vehicleProfile.setInsuranceNumber(requestModel.getInsuranceNumber());
-        vehicleProfile.setInsuranceExpiry(LocalDate.parse(requestModel.getInsuranceExpiry()));
-        vehicleProfile.setChassisNumber(requestModel.getChassisNumber());
         vehicleProfile.setLinkedAccount(savedUser);
         VehicleProfile savedVehicleProfile = this.vehicleProfileRepository.save(vehicleProfile);
 
@@ -293,18 +215,12 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         PetProfile petProfile = new PetProfile();
         petProfile.setPetName(requestModel.getPetName());
         petProfile.setSpecies(requestModel.getSpecies());
-        petProfile.setBreed(requestModel.getBreed());
-        petProfile.setGender(requestModel.getGender());
-        petProfile.setAge(requestModel.getAge());
-        petProfile.setColour(requestModel.getColor());
-        petProfile.setMicroChipId(requestModel.getMicrochipId());
-        petProfile.setVaccinationStatus(requestModel.getVaccinationStatus());
-        petProfile.setVetName(requestModel.getVetName());
-        petProfile.setVetContact(requestModel.getVetContact());
-        petProfile.setMedicalNotes(requestModel.getMedialNotes());
         petProfile.setOwnerName(requestModel.getOwnerName());
         petProfile.setOwnerContact(requestModel.getOwnerContact());
+        petProfile.setOwnerAddress(requestModel.getOwnerAddress());
         petProfile.setAlternateContact(requestModel.getAlternateContact());
+        petProfile.setVaccinationStatus(requestModel.getVaccinationStatus());
+        petProfile.setBreed(requestModel.getBreed());
         petProfile.setLinkedAccount(savedUser);
         PetProfile savedPetProfile = this.petProfileRepository.save(petProfile);
 
@@ -355,53 +271,43 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
 
         if (mapping.getProfileType().getId() == 1) {
             ChildProfile childProfile = this.childProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
-            List<ChildGuardianDetails> guardianDetailsResultList = this.childGuardianDetailsRepository.findAllByChildProfile(childProfile);
-            List<RetrieveUserCardGuardianDetailsResultModel> guardianList = new ArrayList<>();
-            for (ChildGuardianDetails model : guardianDetailsResultList)
-                guardianList.add(new RetrieveUserCardGuardianDetailsResultModel(
-                        model.getEmail(), model.getAlternatePhone(), model.getGuardianName(), model.getIdProofNumber(), model.getIdProofType(),
-                        model.getIsPrimary(), model.getPrimaryPhone(), model.getRelation()));
-            resultModel.setChildProfile(new ChildProfileResultModel(childProfile.getChildName(), childProfile.getGender(),
-                    childProfile.getSchoolName(), childProfile.getSchoolAddress(), childProfile.getSchoolPhone(), childProfile.getEmergencyContactNumber(), guardianList));
+            resultModel.setChildProfile(new ChildProfileResultModel(
+                    childProfile.getChildName(), childProfile.getGender(), childProfile.getStudentAddress(), childProfile.getSchoolName(),
+                    childProfile.getSchoolAddress(), childProfile.getSchoolPhone(), childProfile.getEmergencyContactNumber()
+            ));
         }
 
         else if (mapping.getProfileType().getId() == 2) {
             SeniorProfile seniorProfile = this.seniorProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-            List<SeniorCareTakerDetails> careTakerResultList = this.seniorCareTakerDetailsRepository.findAllBySeniorProfile(seniorProfile);
-            List<RetrieveUserCardCareTakerDetailsResultModel> caretakerList = new ArrayList<>();
-            for (SeniorCareTakerDetails model : careTakerResultList)
-                caretakerList.add(new RetrieveUserCardCareTakerDetailsResultModel(model.getCareTakerName(), model.getRelation(),
-                        model.getPrimaryPhone(), model.getAlternatePhone(), model.getIsPrimary()));
-            resultModel.setSeniorProfile(new SeniorProfileResultModel(seniorProfile.getFullName(), seniorProfile.getDateOfBirth(),
-                    seniorProfile.getGender(), seniorProfile.getBloodGroup(), seniorProfile.getMedicalConditions(), seniorProfile.getCurrentMedications(),
-                    seniorProfile.getDoctorName(), seniorProfile.getDoctorContact(), seniorProfile.getHospitalPreference(), seniorProfile.getInsuranceProvider(),
-                    seniorProfile.getInsuranceNumber(), caretakerList));
+            resultModel.setSeniorProfile(new SeniorProfileResultModel(
+                    seniorProfile.getFullName(), seniorProfile.getGender(), seniorProfile.getContactNumber(), seniorProfile.getAlternateNumber(),
+                    seniorProfile.getBloodGroup(), seniorProfile.getMedicalConditions()
+            ));
 
         }
 
         else if (mapping.getProfileType().getId() == 3) {
             BusinessProfile businessProfile = this.businessProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-            resultModel.setBusinessProfile(new BusinessProfileResultModel(businessProfile.getBusinessName(), businessProfile.getBusinessType(),
-                    businessProfile.getRegistrationNumber(), businessProfile.getGstNumber(), businessProfile.getBusinessEmail(),
-                    businessProfile.getBusinessPhone(), businessProfile.getBusinessAddress(), businessProfile.getWebsiteUrl(),
-                    businessProfile.getOwnerName(), businessProfile.getOwnerContact(), businessProfile.getOwnerEmail()
-                    ));
+            resultModel.setBusinessProfile(new BusinessProfileResultModel(
+                    businessProfile.getBusinessName(), businessProfile.getBusinessDescription(), businessProfile.getOwnerName(), businessProfile.getGstNumber(),
+                    businessProfile.getBusinessPhone(), businessProfile.getBusinessAddress(), businessProfile.getBusinessEmail(), businessProfile.getWebsiteUrl()
+            ));
         }
 
         else if (mapping.getProfileType().getId() == 4) {
             VehicleProfile vehicleProfile = this.vehicleProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-            resultModel.setVehicleProfile(new VehicleProfileResultModel(vehicleProfile.getVehicleNumber(), vehicleProfile.getVehicleType(),
-                    vehicleProfile.getBrand(), vehicleProfile.getModel(), vehicleProfile.getColour(), vehicleProfile.getYearOfManufacturing().toString(),
-                    vehicleProfile.getOwnerName(), vehicleProfile.getOwnerContact(), vehicleProfile.getAlternateContact(), vehicleProfile.getRcNumber(),
-                    vehicleProfile.getInsuranceNumber(), vehicleProfile.getInsuranceExpiry().toString(), vehicleProfile.getChassisNumber()));
+            resultModel.setVehicleProfile(new VehicleProfileResultModel(
+                    vehicleProfile.getVehicleNumber(), vehicleProfile.getVehicleType(), vehicleProfile.getBrand(), vehicleProfile.getModel(),
+                    vehicleProfile.getOwnerName(), vehicleProfile.getOwnerContact(), vehicleProfile.getAlternateContact()
+            ));
         }
 
         else if (mapping.getProfileType().getId() == 5) {
             PetProfile petProfile = this.petProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-            resultModel.setPetProfile(new PetProfileResultModel(petProfile.getPetName(), petProfile.getSpecies(), petProfile.getBreed(),
-                    petProfile.getGender(), petProfile.getAge(), petProfile.getColour(), petProfile.getMicroChipId(), petProfile.getVaccinationStatus(),
-                    petProfile.getVetName(), petProfile.getVetContact(), petProfile.getMedicalNotes(), petProfile.getOwnerName(), petProfile.getOwnerContact(),
-                    petProfile.getAlternateContact()));
+            resultModel.setPetProfile(new PetProfileResultModel(
+                    petProfile.getPetName(), petProfile.getSpecies(), petProfile.getOwnerName(), petProfile.getOwnerContact(), petProfile.getOwnerAddress()
+                    , petProfile.getAlternateContact(), petProfile.getVaccinationStatus(), petProfile.getBreed()
+            ));
         }
         else if (mapping.getProfileType().getId() == 6) {
             SocialProfile socialProfile = this.socialProfileRepository.findById(mapping.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));

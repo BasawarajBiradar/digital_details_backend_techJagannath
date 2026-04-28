@@ -22,37 +22,24 @@ public class PetProfile {
 
     private String species;
 
-    private String breed;
-
-    private String gender;
-
-    private Double age;
-
-    private String colour;
-
-    @Column(name = "micro_chip_id")
-    private String microChipId;
-
-    @Column(name = "vaccination_status")
-    private String vaccinationStatus;
-
-    @Column(name = "vet_name")
-    private String vetName;
-
-    @Column(name = "vet_contact")
-    private String vetContact;
-
-    @Column(name = "medical_notes")
-    private String medicalNotes;
-
     @Column(name = "owner_name")
     private String ownerName;
 
     @Column(name = "owner_contact")
     private String ownerContact;
 
+    @Column(name = "owner_address")
+    private String ownerAddress;
+
     @Column(name = "alternate_contact")
     private String alternateContact;
+
+    @Column(name = "vaccination_status")
+    private String vaccinationStatus;
+
+    private String breed;
+
+    // pet photo
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "linked_account")

@@ -46,9 +46,7 @@ public class HomePageServiceImpl implements HomePageService {
             cards.add(new CardsToShowResultModel(card.getProfileType().getProfileType(), true, card.getUid()));
 
         return new RetrieveHomePageDetailsResultModel(
-                user.getFirstName(), user.getLastName(), user.getEmailId(), user.getMobileNumber(), user.getAlternateNumber(),
-                user.getAddress().getAddressLineOne(), user.getAddress().getAddressLineTwo(), user.getAddress().getCity(),
-                user.getAddress().getState(), user.getAddress().getCountry(), user.getAddress().getPinCode(), null, null, cards
+                user.getFirstName(), user.getLastName(), user.getEmailId(), user.getMobileNumber(), cards
         );
     }
 }
