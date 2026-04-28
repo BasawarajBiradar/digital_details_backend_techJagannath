@@ -20,6 +20,8 @@ import com.techjagannath.digital_identification.models.registerCards.vehicleProf
 import com.techjagannath.digital_identification.service.registercard.RegisterCardDetailsService;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 @Component
 public class RegisterCardDetailsFacadeImpl implements RegisterCardDetailsFacade {
 
@@ -32,6 +34,8 @@ public class RegisterCardDetailsFacadeImpl implements RegisterCardDetailsFacade 
     @Override
     public RegisterCardUserKidsDetailsResultModel facadeEntryPointForRegisterCardUserKidsDetails(String uid,
                                                                                                  RegisterCardUserKidsDetailsRequestModel requestModel) {
+        if (requestModel.getGuardians() == null )
+            requestModel.setGuardians(new ArrayList<>());
         return this.registerCardDetailsService.serviceEntryPointForRegisterCardUserKidsDetails(uid, requestModel);
     }
 

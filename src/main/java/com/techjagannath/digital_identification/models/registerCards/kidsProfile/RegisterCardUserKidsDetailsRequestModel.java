@@ -22,6 +22,9 @@ public class RegisterCardUserKidsDetailsRequestModel {
     private String allergies;
     private String medicalCondition;
 
+    private String emergencyContactNumber;
+    private String schoolPhone;
+
     /* guardian account */
     List<RegisterCardUserKidsGuardianDetails> guardians;
 }

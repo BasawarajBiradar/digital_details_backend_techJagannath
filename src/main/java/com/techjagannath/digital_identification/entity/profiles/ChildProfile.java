@@ -44,4 +44,10 @@ public class ChildProfile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "linked_account")
     private UserMaster linkedAccount;
+
+    @Column(name = "emergency_contact_number")
+    private String emergencyContactNumber;
+
+    @Column(name = "school_phone")
+    private String schoolPhone;
 }

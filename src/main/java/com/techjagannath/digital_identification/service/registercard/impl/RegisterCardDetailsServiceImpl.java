@@ -147,6 +147,8 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
         childProfile.setSchoolAddress(requestModel.getSchoolAddress());
         childProfile.setAllergies(requestModel.getAllergies());
         childProfile.setMedicalCondition(requestModel.getMedicalCondition());
+        childProfile.setEmergencyContactNumber(requestModel.getEmergencyContactNumber());
+        childProfile.setSchoolPhone(requestModel.getSchoolPhone());
         childProfile.setLinkedAccount(savedUser);
         ChildProfile savedChildProfile = this.childProfileRepository.save(childProfile);
 
@@ -359,9 +361,8 @@ public class RegisterCardDetailsServiceImpl implements RegisterCardDetailsServic
                 guardianList.add(new RetrieveUserCardGuardianDetailsResultModel(
                         model.getEmail(), model.getAlternatePhone(), model.getGuardianName(), model.getIdProofNumber(), model.getIdProofType(),
                         model.getIsPrimary(), model.getPrimaryPhone(), model.getRelation()));
-            resultModel.setChildProfile(new ChildProfileResultModel(childProfile.getChildName(), childProfile.getDateOfBirth(),
-                    childProfile.getGender(), childProfile.getBloodGroup(), childProfile.getSchoolName(), childProfile.getSchoolAddress(), childProfile.getAllergies(), childProfile.getMedicalCondition(),
-                    guardianList));
+            resultModel.setChildProfile(new ChildProfileResultModel(childProfile.getChildName(), childProfile.getGender(),
+                    childProfile.getSchoolName(), childProfile.getSchoolAddress(), childProfile.getSchoolPhone(), childProfile.getEmergencyContactNumber(), guardianList));
         }
 
         else if (mapping.getProfileType().getId() == 2) {
