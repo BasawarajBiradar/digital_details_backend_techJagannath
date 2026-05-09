@@ -24,6 +24,9 @@ public class UserMaster {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "middle_name")
+    private String middleName;
+
     @Column(name = "mobile_number", unique = true)
     private String mobileNumber;
 
@@ -38,6 +41,14 @@ public class UserMaster {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "school")
+    private SchoolMaster school;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "student_details")
+    private StudentDetailsMaster studentDetails; // only if user is student
 
     /** logging details */
     @ManyToOne(fetch = FetchType.LAZY)
