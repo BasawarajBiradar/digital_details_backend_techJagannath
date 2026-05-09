@@ -7,9 +7,9 @@ import com.techjagannath.digitalidentification.models.student.homepageinfocard.R
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class StudentServiceImpl implements StudentService {
 
     private final CommonMethods commonMethods;
