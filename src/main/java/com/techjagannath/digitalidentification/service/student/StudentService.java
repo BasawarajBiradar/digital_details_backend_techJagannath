@@ -1,4 +1,8 @@
 package com.techjagannath.digitalidentification.service.student;
 
+import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface StudentService {
+    RetrieveStudentHomePageInfoCardDetailsResultModel serviceEntryPointForRetrieveHomePageInfoCardDetails(HttpServletRequest request);
 }
