@@ -1,4 +1,10 @@
 package com.techjagannath.digitalidentification.facade.schooladmin;
 
+import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface SchoolAdminFacade {
+
+    AddStudentBySchoolAdminResultModel facadeEntryPointForAddStudentBySchoolAdmin(HttpServletRequest request, AddStudentBySchoolAdminRequestModel requestModel);
 }

@@ -1,8 +1,65 @@
 package com.techjagannath.digitalidentification.service.schooladmin.impl;
 
+import com.techjagannath.digitalidentification.entity.*;
+import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
+import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.repository.AddressMasterRepository;
+import com.techjagannath.digitalidentification.repository.RoleMasterRepository;
+import com.techjagannath.digitalidentification.repository.StudentDetailsMasterRepository;
+import com.techjagannath.digitalidentification.repository.UserMasterRepository;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
+import com.techjagannath.digitalidentification.utils.CommonMethods;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class SchoolAdminServiceImpl implements SchoolAdminService {
+
+    private final CommonMethods commonMethods;
+    private final UserMasterRepository userMasterRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleMasterRepository roleMasterRepository;
+    private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
+    private final StudentDetailsMasterRepository studentDetailsMasterRepository;
+    private final AddressMasterRepository addressMasterRepository;
+
+    public SchoolAdminServiceImpl(CommonMethods commonMethods, UserMasterRepository userMasterRepository,
+                                  PasswordEncoder passwordEncoder, RoleMasterRepository roleMasterRepository,
+                                  StudentDetailsMasterRepository studentDetailsMasterRepository, AddressMasterRepository addressMasterRepository) {
+        this.commonMethods = commonMethods;
+        this.userMasterRepository = userMasterRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.roleMasterRepository = roleMasterRepository;
+        this.studentDetailsMasterRepository = studentDetailsMasterRepository;
+        this.addressMasterRepository = addressMasterRepository;
+    }
+
+    @Override
+    public AddStudentBySchoolAdminResultModel serviceEntryPointForAddStudentBySchoolAdmin(HttpServletRequest request, AddStudentBySchoolAdminRequestModel requestModel) {
+        UserMaster adminUser = this.commonMethods.extractUser(request);
+        SchoolMaster schoolMaster = adminUser.getSchool();
+        RoleMaster role = this.roleMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+
+        AddressMaster studentAddress = new AddressMaster(null, requestModel.getAddressLineOne(),
+                requestModel.getAddressLineTwo(), requestModel.getCity(), requestModel.getState(), requestModel.getPinCode(), requestModel.getCountry());
+        AddressMaster savedStudentAddress = this.addressMasterRepository.save(studentAddress);
+
+        StudentDetailsMaster studentDetails = new StudentDetailsMaster(null, requestModel.getClassLevel(), requestModel.getDivision(),
+                savedStudentAddress, requestModel.getBloodGroup(), requestModel.getBirthDate(), requestModel.getEmergencyContactName(),
+                requestModel.getEmergencyContactRelation(), requestModel.getEmergencyContactNumber(), requestModel.getAlternateNumber(),
+                adminUser, LocalDateTime.now());
+        StudentDetailsMaster savedStudentDetails = this.studentDetailsMasterRepository.save(studentDetails);
+
+        UserMaster newUser = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(), requestModel.getMiddleName(),
+                requestModel.getMobileNumber(), passwordEncoder.encode(requestModel.getFirstName()+"@"+requestModel.getBirthDate().toString()),
+                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails,
+                adminUser, LocalDateTime.now());
+
+        this.userMasterRepository.save(newUser);
+        return new AddStudentBySchoolAdminResultModel(true);
+    }
 }

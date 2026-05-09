@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -30,6 +31,8 @@ public class StudentDetailsMaster {
     @Column(name = "blood_group")
     private String bloodGroup;
 
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
     @Column(name = "emergency_contact_name")
     private String emergencyContactName;

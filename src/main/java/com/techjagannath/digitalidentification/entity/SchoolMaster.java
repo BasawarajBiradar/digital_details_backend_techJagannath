@@ -22,4 +22,10 @@ public class SchoolMaster {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "school_address")
     private AddressMaster schoolAddress;
+
+    @Column(name = "contact_number")
+    private String contactNumber;
+
+    @Column(name = "email_id")
+    private String emailId;
 }
