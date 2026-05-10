@@ -1,6 +1,8 @@
 package com.techjagannath.digitalidentification.facade.tapaxeadmin.impl;
 
 import com.techjagannath.digitalidentification.facade.tapaxeadmin.TapaxeAdminFacade;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolRequestModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminResultModel;
 import com.techjagannath.digitalidentification.service.tapaxeadmin.TapaxeAdminService;
@@ -19,5 +21,10 @@ public class TapaxeAdminFacadeImpl implements TapaxeAdminFacade {
     @Override
     public AddSchoolAdminResultModel facadeEntryPointForAddSchoolAdmin(HttpServletRequest request, AddSchoolAdminRequestModel requestModel) {
         return this.tapaxeAdminService.serviceEntryPointForAddSchoolAdmin(request, requestModel);
+    }
+
+    @Override
+    public AddSchoolResultModel facadeEntryPointForAddSchool(HttpServletRequest request, AddSchoolRequestModel requestModel) {
+        return this.tapaxeAdminService.serviceEntryPointForAddSchool(request, requestModel);
     }
 }

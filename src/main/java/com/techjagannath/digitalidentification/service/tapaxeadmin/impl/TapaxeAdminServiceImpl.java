@@ -5,6 +5,8 @@ import com.techjagannath.digitalidentification.entity.RoleMaster;
 import com.techjagannath.digitalidentification.entity.SchoolMaster;
 import com.techjagannath.digitalidentification.entity.UserMaster;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolRequestModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminResultModel;
 import com.techjagannath.digitalidentification.repository.AddressMasterRepository;
@@ -46,22 +48,30 @@ public class TapaxeAdminServiceImpl implements TapaxeAdminService {
         UserMaster tapaxeAdmin = this.commonMethods.extractUser(request);
         RoleMaster role = this.roleMasterRepository.findById(2).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
 
+        SchoolMaster school = this.schoolMasterRepository.findById(requestModel.getSchoolId()).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+
+        UserMaster schoolAdmin = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(),
+                requestModel.getMiddleName(), requestModel.getMobileNo(),
+                this.passwordEncoder.encode(requestModel.getPassword()),
+                requestModel.getEmailId(), role, true,
+                school, null, tapaxeAdmin, LocalDateTime.now());
+        this.userMasterRepository.save(schoolAdmin);
+
+        return new AddSchoolAdminResultModel(true);
+    }
+
+    @Override
+    public AddSchoolResultModel serviceEntryPointForAddSchool(HttpServletRequest request, AddSchoolRequestModel requestModel) {
+        UserMaster tapaxeAdmin = this.commonMethods.extractUser(request);
+
         AddressMaster address = new AddressMaster(null, requestModel.getAddressLineOne(),
                 requestModel.getAddressLineTwo(), requestModel.getCity(), requestModel.getState(),
                 requestModel.getPinCode(), requestModel.getCountry());
         AddressMaster savedAddress = this.addressMasterRepository.save(address);
 
         SchoolMaster school = new SchoolMaster(null, requestModel.getSchoolName(),
-                savedAddress, requestModel.getSchoolContact(), requestModel.getEmailId());
-        SchoolMaster savedSchool = this.schoolMasterRepository.save(school);
-
-        UserMaster schoolAdmin = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(),
-                requestModel.getMiddleName(), requestModel.getMobileNo(),
-                this.passwordEncoder.encode(requestModel.getPassword()),
-                requestModel.getEmailId(), role, true,
-                savedSchool, null, tapaxeAdmin, LocalDateTime.now());
-        this.userMasterRepository.save(schoolAdmin);
-
-        return new AddSchoolAdminResultModel(true);
+                savedAddress, requestModel.getSchoolContact(), requestModel.getSchoolEmailId(), tapaxeAdmin, LocalDateTime.now());
+        this.schoolMasterRepository.save(school);
+        return new AddSchoolResultModel(true);
     }
 }

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,4 +30,12 @@ public class SchoolMaster {
 
     @Column(name = "email_id")
     private String emailId;
+
+    /** logging details */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private UserMaster createdBy;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

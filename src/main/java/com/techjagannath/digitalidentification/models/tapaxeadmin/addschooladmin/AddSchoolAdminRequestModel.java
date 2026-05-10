@@ -15,14 +15,5 @@ public class AddSchoolAdminRequestModel {
     private String emailId;
     private String password;
 
-    private String schoolName;
-    private String schoolContact;
-    private String schoolEmailId;
-
-    private String addressLineOne;
-    private String addressLineTwo;
-    private String city;
-    private String pinCode;
-    private String state;
-    private String country;
+    private Long schoolId;
 }
