@@ -5,6 +5,8 @@ import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddS
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddLTapaxeAdminResultModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddTapaxeAdminRequestModel;
 import com.techjagannath.digitalidentification.service.tapaxeadmin.TapaxeAdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
@@ -26,5 +28,10 @@ public class TapaxeAdminFacadeImpl implements TapaxeAdminFacade {
     @Override
     public AddSchoolResultModel facadeEntryPointForAddSchool(HttpServletRequest request, AddSchoolRequestModel requestModel) {
         return this.tapaxeAdminService.serviceEntryPointForAddSchool(request, requestModel);
+    }
+
+    @Override
+    public AddLTapaxeAdminResultModel facadeEntryPointForAddTapaxeAdmin(AddTapaxeAdminRequestModel requestModel) {
+        return this.tapaxeAdminService.serviceEntryPointForAddTapaxeAdmin(requestModel);
     }
 }

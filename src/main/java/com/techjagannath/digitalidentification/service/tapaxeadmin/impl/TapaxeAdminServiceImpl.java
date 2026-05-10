@@ -9,6 +9,8 @@ import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddS
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddLTapaxeAdminResultModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddTapaxeAdminRequestModel;
 import com.techjagannath.digitalidentification.repository.AddressMasterRepository;
 import com.techjagannath.digitalidentification.repository.RoleMasterRepository;
 import com.techjagannath.digitalidentification.repository.SchoolMasterRepository;
@@ -73,5 +75,19 @@ public class TapaxeAdminServiceImpl implements TapaxeAdminService {
                 savedAddress, requestModel.getSchoolContact(), requestModel.getSchoolEmailId(), tapaxeAdmin, LocalDateTime.now());
         this.schoolMasterRepository.save(school);
         return new AddSchoolResultModel(true);
+    }
+
+    @Override
+    public AddLTapaxeAdminResultModel serviceEntryPointForAddTapaxeAdmin(AddTapaxeAdminRequestModel requestModel) {
+        RoleMaster role = this.roleMasterRepository.findById(1).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+
+        UserMaster adminUser = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(),
+                requestModel.getMiddleName(), requestModel.getMobileNo(),
+                this.passwordEncoder.encode(requestModel.getPassword()),
+                requestModel.getEmailId(), role, true,
+                null, null, null, LocalDateTime.now());
+        UserMaster savedUser = this.userMasterRepository.save(adminUser);
+
+        return new AddLTapaxeAdminResultModel(savedUser.getId());
     }
 }

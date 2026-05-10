@@ -4,10 +4,14 @@ import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddS
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddLTapaxeAdminResultModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddTapaxeAdminRequestModel;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface TapaxeAdminFacade {
     AddSchoolAdminResultModel facadeEntryPointForAddSchoolAdmin(HttpServletRequest request, AddSchoolAdminRequestModel requestModel);
 
     AddSchoolResultModel facadeEntryPointForAddSchool(HttpServletRequest request, AddSchoolRequestModel requestModel);
+
+    AddLTapaxeAdminResultModel facadeEntryPointForAddTapaxeAdmin(AddTapaxeAdminRequestModel requestModel);
 }

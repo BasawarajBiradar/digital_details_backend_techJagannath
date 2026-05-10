@@ -5,6 +5,8 @@ import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddS
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddLTapaxeAdminResultModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddTapaxeAdminRequestModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,5 +36,10 @@ public class TapaxeAdminController {
     public ResponseEntity<ApiResponse<AddSchoolResultModel>> addSchool(
             HttpServletRequest request, @RequestBody AddSchoolRequestModel requestModel) {
         return ResponseBuilder.success(this.tapaxeAdminFacade.facadeEntryPointForAddSchool(request, requestModel), "Success");
+    }
+
+    @PostMapping("/add/admin")
+    public ResponseEntity<ApiResponse<AddLTapaxeAdminResultModel>> addTapaxeAdmin(@RequestBody AddTapaxeAdminRequestModel requestModel) {
+        return ResponseBuilder.success(this.tapaxeAdminFacade.facadeEntryPointForAddTapaxeAdmin(requestModel), "Success");
     }
 }
