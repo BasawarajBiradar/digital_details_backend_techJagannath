@@ -35,7 +35,7 @@ public class UserMaster {
     @Column(name = "email_id",  unique = true)
     private String emailId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role")
     private RoleMaster role;
 
@@ -51,7 +51,7 @@ public class UserMaster {
     private StudentDetailsMaster studentDetails; // only if user is student
 
     /** logging details */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by")
     private UserMaster createdBy;
 

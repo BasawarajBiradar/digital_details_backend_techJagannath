@@ -7,6 +7,7 @@ import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ public class SchoolAdminController {
     }
 
     @PostMapping("/add-student")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
     public ResponseEntity<ApiResponse<AddStudentBySchoolAdminResultModel>> addStudentBySchoolAdmin(
             HttpServletRequest request, @RequestBody AddStudentBySchoolAdminRequestModel requestModel) {
         return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForAddStudentBySchoolAdmin(request, requestModel), "Success");

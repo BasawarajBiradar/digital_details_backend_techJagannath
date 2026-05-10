@@ -11,6 +11,7 @@ import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +28,14 @@ public class TapaxeAdminController {
     }
 
     @PostMapping("/add/school-admin")
+    @PreAuthorize("hasAuthority('TAPAXE_ADMIN_WRITE')")
     public ResponseEntity<ApiResponse<AddSchoolAdminResultModel>> addSchoolAdmin(
             HttpServletRequest request, @RequestBody AddSchoolAdminRequestModel requestModel) {
         return ResponseBuilder.success(this.tapaxeAdminFacade.facadeEntryPointForAddSchoolAdmin(request, requestModel), "Success");
     }
 
     @PostMapping("/add/school")
+    @PreAuthorize("hasAuthority('TAPAXE_ADMIN_WRITE')")
     public ResponseEntity<ApiResponse<AddSchoolResultModel>> addSchool(
             HttpServletRequest request, @RequestBody AddSchoolRequestModel requestModel) {
         return ResponseBuilder.success(this.tapaxeAdminFacade.facadeEntryPointForAddSchool(request, requestModel), "Success");
