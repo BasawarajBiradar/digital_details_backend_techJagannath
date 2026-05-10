@@ -7,10 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.TimeZone;
+
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 public class DigitalIdentificationApplication {
 
+
 	public static void main(String[] args) {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Kolkata"));
 		SpringApplication.run(DigitalIdentificationApplication.class, args);
 	}
 

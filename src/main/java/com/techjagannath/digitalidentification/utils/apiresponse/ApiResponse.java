@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -21,5 +21,5 @@ public class ApiResponse<T> {
     private List<ValidationError> errors;   // ← for field-level validation errors
 
     @Builder.Default
-    private Instant timestamp = Instant.now();
+    private LocalDateTime timestamp = LocalDateTime.now();
 }
