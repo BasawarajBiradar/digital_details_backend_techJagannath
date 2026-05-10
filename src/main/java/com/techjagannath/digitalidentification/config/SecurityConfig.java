@@ -38,8 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/api/user-management/register").permitAll()
-                        .requestMatchers("/api/register-card/**").permitAll()
+                        .requestMatchers("/api/tapaxe-admin/add/admin").permitAll()
                         .anyRequest().authenticated()
                 );
 
