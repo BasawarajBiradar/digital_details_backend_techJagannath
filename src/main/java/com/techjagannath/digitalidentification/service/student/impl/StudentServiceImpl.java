@@ -23,17 +23,17 @@ public class StudentServiceImpl implements StudentService {
         UserMaster user = this.commonMethods.extractUser(request);
         StringBuilder fullName = new StringBuilder(user.getFirstName());
         if (user.getMiddleName() != null)
-            fullName.append(user.getMiddleName());
+            fullName.append(" ").append(user.getMiddleName());
         if (user.getLastName() != null)
-            fullName.append(user.getLastName());
+            fullName.append(" ").append(user.getLastName());
 
         SchoolMaster school = user.getSchool();
         StudentDetailsMaster student = user.getStudentDetails();
 
         return new RetrieveStudentHomePageInfoCardDetailsResultModel(
                 school.getSchoolName(), null, null, fullName.toString(), student.getClassLevel(), student.getDivision(),
-                student.getBloodGroup(), student.getEmergencyContactName(), student.getEmergencyContactNumber(), student.getEmergencyContactRelation(),
-                student.getAlternateContactNumber()
+                student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(), student.getEmergencyContactName(), student.getEmergencyContactNumber(),
+                student.getEmergencyContactRelation(), student.getAlternateContactNumber()
         );
     }
 }

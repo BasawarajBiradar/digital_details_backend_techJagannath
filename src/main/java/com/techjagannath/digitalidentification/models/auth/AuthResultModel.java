@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthResultModel {
     private String token;
+    private String role;
 }

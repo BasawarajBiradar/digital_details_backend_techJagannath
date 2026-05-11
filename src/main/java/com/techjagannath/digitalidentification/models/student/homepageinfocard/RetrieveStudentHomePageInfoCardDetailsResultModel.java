@@ -16,6 +16,8 @@ public class RetrieveStudentHomePageInfoCardDetailsResultModel {
     private String classLevel;
     private String div;
     private String bloodGroup;
+    private String contactNumber;
+    private String emailId;
 
     private String emergencyContactName;
     private String emergencyContactNumber;
