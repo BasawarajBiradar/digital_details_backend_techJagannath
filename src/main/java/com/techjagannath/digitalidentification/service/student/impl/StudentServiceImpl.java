@@ -43,13 +43,13 @@ public class StudentServiceImpl implements StudentService {
         if (student.getStudentAddress().getAddressLineOne() != null)
             studentAddress.append(student.getStudentAddress().getAddressLineOne());
         if (student.getStudentAddress().getAddressLineTwo() != null)
-            studentAddress.append(student.getStudentAddress().getAddressLineTwo());
+            studentAddress.append(", ").append(student.getStudentAddress().getAddressLineTwo());
         if (student.getStudentAddress().getCity() != null)
-            studentAddress.append(student.getStudentAddress().getCity());
+            studentAddress.append(", ").append(student.getStudentAddress().getCity());
         if (student.getStudentAddress().getPinCode() != null)
             studentAddress.append(", ").append(student.getStudentAddress().getPinCode());
         if (student.getStudentAddress().getState() != null)
-            studentAddress.append(student.getStudentAddress().getState());
+            studentAddress.append(", ").append(student.getStudentAddress().getState());
         if (student.getStudentAddress().getCountry() != null)
             studentAddress.append(", ").append(student.getStudentAddress().getCountry());
 
