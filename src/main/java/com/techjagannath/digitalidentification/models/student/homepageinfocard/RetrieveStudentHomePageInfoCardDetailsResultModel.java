@@ -18,6 +18,8 @@ public class RetrieveStudentHomePageInfoCardDetailsResultModel {
     private String bloodGroup;
     private String contactNumber;
     private String emailId;
+    private String birthDate;
+    private String address;
 
     private String emergencyContactName;
     private String emergencyContactNumber;

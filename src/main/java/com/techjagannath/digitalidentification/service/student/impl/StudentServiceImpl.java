@@ -39,9 +39,25 @@ public class StudentServiceImpl implements StudentService {
         SchoolMaster school = user.getSchool();
         StudentDetailsMaster student = user.getStudentDetails();
 
+        StringBuilder studentAddress = new StringBuilder();
+        if (student.getStudentAddress().getAddressLineOne() != null)
+            studentAddress.append(student.getStudentAddress().getAddressLineOne());
+        if (student.getStudentAddress().getAddressLineTwo() != null)
+            studentAddress.append(student.getStudentAddress().getAddressLineTwo());
+        if (student.getStudentAddress().getCity() != null)
+            studentAddress.append(student.getStudentAddress().getCity());
+        if (student.getStudentAddress().getPinCode() != null)
+            studentAddress.append(", ").append(student.getStudentAddress().getPinCode());
+        if (student.getStudentAddress().getState() != null)
+            studentAddress.append(student.getStudentAddress().getState());
+        if (student.getStudentAddress().getCountry() != null)
+            studentAddress.append(", ").append(student.getStudentAddress().getCountry());
+
         return new RetrieveStudentHomePageInfoCardDetailsResultModel(
                 school.getSchoolName(), null, null, fullName.toString(), student.getClassLevel(), student.getDivision(),
-                student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(), student.getEmergencyContactName(), student.getEmergencyContactNumber(),
+                student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(),
+                student.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), studentAddress.toString(),
+                student.getEmergencyContactName(), student.getEmergencyContactNumber(),
                 student.getEmergencyContactRelation(), student.getAlternateContactNumber()
         );
     }
