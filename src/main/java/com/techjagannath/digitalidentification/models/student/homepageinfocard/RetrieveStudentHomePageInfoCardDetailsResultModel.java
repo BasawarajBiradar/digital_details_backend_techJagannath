@@ -25,4 +25,6 @@ public class RetrieveStudentHomePageInfoCardDetailsResultModel {
     private String emergencyContactNumber;
     private String emergencyContactRelation;
     private String alternateContactNumber;
+
+    private String uid;
 }

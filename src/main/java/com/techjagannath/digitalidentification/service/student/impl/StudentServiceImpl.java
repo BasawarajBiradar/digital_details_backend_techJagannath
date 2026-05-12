@@ -65,7 +65,7 @@ public class StudentServiceImpl implements StudentService {
                 student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(),
                 student.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), studentAddress.toString(),
                 student.getEmergencyContactName(), student.getEmergencyContactNumber(),
-                student.getEmergencyContactRelation(), student.getAlternateContactNumber()
+                student.getEmergencyContactRelation(), student.getAlternateContactNumber(), user.getUid()
         );
     }
 
