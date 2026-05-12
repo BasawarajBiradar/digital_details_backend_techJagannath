@@ -1,8 +1,13 @@
 package com.techjagannath.digitalidentification.facade.student;
 
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 public interface StudentFacade {
     RetrieveStudentHomePageInfoCardDetailsResultModel facadeEntryPointForRetrieveHomePageInfoCardDetails(HttpServletRequest request);
+
+    List<RetrieveStudentHomePageTodayEntriesResultModel> facadeEntryPointForRetrieveHomePageTodayEntries(HttpServletRequest request);
 }

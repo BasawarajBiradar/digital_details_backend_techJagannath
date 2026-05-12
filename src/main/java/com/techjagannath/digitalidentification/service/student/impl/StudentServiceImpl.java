@@ -1,21 +1,30 @@
 package com.techjagannath.digitalidentification.service.student.impl;
 
+import com.techjagannath.digitalidentification.entity.NfcCardTapsHistory;
 import com.techjagannath.digitalidentification.entity.SchoolMaster;
 import com.techjagannath.digitalidentification.entity.StudentDetailsMaster;
 import com.techjagannath.digitalidentification.entity.UserMaster;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.repository.NfcCardTapsHistoryRepository;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class StudentServiceImpl implements StudentService {
 
     private final CommonMethods commonMethods;
+    private final NfcCardTapsHistoryRepository nfcCardTapsHistoryRepository;
 
-    public StudentServiceImpl(CommonMethods commonMethods) {
+    public StudentServiceImpl(CommonMethods commonMethods, NfcCardTapsHistoryRepository nfcCardTapsHistoryRepository) {
         this.commonMethods = commonMethods;
+        this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
     }
 
     @Override
@@ -35,5 +44,20 @@ public class StudentServiceImpl implements StudentService {
                 student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(), student.getEmergencyContactName(), student.getEmergencyContactNumber(),
                 student.getEmergencyContactRelation(), student.getAlternateContactNumber()
         );
+    }
+
+    @Override
+    public List<RetrieveStudentHomePageTodayEntriesResultModel> serviceEntryPointForRetrieveHomePageTodayEntries(HttpServletRequest request) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+
+        UserMaster user = this.commonMethods.extractUser(request);
+        List<NfcCardTapsHistory> entries = this.nfcCardTapsHistoryRepository.retrieveLoggedInUserTodayEntries(user);
+        List<RetrieveStudentHomePageTodayEntriesResultModel> resultModels = new ArrayList<>();
+        for (NfcCardTapsHistory entry : entries)
+            resultModels.add(new RetrieveStudentHomePageTodayEntriesResultModel(
+                    entry.getTimeStamp().format(dateFormatter), entry.getTimeStamp().format(timeFormatter), null));
+
+        return resultModels;
     }
 }
