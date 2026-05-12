@@ -56,7 +56,7 @@ public class TapaxeAdminServiceImpl implements TapaxeAdminService {
                 requestModel.getMiddleName(), requestModel.getMobileNo(),
                 this.passwordEncoder.encode(requestModel.getPassword()),
                 requestModel.getEmailId(), role, true,
-                school, null, tapaxeAdmin, LocalDateTime.now());
+                school, null, null, tapaxeAdmin, LocalDateTime.now());
         this.userMasterRepository.save(schoolAdmin);
 
         return new AddSchoolAdminResultModel(true);
@@ -85,7 +85,7 @@ public class TapaxeAdminServiceImpl implements TapaxeAdminService {
                 requestModel.getMiddleName(), requestModel.getMobileNo(),
                 this.passwordEncoder.encode(requestModel.getPassword()),
                 requestModel.getEmailId(), role, true,
-                null, null, null, LocalDateTime.now());
+                null, null, null, null, LocalDateTime.now());
         UserMaster savedUser = this.userMasterRepository.save(adminUser);
 
         return new AddLTapaxeAdminResultModel(savedUser.getId());

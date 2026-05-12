@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/tapaxe-admin/add/admin").permitAll()
+                        .requestMatchers("/api/student/uid/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

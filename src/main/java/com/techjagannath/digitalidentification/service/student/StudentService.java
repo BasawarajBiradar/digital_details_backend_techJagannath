@@ -1,6 +1,7 @@
 package com.techjagannath.digitalidentification.service.student;
 
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -10,4 +11,6 @@ public interface StudentService {
     RetrieveStudentHomePageInfoCardDetailsResultModel serviceEntryPointForRetrieveHomePageInfoCardDetails(HttpServletRequest request);
 
     List<RetrieveStudentHomePageTodayEntriesResultModel> serviceEntryPointForRetrieveHomePageTodayEntries(HttpServletRequest request);
+
+    RetrieveStudentNfcTapResultModel serviceEntryPointForRetrieveStudentNfcTapDetails(String uid);
 }

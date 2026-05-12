@@ -2,6 +2,7 @@ package com.techjagannath.digitalidentification.facade.student.impl;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,5 +27,10 @@ public class StudentFacadeImpl implements StudentFacade {
     @Override
     public List<RetrieveStudentHomePageTodayEntriesResultModel> facadeEntryPointForRetrieveHomePageTodayEntries(HttpServletRequest request) {
         return this.studentService.serviceEntryPointForRetrieveHomePageTodayEntries(request);
+    }
+
+    @Override
+    public RetrieveStudentNfcTapResultModel facadeEntryPointForRetrieveStudentNfcTapDetails(String uid) {
+        return this.studentService.serviceEntryPointForRetrieveStudentNfcTapDetails(uid);
     }
 }
