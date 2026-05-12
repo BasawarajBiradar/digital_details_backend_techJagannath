@@ -6,13 +6,12 @@ import com.techjagannath.digitalidentification.models.student.nfccardtap.Retriev
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
+import com.techjagannath.digitalidentification.utils.qrgenerator.QRCodeGenerator;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,6 +40,11 @@ public class StudentController {
     @GetMapping("/uid/{uid}")
     public ResponseEntity<ApiResponse<RetrieveStudentNfcTapResultModel>> retrieveStudentNfcTapDetails(@PathVariable("uid") String uid) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveStudentNfcTapDetails(uid), "Success");
+    }
+
+    @GetMapping(value = "/qr-generate", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] generateQR(@RequestParam String url) throws Exception {
+        return QRCodeGenerator.generateQRCode(url, 250, 250);
     }
 
 }
