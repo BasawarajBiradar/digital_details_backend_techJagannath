@@ -55,7 +55,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:4200", "https://tapaxe.techjagannath.com")); // Angular
+        config.setAllowedOrigins(List.of("http://192.168.1.58:4200",
+                "http://localhost:4200",
+                "https://tapaxe.techjagannath.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
