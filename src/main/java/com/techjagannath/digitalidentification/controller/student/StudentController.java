@@ -43,7 +43,7 @@ public class StudentController {
 
     @PostMapping("/uid/{uid}")
     public ResponseEntity<ApiResponse<RetrieveStudentNfcTapResultModel>> retrieveStudentNfcTapDetails(@PathVariable("uid") String uid
-            , RetrieveStudentNfcTapDetailsRequestModel requestModel) {
+            ,@RequestBody RetrieveStudentNfcTapDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveStudentNfcTapDetails(uid, requestModel)
                 , "Success");
     }
@@ -60,7 +60,7 @@ public class StudentController {
 
     @PostMapping("/uid/register/{uid}")
     public ResponseEntity<ApiResponse<RegisterStudentUidResultModel>> registerStudentNfcUid(@PathVariable("uid") String uid
-            , RegisterStudentUidRequestModel requestModel) {
+            ,@RequestBody RegisterStudentUidRequestModel requestModel) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRegisterStudentNfcUid(uid, requestModel), "Success");
     }
 
