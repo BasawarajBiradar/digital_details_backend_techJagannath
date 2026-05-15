@@ -5,6 +5,7 @@ import com.techjagannath.digitalidentification.models.student.nfccardtap.Retriev
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
+import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,4 +22,6 @@ public interface StudentFacade {
     VerifyNfcUidResultModel facadeEntryPointForVerifyStudentNfcUid(String uid);
 
     RegisterStudentUidResultModel facadeEntryPointForRegisterStudentNfcUid(String uid, RegisterStudentUidRequestModel requestModel);
+
+    List<RetrieveSchoolListResultModel> facadeEntryPointForRetrieveSchoolList();
 }

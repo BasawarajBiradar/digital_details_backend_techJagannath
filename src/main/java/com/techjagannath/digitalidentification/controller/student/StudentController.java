@@ -6,6 +6,7 @@ import com.techjagannath.digitalidentification.models.student.nfccardtap.Retriev
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
+import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
@@ -62,6 +63,11 @@ public class StudentController {
     public ResponseEntity<ApiResponse<RegisterStudentUidResultModel>> registerStudentNfcUid(@PathVariable("uid") String uid
             ,@RequestBody RegisterStudentUidRequestModel requestModel) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRegisterStudentNfcUid(uid, requestModel), "Success");
+    }
+
+    @GetMapping("/uid/school-list")
+    public ResponseEntity<ApiResponse<List<RetrieveSchoolListResultModel>>> retrieveSchoolList() {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveSchoolList(), "Success");
     }
 
 }

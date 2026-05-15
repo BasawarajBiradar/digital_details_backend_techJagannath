@@ -7,6 +7,7 @@ import com.techjagannath.digitalidentification.models.student.nfccardtap.Retriev
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
+import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.repository.*;
@@ -183,5 +184,14 @@ public class StudentServiceImpl implements StudentService {
         this.nfcUidMasterRepository.save(nfcUidMaster);
 
         return new RegisterStudentUidResultModel(savedUser.getId());
+    }
+
+    @Override
+    public List<RetrieveSchoolListResultModel> serviceEntryPointForRetrieveSchoolList() {
+        List<SchoolMaster> schools = this.schoolMasterRepository.findAll();
+        List<RetrieveSchoolListResultModel> resultModels = new ArrayList<>();
+        for (SchoolMaster schoolMaster : schools)
+            resultModels.add(new RetrieveSchoolListResultModel(schoolMaster.getId(), schoolMaster.getSchoolName()));
+        return resultModels;
     }
 }
