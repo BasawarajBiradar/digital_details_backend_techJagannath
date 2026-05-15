@@ -41,7 +41,7 @@ public class StudentController {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveHomePageTodayEntries(request), "Success");
     }
 
-    @GetMapping("/uid/{uid}")
+    @PostMapping("/uid/{uid}")
     public ResponseEntity<ApiResponse<RetrieveStudentNfcTapResultModel>> retrieveStudentNfcTapDetails(@PathVariable("uid") String uid
             , RetrieveStudentNfcTapDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveStudentNfcTapDetails(uid, requestModel)
@@ -58,7 +58,7 @@ public class StudentController {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForVerifyStudentNfcUid(uid), "Success");
     }
 
-    @GetMapping("/uid/register/{uid}")
+    @PostMapping("/uid/register/{uid}")
     public ResponseEntity<ApiResponse<RegisterStudentUidResultModel>> registerStudentNfcUid(@PathVariable("uid") String uid
             , RegisterStudentUidRequestModel requestModel) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRegisterStudentNfcUid(uid, requestModel), "Success");
