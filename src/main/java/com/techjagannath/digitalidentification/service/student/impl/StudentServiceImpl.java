@@ -3,6 +3,7 @@ package com.techjagannath.digitalidentification.service.student.impl;
 import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
@@ -88,8 +89,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public RetrieveStudentNfcTapResultModel serviceEntryPointForRetrieveStudentNfcTapDetails(String uid) {
-        UserMaster user = this.userMasterRepository.findByUid(uid);
+    public RetrieveStudentNfcTapResultModel serviceEntryPointForRetrieveStudentNfcTapDetails(String uid, RetrieveStudentNfcTapDetailsRequestModel requestModel) {
+        UserMaster user = this.userMasterRepository.findById(requestModel.getUserId()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));// this.userMasterRepository.findByUid(uid);
         if (user == null)
             throw new ResourceNotFoundException(USER_NOT_FOUND);
         StringBuilder fullName = new StringBuilder(user.getFirstName());

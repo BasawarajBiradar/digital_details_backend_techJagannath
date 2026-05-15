@@ -2,6 +2,7 @@ package com.techjagannath.digitalidentification.controller.student;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
@@ -39,8 +40,10 @@ public class StudentController {
     }
 
     @GetMapping("/uid/{uid}")
-    public ResponseEntity<ApiResponse<RetrieveStudentNfcTapResultModel>> retrieveStudentNfcTapDetails(@PathVariable("uid") String uid) {
-        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveStudentNfcTapDetails(uid), "Success");
+    public ResponseEntity<ApiResponse<RetrieveStudentNfcTapResultModel>> retrieveStudentNfcTapDetails(@PathVariable("uid") String uid
+            , RetrieveStudentNfcTapDetailsRequestModel requestModel) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveStudentNfcTapDetails(uid, requestModel)
+                , "Success");
     }
 
     @GetMapping(value = "/qr-generate", produces = MediaType.IMAGE_PNG_VALUE)
