@@ -2,7 +2,6 @@ package com.techjagannath.digitalidentification.service.student.impl;
 
 import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
-import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
@@ -174,8 +173,8 @@ public class StudentServiceImpl implements StudentService {
         StudentDetailsMaster savedStudentDetails = this.studentDetailsMasterRepository.save(studentDetails);
 
         UserMaster newUser = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(), requestModel.getMiddleName(),
-                requestModel.getMobileNumber(), passwordEncoder.encode(requestModel.getFirstName()+"@"+requestModel.getBirthDate().toString()),
-                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, null,
+                requestModel.getMobileNumber(), passwordEncoder.encode(requestModel.getPassword()),
+                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, uid,
                 null, LocalDateTime.now());
         UserMaster savedUser = this.userMasterRepository.save(newUser);
 

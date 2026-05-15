@@ -17,8 +17,13 @@ public class RegisterStudentUidRequestModel {
 
     @NotBlank
     private LocalDate birthDate;
+    @NotBlank
     private String mobileNumber;
+    @NotBlank
     private String emailId;
+
+    @NotBlank
+    private String password;
 
     private String emergencyContactNumber;
     private String emergencyContactName;
