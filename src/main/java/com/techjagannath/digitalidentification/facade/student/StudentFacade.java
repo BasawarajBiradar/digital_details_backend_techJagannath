@@ -3,6 +3,7 @@ package com.techjagannath.digitalidentification.facade.student;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface StudentFacade {
     List<RetrieveStudentHomePageTodayEntriesResultModel> facadeEntryPointForRetrieveHomePageTodayEntries(HttpServletRequest request);
 
     RetrieveStudentNfcTapResultModel facadeEntryPointForRetrieveStudentNfcTapDetails(String uid);
+
+    VerifyNfcUidResultModel facadeEntryPointForVerifyStudentNfcUid(String uid);
 }

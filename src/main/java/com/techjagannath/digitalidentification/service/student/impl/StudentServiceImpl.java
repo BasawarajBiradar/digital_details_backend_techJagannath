@@ -1,14 +1,13 @@
 package com.techjagannath.digitalidentification.service.student.impl;
 
-import com.techjagannath.digitalidentification.entity.NfcCardTapsHistory;
-import com.techjagannath.digitalidentification.entity.SchoolMaster;
-import com.techjagannath.digitalidentification.entity.StudentDetailsMaster;
-import com.techjagannath.digitalidentification.entity.UserMaster;
+import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.repository.NfcCardTapsHistoryRepository;
+import com.techjagannath.digitalidentification.repository.NfcUidMasterRepository;
 import com.techjagannath.digitalidentification.repository.UserMasterRepository;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -25,13 +25,16 @@ public class StudentServiceImpl implements StudentService {
     private final CommonMethods commonMethods;
     private final NfcCardTapsHistoryRepository nfcCardTapsHistoryRepository;
     private final UserMasterRepository userMasterRepository;
-    private final String USER_NOT_FOUND = "User not found";
+    private final NfcUidMasterRepository nfcUidMasterRepository;
+    private static final String USER_NOT_FOUND = "User not found";
+    private static final String UID_NOT_VALID = "Invalid UID";
 
     public StudentServiceImpl(CommonMethods commonMethods, NfcCardTapsHistoryRepository nfcCardTapsHistoryRepository,
-                              UserMasterRepository userMasterRepository) {
+                              UserMasterRepository userMasterRepository, NfcUidMasterRepository nfcUidMasterRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
+        this.nfcUidMasterRepository = nfcUidMasterRepository;
     }
 
     @Override
@@ -119,5 +122,14 @@ public class StudentServiceImpl implements StudentService {
                 student.getEmergencyContactName(), student.getEmergencyContactNumber(),
                 student.getEmergencyContactRelation(), student.getAlternateContactNumber()
         );
+    }
+
+    @Override
+    public VerifyNfcUidResultModel serviceEntryPointForVerifyStudentNfcUid(String uid) {
+        Optional<NfcUidMaster> result = this.nfcUidMasterRepository.findByUid(uid);
+        if (result.isEmpty())
+            throw new ResourceNotFoundException(UID_NOT_VALID);
+        UserMaster user = result.get().getMappedUser();
+        return new VerifyNfcUidResultModel( user != null ? user.getId() : null);
     }
 }

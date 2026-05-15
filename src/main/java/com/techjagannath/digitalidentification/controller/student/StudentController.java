@@ -4,6 +4,7 @@ import com.techjagannath.digitalidentification.facade.student.StudentFacade;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
 import com.techjagannath.digitalidentification.utils.qrgenerator.QRCodeGenerator;
@@ -45,6 +46,11 @@ public class StudentController {
     @GetMapping(value = "/qr-generate", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] generateQR(@RequestParam String url) throws Exception {
         return QRCodeGenerator.generateQRCode(url, 250, 250);
+    }
+
+    @GetMapping("/uid/verify/{uid}")
+    public ResponseEntity<ApiResponse<VerifyNfcUidResultModel>> verifyStudentNfcUid(@PathVariable("uid") String uid) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForVerifyStudentNfcUid(uid), "Success");
     }
 
 }

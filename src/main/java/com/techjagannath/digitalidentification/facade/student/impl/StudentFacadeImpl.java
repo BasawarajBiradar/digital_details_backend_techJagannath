@@ -4,6 +4,7 @@ import com.techjagannath.digitalidentification.facade.student.StudentFacade;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
@@ -32,5 +33,10 @@ public class StudentFacadeImpl implements StudentFacade {
     @Override
     public RetrieveStudentNfcTapResultModel facadeEntryPointForRetrieveStudentNfcTapDetails(String uid) {
         return this.studentService.serviceEntryPointForRetrieveStudentNfcTapDetails(uid);
+    }
+
+    @Override
+    public VerifyNfcUidResultModel facadeEntryPointForVerifyStudentNfcUid(String uid) {
+        return this.studentService.serviceEntryPointForVerifyStudentNfcUid(uid);
     }
 }
