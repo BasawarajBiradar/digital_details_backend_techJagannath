@@ -4,6 +4,8 @@ import com.techjagannath.digitalidentification.facade.student.StudentFacade;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
+import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
+import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.service.student.StudentService;
@@ -40,4 +42,10 @@ public class StudentFacadeImpl implements StudentFacade {
     public VerifyNfcUidResultModel facadeEntryPointForVerifyStudentNfcUid(String uid) {
         return this.studentService.serviceEntryPointForVerifyStudentNfcUid(uid);
     }
+
+    @Override
+    public RegisterStudentUidResultModel facadeEntryPointForRegisterStudentNfcUid(String uid, RegisterStudentUidRequestModel requestModel) {
+        return this.studentService.serviceEntryPointForRegisterStudentNfcUid(uid, requestModel);
+    }
+
 }

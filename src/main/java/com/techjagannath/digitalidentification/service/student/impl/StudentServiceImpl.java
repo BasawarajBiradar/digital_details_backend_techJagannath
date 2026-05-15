@@ -2,19 +2,23 @@ package com.techjagannath.digitalidentification.service.student.impl;
 
 import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
+import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
+import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
+import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
-import com.techjagannath.digitalidentification.repository.NfcCardTapsHistoryRepository;
-import com.techjagannath.digitalidentification.repository.NfcUidMasterRepository;
-import com.techjagannath.digitalidentification.repository.UserMasterRepository;
+import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +31,29 @@ public class StudentServiceImpl implements StudentService {
     private final NfcCardTapsHistoryRepository nfcCardTapsHistoryRepository;
     private final UserMasterRepository userMasterRepository;
     private final NfcUidMasterRepository nfcUidMasterRepository;
+    private final SchoolMasterRepository schoolMasterRepository;
+    private final RoleMasterRepository roleMasterRepository;
+    private final AddressMasterRepository addressMasterRepository;
+    private final StudentDetailsMasterRepository studentDetailsMasterRepository;
+    private final PasswordEncoder passwordEncoder;
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
+    private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
 
     public StudentServiceImpl(CommonMethods commonMethods, NfcCardTapsHistoryRepository nfcCardTapsHistoryRepository,
-                              UserMasterRepository userMasterRepository, NfcUidMasterRepository nfcUidMasterRepository) {
+                              UserMasterRepository userMasterRepository, NfcUidMasterRepository nfcUidMasterRepository,
+                              SchoolMasterRepository schoolMasterRepository, RoleMasterRepository roleMasterRepository,
+                              AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
+                              PasswordEncoder passwordEncoder) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
         this.nfcUidMasterRepository = nfcUidMasterRepository;
+        this.schoolMasterRepository = schoolMasterRepository;
+        this.roleMasterRepository = roleMasterRepository;
+        this.addressMasterRepository = addressMasterRepository;
+        this.studentDetailsMasterRepository = studentDetailsMasterRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -132,5 +150,39 @@ public class StudentServiceImpl implements StudentService {
             throw new ResourceNotFoundException(UID_NOT_VALID);
         UserMaster user = result.get().getMappedUser();
         return new VerifyNfcUidResultModel( user != null ? user.getId() : null);
+    }
+
+    @Override
+    public RegisterStudentUidResultModel serviceEntryPointForRegisterStudentNfcUid(String uid, RegisterStudentUidRequestModel requestModel) {
+        Optional<NfcUidMaster> result = this.nfcUidMasterRepository.findByUid(uid);
+        if (result.isEmpty())
+            throw new ResourceNotFoundException(UID_NOT_VALID);
+        if (result.get().getMappedUser() != null)
+            throw new DataIntegrityViolationException(UID_NOT_VALID);
+
+        SchoolMaster schoolMaster = this.schoolMasterRepository.findById(requestModel.getSchoolId()).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+        RoleMaster role = this.roleMasterRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+
+        AddressMaster studentAddress = new AddressMaster(null, requestModel.getAddressLineOne(),
+                requestModel.getAddressLineTwo(), requestModel.getCity(), requestModel.getState(), requestModel.getPinCode(), requestModel.getCountry());
+        AddressMaster savedStudentAddress = this.addressMasterRepository.save(studentAddress);
+
+        StudentDetailsMaster studentDetails = new StudentDetailsMaster(null, requestModel.getClassLevel(), requestModel.getDivision(),
+                savedStudentAddress, requestModel.getBloodGroup(), requestModel.getBirthDate(), requestModel.getEmergencyContactName(),
+                requestModel.getEmergencyContactRelation(), requestModel.getEmergencyContactNumber(), requestModel.getAlternateNumber(),
+                null, LocalDateTime.now());
+        StudentDetailsMaster savedStudentDetails = this.studentDetailsMasterRepository.save(studentDetails);
+
+        UserMaster newUser = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(), requestModel.getMiddleName(),
+                requestModel.getMobileNumber(), passwordEncoder.encode(requestModel.getFirstName()+"@"+requestModel.getBirthDate().toString()),
+                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, null,
+                null, LocalDateTime.now());
+        UserMaster savedUser = this.userMasterRepository.save(newUser);
+
+        NfcUidMaster nfcUidMaster = result.get();
+        nfcUidMaster.setMappedUser(savedUser);
+        this.nfcUidMasterRepository.save(nfcUidMaster);
+
+        return new RegisterStudentUidResultModel(savedUser.getId());
     }
 }
