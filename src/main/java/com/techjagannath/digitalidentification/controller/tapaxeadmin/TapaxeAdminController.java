@@ -1,6 +1,8 @@
 package com.techjagannath.digitalidentification.controller.tapaxeadmin;
 
 import com.techjagannath.digitalidentification.facade.tapaxeadmin.TapaxeAdminFacade;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addnfcuid.AddNfcUidRequestModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addnfcuid.AddNfcUidResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
@@ -44,5 +46,12 @@ public class TapaxeAdminController {
     @PostMapping("/add/admin")
     public ResponseEntity<ApiResponse<AddLTapaxeAdminResultModel>> addTapaxeAdmin(@RequestBody AddTapaxeAdminRequestModel requestModel) {
         return ResponseBuilder.success(this.tapaxeAdminFacade.facadeEntryPointForAddTapaxeAdmin(requestModel), "Success");
+    }
+
+    @PostMapping("/add-nfc-uid")
+    @PreAuthorize("hasAuthority('TAPAXE_ADMIN_WRITE')")
+    public ResponseEntity<ApiResponse<AddNfcUidResultModel>> addNfcUid(
+            HttpServletRequest request, @RequestBody AddNfcUidRequestModel requestModel) {
+        return ResponseBuilder.success(this.tapaxeAdminFacade.facadeEntryPointForAddNfcUid(request, requestModel), "Success");
     }
 }

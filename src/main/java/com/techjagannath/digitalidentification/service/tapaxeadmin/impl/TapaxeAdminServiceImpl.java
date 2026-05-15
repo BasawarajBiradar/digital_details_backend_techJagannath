@@ -1,20 +1,16 @@
 package com.techjagannath.digitalidentification.service.tapaxeadmin.impl;
 
-import com.techjagannath.digitalidentification.entity.AddressMaster;
-import com.techjagannath.digitalidentification.entity.RoleMaster;
-import com.techjagannath.digitalidentification.entity.SchoolMaster;
-import com.techjagannath.digitalidentification.entity.UserMaster;
+import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addnfcuid.AddNfcUidRequestModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addnfcuid.AddNfcUidResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddLTapaxeAdminResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addtapaxeadmin.AddTapaxeAdminRequestModel;
-import com.techjagannath.digitalidentification.repository.AddressMasterRepository;
-import com.techjagannath.digitalidentification.repository.RoleMasterRepository;
-import com.techjagannath.digitalidentification.repository.SchoolMasterRepository;
-import com.techjagannath.digitalidentification.repository.UserMasterRepository;
+import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.service.tapaxeadmin.TapaxeAdminService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,8 +29,9 @@ public class TapaxeAdminServiceImpl implements TapaxeAdminService {
     private final AddressMasterRepository addressMasterRepository;
     private final UserMasterRepository userMasterRepository;
     private final SchoolMasterRepository schoolMasterRepository;
+    private final NfcUidMasterRepository nfcUidMasterRepository;
 
-    public TapaxeAdminServiceImpl(CommonMethods commonMethods, PasswordEncoder passwordEncoder,
+    public TapaxeAdminServiceImpl(CommonMethods commonMethods, PasswordEncoder passwordEncoder, NfcUidMasterRepository nfcUidMasterRepository,
                                   RoleMasterRepository roleMasterRepository, AddressMasterRepository addressMasterRepository,
                                   UserMasterRepository userMasterRepository, SchoolMasterRepository schoolMasterRepository) {
         this.commonMethods = commonMethods;
@@ -43,6 +40,7 @@ public class TapaxeAdminServiceImpl implements TapaxeAdminService {
         this.addressMasterRepository = addressMasterRepository;
         this.userMasterRepository = userMasterRepository;
         this.schoolMasterRepository = schoolMasterRepository;
+        this.nfcUidMasterRepository = nfcUidMasterRepository;
     }
 
     @Override
@@ -89,5 +87,14 @@ public class TapaxeAdminServiceImpl implements TapaxeAdminService {
         UserMaster savedUser = this.userMasterRepository.save(adminUser);
 
         return new AddLTapaxeAdminResultModel(savedUser.getId());
+    }
+
+    @Override
+    public AddNfcUidResultModel serviceEntryPointForAddNfcUid(HttpServletRequest request, AddNfcUidRequestModel requestModel) {
+        UserMaster adminUser = this.commonMethods.extractUser(request);
+        NfcUidMaster nfcUidMaster = new NfcUidMaster(
+                null, requestModel.getUid(), null, adminUser, LocalDateTime.now());
+        NfcUidMaster savedNfcUidMaster = this.nfcUidMasterRepository.save(nfcUidMaster);
+        return new AddNfcUidResultModel("https://tapaxe.techjagannath.com"+"/student/"+savedNfcUidMaster.getUid());
     }
 }

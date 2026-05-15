@@ -1,6 +1,8 @@
 package com.techjagannath.digitalidentification.facade.tapaxeadmin.impl;
 
 import com.techjagannath.digitalidentification.facade.tapaxeadmin.TapaxeAdminFacade;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addnfcuid.AddNfcUidRequestModel;
+import com.techjagannath.digitalidentification.models.tapaxeadmin.addnfcuid.AddNfcUidResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolRequestModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschool.AddSchoolResultModel;
 import com.techjagannath.digitalidentification.models.tapaxeadmin.addschooladmin.AddSchoolAdminRequestModel;
@@ -34,4 +36,10 @@ public class TapaxeAdminFacadeImpl implements TapaxeAdminFacade {
     public AddLTapaxeAdminResultModel facadeEntryPointForAddTapaxeAdmin(AddTapaxeAdminRequestModel requestModel) {
         return this.tapaxeAdminService.serviceEntryPointForAddTapaxeAdmin(requestModel);
     }
+
+    @Override
+    public AddNfcUidResultModel facadeEntryPointForAddNfcUid(HttpServletRequest request, AddNfcUidRequestModel requestModel) {
+        return this.tapaxeAdminService.serviceEntryPointForAddNfcUid(request, requestModel);
+    }
+
 }
