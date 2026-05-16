@@ -2,6 +2,7 @@ package com.techjagannath.digitalidentification.service.schooladmin;
 
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,4 +14,6 @@ public interface SchoolAdminService {
     AddStudentBySchoolAdminResultModel serviceEntryPointForAddStudentBySchoolAdmin(HttpServletRequest request, AddStudentBySchoolAdminRequestModel requestModel);
 
     List<RetrieveStudentsListResultModel> serviceEntryPointForRetrieveStudentsList(HttpServletRequest request, RetrieveStudentsListRequestModel requestModel);
+
+    RetrieveStudentByIdResultModel serviceEntryPointForRetrieveStudentById(Long id);
 }

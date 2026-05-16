@@ -3,6 +3,7 @@ package com.techjagannath.digitalidentification.controller.schooladmin;
 import com.techjagannath.digitalidentification.facade.schooladmin.SchoolAdminFacade;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
@@ -36,5 +37,11 @@ public class SchoolAdminController {
     public ResponseEntity<ApiResponse<List<RetrieveStudentsListResultModel>>> retrieveStudentsList(
             HttpServletRequest request,@RequestBody RetrieveStudentsListRequestModel requestModel) {
         return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForRetrieveStudentsList(request, requestModel), "Success");
+    }
+
+    @GetMapping("/dashboard/student/{id}")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
+    public ResponseEntity<ApiResponse<RetrieveStudentByIdResultModel>> retrieveStudentById(@PathVariable("id") Long id) {
+        return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForRetrieveStudentById(id), "Success");
     }
 }

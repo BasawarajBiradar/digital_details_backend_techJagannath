@@ -4,6 +4,7 @@ import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
 import com.techjagannath.digitalidentification.repository.AddressMasterRepository;
@@ -17,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -92,5 +93,36 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
                     classLevel, division, registrationDate));
         }
         return resultModels;
+    }
+
+    @Override
+    public RetrieveStudentByIdResultModel serviceEntryPointForRetrieveStudentById(Long id) {
+        UserMaster studentUser = this.userMasterRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+        StudentDetailsMaster details = studentUser.getStudentDetails();
+
+        StringBuilder fullName = new StringBuilder(studentUser.getFirstName());
+        if (studentUser.getMiddleName() != null)
+            fullName.append(" ").append(studentUser.getMiddleName());
+        fullName.append(" ").append(studentUser.getLastName());
+
+        StringBuilder studentAddress = new StringBuilder();
+        if (details.getStudentAddress().getAddressLineOne() != null)
+            studentAddress.append(details.getStudentAddress().getAddressLineOne());
+        if (details.getStudentAddress().getAddressLineTwo() != null)
+            studentAddress.append(", ").append(details.getStudentAddress().getAddressLineTwo());
+        if (details.getStudentAddress().getCity() != null)
+            studentAddress.append(", ").append(details.getStudentAddress().getCity());
+        if (details.getStudentAddress().getPinCode() != null)
+            studentAddress.append(", ").append(details.getStudentAddress().getPinCode());
+        if (details.getStudentAddress().getState() != null)
+            studentAddress.append(", ").append(details.getStudentAddress().getState());
+        if (details.getStudentAddress().getCountry() != null)
+            studentAddress.append(", ").append(details.getStudentAddress().getCountry());
+
+        return new RetrieveStudentByIdResultModel(null, fullName.toString(), details.getClassLevel(),
+                details.getDivision(), details.getBloodGroup(), studentUser.getMobileNumber(), studentUser.getEmailId(),
+                details.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), studentAddress.toString(),
+                details.getEmergencyContactName(), details.getEmergencyContactNumber(), details.getEmergencyContactRelation(),
+                details.getAlternateContactNumber());
     }
 }
