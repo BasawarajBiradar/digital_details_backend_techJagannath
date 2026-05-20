@@ -9,14 +9,17 @@ import com.techjagannath.digitalidentification.models.student.registerstudentnfc
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
+import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,6 +39,8 @@ public class StudentServiceImpl implements StudentService {
     private final AddressMasterRepository addressMasterRepository;
     private final StudentDetailsMasterRepository studentDetailsMasterRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Utils s3Utils;
+    private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
     private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
@@ -44,6 +49,7 @@ public class StudentServiceImpl implements StudentService {
                               UserMasterRepository userMasterRepository, NfcUidMasterRepository nfcUidMasterRepository,
                               SchoolMasterRepository schoolMasterRepository, RoleMasterRepository roleMasterRepository,
                               AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
+                              StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
                               PasswordEncoder passwordEncoder) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
@@ -54,6 +60,8 @@ public class StudentServiceImpl implements StudentService {
         this.addressMasterRepository = addressMasterRepository;
         this.studentDetailsMasterRepository = studentDetailsMasterRepository;
         this.passwordEncoder = passwordEncoder;
+        this.s3Utils = s3Utils;
+        this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
     }
 
     @Override
@@ -193,5 +201,17 @@ public class StudentServiceImpl implements StudentService {
         for (SchoolMaster schoolMaster : schools)
             resultModels.add(new RetrieveSchoolListResultModel(schoolMaster.getId(), schoolMaster.getSchoolName()));
         return resultModels;
+    }
+
+    @Override
+    public StudentProfilePhotoUploadResultModel serviceEntryPointForUploadStudentProfileImages(HttpServletRequest request, MultipartFile file) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        String fileKey = this.s3Utils.uploadStudentProfileImage(file);
+
+        StudentProfilePhotoRepo profilePhoto = new StudentProfilePhotoRepo(null, user,
+                fileKey, file.getOriginalFilename(), file.getContentType(), LocalDateTime.now());
+        StudentProfilePhotoRepo savedProfilePhoto = this.studentProfilePhotoRepoRepository.save(profilePhoto);
+
+        return new StudentProfilePhotoUploadResultModel(true);
     }
 }

@@ -8,10 +8,12 @@ import com.techjagannath.digitalidentification.models.student.registerstudentnfc
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -52,6 +54,11 @@ public class StudentFacadeImpl implements StudentFacade {
     @Override
     public List<RetrieveSchoolListResultModel> facadeEntryPointForRetrieveSchoolList() {
         return this.studentService.serviceEntryPointForRetrieveSchoolList();
+    }
+
+    @Override
+    public StudentProfilePhotoUploadResultModel uploadStudentProfileImage(HttpServletRequest request, MultipartFile file) {
+        return this.studentService.serviceEntryPointForUploadStudentProfileImages(request, file);
     }
 
 }

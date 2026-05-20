@@ -8,6 +8,7 @@ import com.techjagannath.digitalidentification.models.student.registerstudentnfc
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -68,6 +70,13 @@ public class StudentController {
     @GetMapping("/uid/school-list")
     public ResponseEntity<ApiResponse<List<RetrieveSchoolListResultModel>>> retrieveSchoolList() {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveSchoolList(), "Success");
+    }
+
+    @PostMapping("/upload/profile-photo")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<StudentProfilePhotoUploadResultModel>> uploadStudentProfileImage(HttpServletRequest request
+            , @RequestParam("file") MultipartFile file) {
+        return ResponseBuilder.success(studentFacade.uploadStudentProfileImage(request, file), "Success");
     }
 
 }
