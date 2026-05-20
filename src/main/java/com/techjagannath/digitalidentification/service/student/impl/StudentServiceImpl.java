@@ -90,8 +90,12 @@ public class StudentServiceImpl implements StudentService {
         if (student.getStudentAddress().getCountry() != null)
             studentAddress.append(", ").append(student.getStudentAddress().getCountry());
 
+        StudentProfilePhotoRepo studentProfile = this.studentProfilePhotoRepoRepository.findByMappedUserAndIsActive(user, true);
+
         return new RetrieveStudentHomePageInfoCardDetailsResultModel(
-                school.getSchoolName(), null, null, fullName.toString(), student.getClassLevel(), student.getDivision(),
+                school.getSchoolName(), null,
+                studentProfile != null ? this.s3Utils.generatePreSignedUrl(studentProfile.getFileUrl()) : null
+                , fullName.toString(), student.getClassLevel(), student.getDivision(),
                 student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(),
                 student.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), studentAddress.toString(),
                 student.getEmergencyContactName(), student.getEmergencyContactNumber(),
@@ -206,11 +210,19 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentProfilePhotoUploadResultModel serviceEntryPointForUploadStudentProfileImages(HttpServletRequest request, MultipartFile file) {
         UserMaster user = this.commonMethods.extractUser(request);
+        StudentProfilePhotoRepo oldImage = this.studentProfilePhotoRepoRepository.findByMappedUserAndIsActive(user, true);
+
+        if (oldImage != null) {
+            oldImage.setIsActive(false);
+            this.studentProfilePhotoRepoRepository.save(oldImage);
+            this.s3Utils.deleteFile(oldImage.getFileUrl());
+        }
+
         String fileKey = this.s3Utils.uploadStudentProfileImage(file);
 
         StudentProfilePhotoRepo profilePhoto = new StudentProfilePhotoRepo(null, user,
-                fileKey, file.getOriginalFilename(), file.getContentType(), LocalDateTime.now());
-        StudentProfilePhotoRepo savedProfilePhoto = this.studentProfilePhotoRepoRepository.save(profilePhoto);
+                fileKey, file.getOriginalFilename(), file.getContentType(), LocalDateTime.now(), true);
+        this.studentProfilePhotoRepoRepository.save(profilePhoto);
 
         return new StudentProfilePhotoUploadResultModel(true);
     }

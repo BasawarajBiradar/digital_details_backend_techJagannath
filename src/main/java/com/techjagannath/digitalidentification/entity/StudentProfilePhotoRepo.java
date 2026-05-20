@@ -33,4 +33,7 @@ public class StudentProfilePhotoRepo {
 
     @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 }
