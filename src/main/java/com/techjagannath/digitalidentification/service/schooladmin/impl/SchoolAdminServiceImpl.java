@@ -7,12 +7,10 @@ import com.techjagannath.digitalidentification.models.schooladmin.addstudent.Add
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
-import com.techjagannath.digitalidentification.repository.AddressMasterRepository;
-import com.techjagannath.digitalidentification.repository.RoleMasterRepository;
-import com.techjagannath.digitalidentification.repository.StudentDetailsMasterRepository;
-import com.techjagannath.digitalidentification.repository.UserMasterRepository;
+import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
+import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,16 +30,21 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
     private final StudentDetailsMasterRepository studentDetailsMasterRepository;
     private final AddressMasterRepository addressMasterRepository;
+    private final S3Utils s3Utils;
+    private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
 
     public SchoolAdminServiceImpl(CommonMethods commonMethods, UserMasterRepository userMasterRepository,
-                                  PasswordEncoder passwordEncoder, RoleMasterRepository roleMasterRepository,
-                                  StudentDetailsMasterRepository studentDetailsMasterRepository, AddressMasterRepository addressMasterRepository) {
+                                  PasswordEncoder passwordEncoder, RoleMasterRepository roleMasterRepository, S3Utils s3Utils,
+                                  StudentDetailsMasterRepository studentDetailsMasterRepository, AddressMasterRepository addressMasterRepository,
+                                  StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository) {
         this.commonMethods = commonMethods;
         this.userMasterRepository = userMasterRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleMasterRepository = roleMasterRepository;
         this.studentDetailsMasterRepository = studentDetailsMasterRepository;
         this.addressMasterRepository = addressMasterRepository;
+        this.s3Utils = s3Utils;
+        this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
     }
 
     @Override
@@ -119,7 +122,10 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         if (details.getStudentAddress().getCountry() != null)
             studentAddress.append(", ").append(details.getStudentAddress().getCountry());
 
-        return new RetrieveStudentByIdResultModel(null, fullName.toString(), details.getClassLevel(),
+        StudentProfilePhotoRepo studentProfile = this.studentProfilePhotoRepoRepository.findByMappedUserAndIsActive(studentUser, true);
+
+        return new RetrieveStudentByIdResultModel(studentProfile != null ? this.s3Utils.generatePreSignedUrl(studentProfile.getFileUrl()) : null
+                , fullName.toString(), details.getClassLevel(),
                 details.getDivision(), details.getBloodGroup(), studentUser.getMobileNumber(), studentUser.getEmailId(),
                 details.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), studentAddress.toString(),
                 details.getEmergencyContactName(), details.getEmergencyContactNumber(), details.getEmergencyContactRelation(),

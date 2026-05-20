@@ -146,8 +146,12 @@ public class StudentServiceImpl implements StudentService {
         if (student.getStudentAddress().getCountry() != null)
             studentAddress.append(", ").append(student.getStudentAddress().getCountry());
 
+        StudentProfilePhotoRepo studentProfile = this.studentProfilePhotoRepoRepository.findByMappedUserAndIsActive(user, true);
+
         return new RetrieveStudentNfcTapResultModel(
-                school.getSchoolName(), null, null, fullName.toString(), student.getClassLevel(), student.getDivision(),
+                school.getSchoolName(), null,
+                studentProfile != null ? this.s3Utils.generatePreSignedUrl(studentProfile.getFileUrl()) : null
+                , fullName.toString(), student.getClassLevel(), student.getDivision(),
                 student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(),
                 student.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), studentAddress.toString(),
                 student.getEmergencyContactName(), student.getEmergencyContactNumber(),
