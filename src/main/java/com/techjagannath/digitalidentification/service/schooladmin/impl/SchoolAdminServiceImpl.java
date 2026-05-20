@@ -7,6 +7,7 @@ import com.techjagannath.digitalidentification.models.schooladmin.addstudent.Add
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
@@ -14,6 +15,7 @@ import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,11 +34,13 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     private final AddressMasterRepository addressMasterRepository;
     private final S3Utils s3Utils;
     private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
+    private final SchoolLogoRepoRepository schoolLogoRepoRepository;
 
     public SchoolAdminServiceImpl(CommonMethods commonMethods, UserMasterRepository userMasterRepository,
                                   PasswordEncoder passwordEncoder, RoleMasterRepository roleMasterRepository, S3Utils s3Utils,
                                   StudentDetailsMasterRepository studentDetailsMasterRepository, AddressMasterRepository addressMasterRepository,
-                                  StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository) {
+                                  StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository,
+                                  SchoolLogoRepoRepository schoolLogoRepoRepository) {
         this.commonMethods = commonMethods;
         this.userMasterRepository = userMasterRepository;
         this.passwordEncoder = passwordEncoder;
@@ -45,6 +49,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         this.addressMasterRepository = addressMasterRepository;
         this.s3Utils = s3Utils;
         this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
+        this.schoolLogoRepoRepository = schoolLogoRepoRepository;
     }
 
     @Override
@@ -130,5 +135,27 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
                 details.getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), studentAddress.toString(),
                 details.getEmergencyContactName(), details.getEmergencyContactNumber(), details.getEmergencyContactRelation(),
                 details.getAlternateContactNumber());
+    }
+
+    @Override
+    public SchoolLogoUploadResultModel serviceEntryPointForUploadSchoolImage(HttpServletRequest request, MultipartFile file) {
+        UserMaster adminUser = this.commonMethods.extractUser(request);
+        SchoolMaster school = adminUser.getSchool();
+        SchoolLogoRepo oldImage = this.schoolLogoRepoRepository.findBySchoolAndIsActive(school, true);
+
+        if (oldImage != null) {
+            oldImage.setIsActive(false);
+            this.schoolLogoRepoRepository.save(oldImage);
+            this.s3Utils.deleteFile(oldImage.getFileUrl());
+        }
+
+        String fileKey = this.s3Utils.uploadSchoolLogo(file);
+
+        SchoolLogoRepo profilePhoto = new SchoolLogoRepo(null, school,
+                fileKey, file.getOriginalFilename(), file.getContentType(), adminUser, LocalDateTime.now(), true);
+
+        this.schoolLogoRepoRepository.save(profilePhoto);
+
+        return new SchoolLogoUploadResultModel(true);
     }
 }

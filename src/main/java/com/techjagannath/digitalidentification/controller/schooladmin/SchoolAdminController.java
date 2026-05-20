@@ -6,12 +6,14 @@ import com.techjagannath.digitalidentification.models.schooladmin.addstudent.Add
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -44,4 +46,13 @@ public class SchoolAdminController {
     public ResponseEntity<ApiResponse<RetrieveStudentByIdResultModel>> retrieveStudentById(@PathVariable("id") Long id) {
         return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForRetrieveStudentById(id), "Success");
     }
+
+
+    @PostMapping("/upload/school-logo")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
+    public ResponseEntity<ApiResponse<SchoolLogoUploadResultModel>> uploadSchoolLogo(HttpServletRequest request
+            , @RequestParam("file") MultipartFile file) {
+        return ResponseBuilder.success(this.schoolAdminFacade.uploadSchoolLogo(request, file), "Success");
+    }
+
 }

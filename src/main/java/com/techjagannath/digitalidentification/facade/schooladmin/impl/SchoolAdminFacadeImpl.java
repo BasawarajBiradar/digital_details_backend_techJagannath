@@ -6,9 +6,11 @@ import com.techjagannath.digitalidentification.models.schooladmin.addstudent.Add
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,5 +37,10 @@ public class SchoolAdminFacadeImpl implements SchoolAdminFacade {
     @Override
     public RetrieveStudentByIdResultModel facadeEntryPointForRetrieveStudentById(Long id) {
         return this.schoolAdminService.serviceEntryPointForRetrieveStudentById(id);
+    }
+
+    @Override
+    public SchoolLogoUploadResultModel uploadSchoolLogo(HttpServletRequest request, MultipartFile file) {
+        return this.schoolAdminService.serviceEntryPointForUploadSchoolImage(request, file);
     }
 }
