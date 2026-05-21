@@ -5,6 +5,7 @@ import com.techjagannath.digitalidentification.models.schooladmin.addstudent.Add
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,4 +21,6 @@ public interface SchoolAdminService {
     RetrieveStudentByIdResultModel serviceEntryPointForRetrieveStudentById(Long id);
 
     SchoolLogoUploadResultModel serviceEntryPointForUploadSchoolImage(HttpServletRequest request, MultipartFile file);
+
+    SchoolLogoRetrieveResultModel serviceEntryPointForRetrieveSchoolLogo(HttpServletRequest request);
 }

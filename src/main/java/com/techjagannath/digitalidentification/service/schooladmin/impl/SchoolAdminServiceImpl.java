@@ -7,6 +7,7 @@ import com.techjagannath.digitalidentification.models.schooladmin.addstudent.Add
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
@@ -157,5 +158,14 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         this.schoolLogoRepoRepository.save(profilePhoto);
 
         return new SchoolLogoUploadResultModel(true);
+    }
+
+    @Override
+    public SchoolLogoRetrieveResultModel serviceEntryPointForRetrieveSchoolLogo(HttpServletRequest request) {
+        UserMaster adminUser = this.commonMethods.extractUser(request);
+        SchoolMaster school = adminUser.getSchool();
+        SchoolLogoRepo schoolImage = this.schoolLogoRepoRepository.findBySchoolAndIsActive(school, true);
+        String url = this.s3Utils.generatePreSignedUrl(schoolImage.getFileUrl());
+        return new SchoolLogoRetrieveResultModel(schoolImage.getContentType(), url);
     }
 }

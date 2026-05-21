@@ -6,6 +6,7 @@ import com.techjagannath.digitalidentification.models.schooladmin.addstudent.Add
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
@@ -53,6 +54,12 @@ public class SchoolAdminController {
     public ResponseEntity<ApiResponse<SchoolLogoUploadResultModel>> uploadSchoolLogo(HttpServletRequest request
             , @RequestParam("file") MultipartFile file) {
         return ResponseBuilder.success(this.schoolAdminFacade.uploadSchoolLogo(request, file), "Success");
+    }
+
+    @GetMapping("/retrieve/school-logo")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
+    public ResponseEntity<ApiResponse<SchoolLogoRetrieveResultModel>> retrieveSchoolLogo(HttpServletRequest request) {
+        return ResponseBuilder.success(this.schoolAdminFacade.retrieveSchoolLogo(request), "Success");
     }
 
 }
