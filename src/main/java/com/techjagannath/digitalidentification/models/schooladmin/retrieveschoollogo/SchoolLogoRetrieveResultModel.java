@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class SchoolLogoRetrieveResultModel {
     private String fileName;
     private String fileUrl;
+    private String schoolName;
 }

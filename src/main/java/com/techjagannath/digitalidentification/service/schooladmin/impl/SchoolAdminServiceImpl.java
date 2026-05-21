@@ -165,7 +165,10 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         UserMaster adminUser = this.commonMethods.extractUser(request);
         SchoolMaster school = adminUser.getSchool();
         SchoolLogoRepo schoolImage = this.schoolLogoRepoRepository.findBySchoolAndIsActive(school, true);
-        String url = this.s3Utils.generatePreSignedUrl(schoolImage.getFileUrl());
-        return new SchoolLogoRetrieveResultModel(schoolImage.getContentType(), url);
+        String url = null;
+        if (schoolImage != null)
+            url = this.s3Utils.generatePreSignedUrl(schoolImage.getFileUrl());
+        return new SchoolLogoRetrieveResultModel(
+                schoolImage != null ? schoolImage.getContentType() : null, url, school.getSchoolName());
     }
 }

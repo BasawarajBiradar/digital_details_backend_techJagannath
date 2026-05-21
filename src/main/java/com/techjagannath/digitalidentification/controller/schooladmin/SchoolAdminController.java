@@ -56,7 +56,7 @@ public class SchoolAdminController {
         return ResponseBuilder.success(this.schoolAdminFacade.uploadSchoolLogo(request, file), "Success");
     }
 
-    @GetMapping("/retrieve/school-logo")
+    @GetMapping("/retrieve/school-logo-name")
     @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
     public ResponseEntity<ApiResponse<SchoolLogoRetrieveResultModel>> retrieveSchoolLogo(HttpServletRequest request) {
         return ResponseBuilder.success(this.schoolAdminFacade.retrieveSchoolLogo(request), "Success");
