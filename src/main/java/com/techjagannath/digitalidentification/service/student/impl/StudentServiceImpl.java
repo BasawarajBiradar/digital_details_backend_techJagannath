@@ -41,6 +41,7 @@ public class StudentServiceImpl implements StudentService {
     private final PasswordEncoder passwordEncoder;
     private final S3Utils s3Utils;
     private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
+    private final SchoolLogoRepoRepository schoolLogoRepoRepository;
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
     private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
@@ -50,7 +51,7 @@ public class StudentServiceImpl implements StudentService {
                               SchoolMasterRepository schoolMasterRepository, RoleMasterRepository roleMasterRepository,
                               AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
-                              PasswordEncoder passwordEncoder) {
+                              PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
@@ -62,6 +63,7 @@ public class StudentServiceImpl implements StudentService {
         this.passwordEncoder = passwordEncoder;
         this.s3Utils = s3Utils;
         this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
+        this.schoolLogoRepoRepository = schoolLogoRepoRepository;
     }
 
     @Override
@@ -91,9 +93,10 @@ public class StudentServiceImpl implements StudentService {
             studentAddress.append(", ").append(student.getStudentAddress().getCountry());
 
         StudentProfilePhotoRepo studentProfile = this.studentProfilePhotoRepoRepository.findByMappedUserAndIsActive(user, true);
+        SchoolLogoRepo schoolLogo = this.schoolLogoRepoRepository.findBySchoolAndIsActive(school, true);
 
         return new RetrieveStudentHomePageInfoCardDetailsResultModel(
-                school.getSchoolName(), null,
+                school.getSchoolName(), schoolLogo != null ? this.s3Utils.generatePreSignedUrl(schoolLogo.getFileUrl()) : null,
                 studentProfile != null ? this.s3Utils.generatePreSignedUrl(studentProfile.getFileUrl()) : null
                 , fullName.toString(), student.getClassLevel(), student.getDivision(),
                 student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(),
@@ -147,9 +150,10 @@ public class StudentServiceImpl implements StudentService {
             studentAddress.append(", ").append(student.getStudentAddress().getCountry());
 
         StudentProfilePhotoRepo studentProfile = this.studentProfilePhotoRepoRepository.findByMappedUserAndIsActive(user, true);
+        SchoolLogoRepo schoolLogo = this.schoolLogoRepoRepository.findBySchoolAndIsActive(school, true);
 
         return new RetrieveStudentNfcTapResultModel(
-                school.getSchoolName(), null,
+                school.getSchoolName(), schoolLogo != null ? this.s3Utils.generatePreSignedUrl(schoolLogo.getFileUrl()) : null,
                 studentProfile != null ? this.s3Utils.generatePreSignedUrl(studentProfile.getFileUrl()) : null
                 , fullName.toString(), student.getClassLevel(), student.getDivision(),
                 student.getBloodGroup(), user.getMobileNumber(), user.getEmailId(),
