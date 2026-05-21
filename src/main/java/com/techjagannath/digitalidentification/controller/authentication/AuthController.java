@@ -7,8 +7,10 @@ import com.techjagannath.digitalidentification.models.auth.AuthResultModel;
 import com.techjagannath.digitalidentification.repository.UserMasterRepository;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,14 +34,26 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResultModel>> login(@RequestBody AuthRequest request) {
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmailId(),
-                        request.getPassword()
-                )
-        );
-        UserMaster user = this. userMasterRepository.findByEmailId(request.getEmailId());
+        UserMaster user = userMasterRepository.findByEmailId(request.getEmailId());
+
+        if (user == null) {return ResponseBuilder.error("Invalid email id", "401",HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmailId(),
+                            request.getPassword()
+                    )
+            );
+
+        } catch (BadCredentialsException ex) {
+            return ResponseBuilder.error("Wrong password", "401", HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = jwtUtil.generateToken(request.getEmailId());
+
         return ResponseBuilder.success(
-                new AuthResultModel(jwtUtil.generateToken(request.getEmailId()), user.getRole().getRole()), "Success");
+                new AuthResultModel(token, user.getRole().getRole()), "Success");
     }
 }
