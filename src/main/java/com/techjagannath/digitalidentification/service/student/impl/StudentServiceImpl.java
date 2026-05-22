@@ -121,7 +121,8 @@ public class StudentServiceImpl implements StudentService {
         List<RetrieveStudentHomePageTodayEntriesResultModel> resultModels = new ArrayList<>();
         for (NfcCardTapsHistory entry : entries)
             resultModels.add(new RetrieveStudentHomePageTodayEntriesResultModel(
-                    entry.getTimeStamp().format(dateFormatter), entry.getTimeStamp().format(timeFormatter), null));
+                    entry.getTimeStamp().format(dateFormatter), entry.getTimeStamp().format(timeFormatter),
+                    entry.getDevice().getRoomNumber() != null ? entry.getDevice().getSchool().getSchoolName() + entry.getDevice().getRoomNumber() : entry.getDevice().getSchool().getSchoolName()));
 
         return resultModels;
     }
