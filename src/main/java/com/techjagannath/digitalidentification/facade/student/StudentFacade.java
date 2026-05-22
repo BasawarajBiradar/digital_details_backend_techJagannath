@@ -3,6 +3,8 @@ package com.techjagannath.digitalidentification.facade.student;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
+import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapRequestModel;
+import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
@@ -28,4 +30,6 @@ public interface StudentFacade {
     List<RetrieveSchoolListResultModel> facadeEntryPointForRetrieveSchoolList();
 
     StudentProfilePhotoUploadResultModel uploadStudentProfileImage(HttpServletRequest request, MultipartFile file);
+
+    RecordNfcTapResultModel facadeEntryPointForRecordNfcTap(String uid, RecordNfcTapRequestModel requestModel);
 }

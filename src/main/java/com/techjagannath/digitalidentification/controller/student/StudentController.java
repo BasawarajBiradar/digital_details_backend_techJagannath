@@ -4,6 +4,8 @@ import com.techjagannath.digitalidentification.facade.student.StudentFacade;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
+import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapRequestModel;
+import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
@@ -77,6 +79,12 @@ public class StudentController {
     public ResponseEntity<ApiResponse<StudentProfilePhotoUploadResultModel>> uploadStudentProfileImage(HttpServletRequest request
             , @RequestParam("file") MultipartFile file) {
         return ResponseBuilder.success(studentFacade.uploadStudentProfileImage(request, file), "Success");
+    }
+
+    @PostMapping("/uid/record-tap/{uid}")
+    public ResponseEntity<ApiResponse<RecordNfcTapResultModel>> registerStudentNfcUid(@PathVariable("uid") String uid
+            , @RequestBody RecordNfcTapRequestModel requestModel) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRecordNfcTap(uid, requestModel), "Success");
     }
 
 }

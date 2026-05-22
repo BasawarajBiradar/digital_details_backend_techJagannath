@@ -23,8 +23,11 @@ public class NfcCardTapsHistory {
     private UserMaster studentUser;
 
     private String uid;
-    @Column(name = "device_id")
-    private String deviceId;
+
+    @JoinColumn(name = "device")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private NfcReaderDeviceMaster device;
+
     @Column(name = "time_stamp")
     private LocalDateTime timeStamp;
 }

@@ -4,6 +4,8 @@ import com.techjagannath.digitalidentification.facade.student.StudentFacade;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
+import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapRequestModel;
+import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
@@ -59,6 +61,11 @@ public class StudentFacadeImpl implements StudentFacade {
     @Override
     public StudentProfilePhotoUploadResultModel uploadStudentProfileImage(HttpServletRequest request, MultipartFile file) {
         return this.studentService.serviceEntryPointForUploadStudentProfileImages(request, file);
+    }
+
+    @Override
+    public RecordNfcTapResultModel facadeEntryPointForRecordNfcTap(String uid, RecordNfcTapRequestModel requestModel) {
+        return this.studentService.serviceEntryPointForRecordNfcTap(uid, requestModel);
     }
 
 }

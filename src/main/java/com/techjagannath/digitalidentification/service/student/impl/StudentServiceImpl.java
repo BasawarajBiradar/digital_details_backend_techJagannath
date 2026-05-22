@@ -5,6 +5,8 @@ import com.techjagannath.digitalidentification.exception.ResourceNotFoundExcepti
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
+import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapRequestModel;
+import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
@@ -42,6 +44,7 @@ public class StudentServiceImpl implements StudentService {
     private final S3Utils s3Utils;
     private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
     private final SchoolLogoRepoRepository schoolLogoRepoRepository;
+    private final NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository;
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
     private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
@@ -51,7 +54,8 @@ public class StudentServiceImpl implements StudentService {
                               SchoolMasterRepository schoolMasterRepository, RoleMasterRepository roleMasterRepository,
                               AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
-                              PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository) {
+                              PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository,
+                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
@@ -64,6 +68,7 @@ public class StudentServiceImpl implements StudentService {
         this.s3Utils = s3Utils;
         this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
         this.schoolLogoRepoRepository = schoolLogoRepoRepository;
+        this.nfcReaderDeviceMasterRepository = nfcReaderDeviceMasterRepository;
     }
 
     @Override
@@ -233,5 +238,19 @@ public class StudentServiceImpl implements StudentService {
         this.studentProfilePhotoRepoRepository.save(profilePhoto);
 
         return new StudentProfilePhotoUploadResultModel(true);
+    }
+
+    @Override
+    public RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, RecordNfcTapRequestModel requestModel) {
+        NfcReaderDeviceMaster deviceMaster =
+                this.nfcReaderDeviceMasterRepository
+                        .findById(requestModel.getDeviceId()).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+
+        NfcUidMaster nfc = this.nfcUidMasterRepository.findByUid(uid).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+        NfcCardTapsHistory history = new NfcCardTapsHistory(null, nfc.getMappedUser(),
+                nfc.getUid(), deviceMaster, LocalDateTime.now());
+        this.nfcCardTapsHistoryRepository.save(history);
+
+        return new RecordNfcTapResultModel(true);
     }
 }
