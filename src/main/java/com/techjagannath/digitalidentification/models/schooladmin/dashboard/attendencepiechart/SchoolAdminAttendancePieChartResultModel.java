@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SchoolAdminAttendancePieChartResultModel {
-    private Long presentStudents;
-    private Long absentStudents;
+    private String key;
+    private Integer value;
 }

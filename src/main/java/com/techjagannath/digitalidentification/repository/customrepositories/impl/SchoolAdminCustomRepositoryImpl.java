@@ -16,7 +16,7 @@ public class SchoolAdminCustomRepositoryImpl implements SchoolAdminCustomReposit
     private EntityManager em;
 
     @Override
-    public Long retrieveAttendancePieChartData(Long schoolId) {
+    public Integer retrieveAttendancePieChartData(Long schoolId) {
         LocalDateTime timeStamp = LocalDate.now().atStartOfDay();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT COUNT(DISTINCT nch.student) FROM nfc_card_taps_history nch ")
@@ -26,6 +26,6 @@ public class SchoolAdminCustomRepositoryImpl implements SchoolAdminCustomReposit
         Query query = em.createNativeQuery(sql.toString());
         query.setParameter("schoolId", schoolId);
         query.setParameter("timeStamp", timeStamp);
-        return Long.parseLong(query.getSingleResult().toString());
+        return Integer.parseInt(query.getSingleResult().toString());
     }
 }

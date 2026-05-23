@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -180,9 +181,13 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     @Override
     public SchoolAdminAttendancePieChartResultModelWrapper serviceEntryPointForRetrieveAttendancePieChartData(HttpServletRequest request) {
         UserMaster user = this.commonMethods.extractUser(request);
-        Long presentCount = this.schoolAdminCustomRepository.retrieveAttendancePieChartData(user.getSchool().getId());
+        Integer presentCount = this.schoolAdminCustomRepository.retrieveAttendancePieChartData(user.getSchool().getId());
         Integer totalCount = this.userMasterRepository.countBySchoolAndRole_Id(user.getSchool(), 3);
+        List<SchoolAdminAttendancePieChartResultModel> result = new LinkedList<>();
+        result.add(new SchoolAdminAttendancePieChartResultModel("presentCount", presentCount));
+        result.add(new SchoolAdminAttendancePieChartResultModel("absentCount", totalCount - presentCount));
         return new SchoolAdminAttendancePieChartResultModelWrapper(
-                totalCount, new SchoolAdminAttendancePieChartResultModel(presentCount,totalCount - presentCount));
+                totalCount, result);
+
     }
 }
