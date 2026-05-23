@@ -2,6 +2,7 @@ package com.techjagannath.digitalidentification.facade.schooladmin;
 
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModelWrapper;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
@@ -23,4 +24,6 @@ public interface SchoolAdminFacade {
     SchoolLogoUploadResultModel uploadSchoolLogo(HttpServletRequest request, MultipartFile file);
 
     SchoolLogoRetrieveResultModel retrieveSchoolLogo(HttpServletRequest request);
+
+    SchoolAdminAttendancePieChartResultModelWrapper retrieveAttendancePieChartData(HttpServletRequest request);
 }

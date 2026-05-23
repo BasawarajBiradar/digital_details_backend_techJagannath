@@ -4,12 +4,15 @@ import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModelWrapper;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.repository.*;
+import com.techjagannath.digitalidentification.repository.customrepositories.SchoolAdminCustomRepository;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
@@ -36,12 +39,13 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     private final S3Utils s3Utils;
     private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
     private final SchoolLogoRepoRepository schoolLogoRepoRepository;
+    private final SchoolAdminCustomRepository schoolAdminCustomRepository;
 
     public SchoolAdminServiceImpl(CommonMethods commonMethods, UserMasterRepository userMasterRepository,
                                   PasswordEncoder passwordEncoder, RoleMasterRepository roleMasterRepository, S3Utils s3Utils,
                                   StudentDetailsMasterRepository studentDetailsMasterRepository, AddressMasterRepository addressMasterRepository,
                                   StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository,
-                                  SchoolLogoRepoRepository schoolLogoRepoRepository) {
+                                  SchoolLogoRepoRepository schoolLogoRepoRepository, SchoolAdminCustomRepository schoolAdminCustomRepository) {
         this.commonMethods = commonMethods;
         this.userMasterRepository = userMasterRepository;
         this.passwordEncoder = passwordEncoder;
@@ -51,6 +55,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         this.s3Utils = s3Utils;
         this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
         this.schoolLogoRepoRepository = schoolLogoRepoRepository;
+        this.schoolAdminCustomRepository = schoolAdminCustomRepository;
     }
 
     @Override
@@ -170,5 +175,14 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
             url = this.s3Utils.generatePreSignedUrl(schoolImage.getFileUrl());
         return new SchoolLogoRetrieveResultModel(
                 schoolImage != null ? schoolImage.getContentType() : null, url, school.getSchoolName());
+    }
+
+    @Override
+    public SchoolAdminAttendancePieChartResultModelWrapper serviceEntryPointForRetrieveAttendancePieChartData(HttpServletRequest request) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        Long presentCount = this.schoolAdminCustomRepository.retrieveAttendancePieChartData(user.getSchool().getId());
+        Integer totalCount = this.userMasterRepository.countBySchoolAndRole_Id(user.getSchool(), 3);
+        return new SchoolAdminAttendancePieChartResultModelWrapper(
+                totalCount, new SchoolAdminAttendancePieChartResultModel(presentCount,totalCount - presentCount));
     }
 }
