@@ -3,6 +3,7 @@ package com.techjagannath.digitalidentification.facade.schooladmin.impl;
 import com.techjagannath.digitalidentification.facade.schooladmin.SchoolAdminFacade;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModelWrapper;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
@@ -52,7 +53,7 @@ public class SchoolAdminFacadeImpl implements SchoolAdminFacade {
     }
 
     @Override
-    public SchoolAdminAttendancePieChartResultModelWrapper retrieveAttendancePieChartData(HttpServletRequest request) {
-        return this.schoolAdminService.serviceEntryPointForRetrieveAttendancePieChartData(request);
+    public SchoolAdminAttendancePieChartResultModelWrapper retrieveAttendancePieChartData(HttpServletRequest request, SchoolAdminAttendancePieChartRequestModel requestModel) {
+        return this.schoolAdminService.serviceEntryPointForRetrieveAttendancePieChartData(request, requestModel);
     }
 }

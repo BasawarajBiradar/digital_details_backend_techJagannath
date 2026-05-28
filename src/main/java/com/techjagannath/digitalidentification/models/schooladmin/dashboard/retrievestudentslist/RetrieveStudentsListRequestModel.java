@@ -4,5 +4,7 @@ import lombok.Data;
 
 @Data
 public class RetrieveStudentsListRequestModel {
-    private Integer size;
+    private String classLevel;
+    private String division;
+    private Integer roleId;
 }

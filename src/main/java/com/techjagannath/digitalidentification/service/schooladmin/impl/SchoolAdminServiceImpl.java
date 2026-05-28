@@ -4,6 +4,7 @@ import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModelWrapper;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
@@ -88,7 +89,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     public List<RetrieveStudentsListResultModel> serviceEntryPointForRetrieveStudentsList(HttpServletRequest request, RetrieveStudentsListRequestModel requestModel) {
         UserMaster adminUser = this.commonMethods.extractUser(request);
         List<Object[]> resultList = this.userMasterRepository.retrieveStudentsListBySchool(
-                adminUser.getSchool().getId(), requestModel.getSize());
+                adminUser.getSchool().getId(), null, requestModel.getRoleId(), requestModel.getClassLevel(), requestModel.getDivision());
         List<RetrieveStudentsListResultModel> resultModels = new LinkedList<>();
         for (Object[] res : resultList) {
             Long id = Long.parseLong(res[0].toString());
@@ -179,10 +180,13 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     }
 
     @Override
-    public SchoolAdminAttendancePieChartResultModelWrapper serviceEntryPointForRetrieveAttendancePieChartData(HttpServletRequest request) {
+    public SchoolAdminAttendancePieChartResultModelWrapper serviceEntryPointForRetrieveAttendancePieChartData(HttpServletRequest request
+            , SchoolAdminAttendancePieChartRequestModel requestModel) {
         UserMaster user = this.commonMethods.extractUser(request);
-        Integer presentCount = this.schoolAdminCustomRepository.retrieveAttendancePieChartData(user.getSchool().getId());
-        Integer totalCount = this.userMasterRepository.countBySchoolAndRole_Id(user.getSchool(), 3);
+        Integer presentCount = this.schoolAdminCustomRepository.retrieveAttendancePieChartData(user.getSchool().getId(), requestModel.getRoleId(),
+                requestModel.getClassLevel(), requestModel.getDivision());
+        Integer totalCount = this.schoolAdminCustomRepository.totalCountOfStudents(user.getSchool().getId(), requestModel.getRoleId(),
+                requestModel.getClassLevel(), requestModel.getDivision());
         List<SchoolAdminAttendancePieChartResultModel> result = new LinkedList<>();
         result.add(new SchoolAdminAttendancePieChartResultModel("presentCount", presentCount));
         result.add(new SchoolAdminAttendancePieChartResultModel("absentCount", totalCount - presentCount));
