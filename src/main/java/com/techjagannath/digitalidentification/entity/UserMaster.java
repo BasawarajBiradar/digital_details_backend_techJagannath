@@ -53,6 +53,9 @@ public class UserMaster {
     @Column(name = "uid", unique = true)
     private String uid;
 
+    @Column(name = "is_present", nullable = false)
+    private Boolean isPresent = false; // for attendance
+
     /** logging details */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by")

@@ -18,6 +18,7 @@ import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -179,6 +180,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public RegisterStudentUidResultModel serviceEntryPointForRegisterStudentNfcUid(String uid, RegisterStudentUidRequestModel requestModel) {
         Optional<NfcUidMaster> result = this.nfcUidMasterRepository.findByUid(uid);
         if (result.isEmpty())
@@ -201,7 +203,7 @@ public class StudentServiceImpl implements StudentService {
 
         UserMaster newUser = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(), requestModel.getMiddleName(),
                 requestModel.getMobileNumber(), passwordEncoder.encode(requestModel.getPassword()),
-                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, uid,
+                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, uid, false,
                 null, LocalDateTime.now());
         UserMaster savedUser = this.userMasterRepository.save(newUser);
 
@@ -222,6 +224,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public StudentProfilePhotoUploadResultModel serviceEntryPointForUploadStudentProfileImages(HttpServletRequest request, MultipartFile file) {
         UserMaster user = this.commonMethods.extractUser(request);
         StudentProfilePhotoRepo oldImage = this.studentProfilePhotoRepoRepository.findByMappedUserAndIsActive(user, true);
@@ -242,6 +245,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, RecordNfcTapRequestModel requestModel) {
         NfcReaderDeviceMaster deviceMaster =
                 this.nfcReaderDeviceMasterRepository
@@ -250,6 +254,12 @@ public class StudentServiceImpl implements StudentService {
         NfcUidMaster nfc = this.nfcUidMasterRepository.findByUid(uid).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
         NfcCardTapsHistory history = new NfcCardTapsHistory(null, nfc.getMappedUser(),
                 nfc.getUid(), deviceMaster, LocalDateTime.now());
+
+        if (!Boolean.TRUE.equals(nfc.getMappedUser().getIsPresent())) {
+            nfc.getMappedUser().setIsPresent(true);
+            this.userMasterRepository.save(nfc.getMappedUser());
+        }
+
         this.nfcCardTapsHistoryRepository.save(history);
 
         return new RecordNfcTapResultModel(true);

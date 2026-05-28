@@ -77,7 +77,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
 
         UserMaster newUser = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(), requestModel.getMiddleName(),
                 requestModel.getMobileNumber(), passwordEncoder.encode(requestModel.getFirstName()+"@"+requestModel.getBirthDate().toString()),
-                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, null,
+                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, null, false,
                 adminUser, LocalDateTime.now());
 
         this.userMasterRepository.save(newUser);
