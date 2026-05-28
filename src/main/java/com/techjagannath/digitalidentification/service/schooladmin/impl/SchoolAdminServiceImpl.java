@@ -99,7 +99,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
             String classLevel = res[4].toString();
             String division = res[5] == null ? null : res[5].toString();
             String registrationDate = res[6].toString().split(" ")[0];
-            String isPresent = res[7].toString();
+            Boolean isPresent = (Boolean) res[7];
 
             StringBuilder fullName = new StringBuilder(firstName);
             if (middleName != null)
