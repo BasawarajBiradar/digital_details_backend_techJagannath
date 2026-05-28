@@ -21,7 +21,7 @@ public class UserMasterCustomRepositoryImpl implements UserMasterCustomRepositor
         if (size != null)
             sql.append(" TOP ").append(size);
         sql.append(" um.id, um.first_name, um.middle_name, um.last_name, ")
-                .append(" sdm.class_level, sdm.division, um.created_at  FROM user_master um ")
+                .append(" sdm.class_level, sdm.division, um.created_at, um.is_present  FROM user_master um ")
                 .append(" JOIN student_details_master sdm ON um.student_details  = sdm.id ")
                 .append(" WHERE um.school = :schoolId ");
 

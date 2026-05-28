@@ -13,4 +13,5 @@ public class RetrieveStudentsListResultModel {
     private String classLevel;
     private String division;
     private String registrationDate;
+    private Boolean isPresent;
 }
