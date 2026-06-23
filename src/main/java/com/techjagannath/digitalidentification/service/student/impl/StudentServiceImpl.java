@@ -15,6 +15,7 @@ import com.techjagannath.digitalidentification.models.student.uploadprofilephoto
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.service.student.StudentService;
+import com.techjagannath.digitalidentification.service.whatsappservice.WhatsAppService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +47,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
     private final SchoolLogoRepoRepository schoolLogoRepoRepository;
     private final NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository;
+    private final WhatsAppService whatsAppService;
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
     private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
@@ -56,7 +58,7 @@ public class StudentServiceImpl implements StudentService {
                               AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
                               PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository,
-                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository) {
+                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository, WhatsAppService whatsAppService) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
@@ -70,6 +72,7 @@ public class StudentServiceImpl implements StudentService {
         this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
         this.schoolLogoRepoRepository = schoolLogoRepoRepository;
         this.nfcReaderDeviceMasterRepository = nfcReaderDeviceMasterRepository;
+        this.whatsAppService = whatsAppService;
     }
 
     @Override
@@ -258,6 +261,8 @@ public class StudentServiceImpl implements StudentService {
         if (!Boolean.TRUE.equals(nfc.getMappedUser().getIsPresent())) {
             nfc.getMappedUser().setIsPresent(true);
             this.userMasterRepository.save(nfc.getMappedUser());
+            this.whatsAppService.sendEntryAlert(nfc.getMappedUser().getMobileNumber(), nfc.getMappedUser().getFirstName(),
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")));
         }
 
         this.nfcCardTapsHistoryRepository.save(history);
