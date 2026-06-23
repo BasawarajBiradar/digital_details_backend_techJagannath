@@ -4,6 +4,8 @@ import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModelWrapper;
@@ -16,15 +18,16 @@ import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.repository.customrepositories.SchoolAdminCustomRepository;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
+import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -194,5 +197,26 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         return new SchoolAdminAttendancePieChartResultModelWrapper(
                 totalCount, result);
 
+    }
+
+    @Override
+    public List<RetrieveAttendanceDetailsResultModel> serviceEntryPointForRetrieveAttendanceDetailsPage(HttpServletRequest request, RetrieveAttendanceDetailsRequestModel requestModel) {
+        UserMaster adminUser = this.commonMethods.extractUser(request);
+        List<Object[]> resultList = this.schoolAdminCustomRepository.retreiveAttendanceDetailsPage(
+                adminUser.getSchool().getId(), requestModel.getRoleId(), requestModel.getClassLevel(), requestModel.getDivision(),
+                requestModel.getDateFrom(), requestModel.getDateTo(), requestModel.getIsPresent()
+        );
+        List<RetrieveAttendanceDetailsResultModel> resultModels = new LinkedList<>();
+        for (Object[] res : resultList) {
+            String firstName = res[0] == null ? null : res[0].toString();
+            String middleName = res[0] == null ? null : res[0].toString();
+            String lastName = res[0] == null ? null : res[0].toString();
+            String classLevel = res[0] == null ? null : res[0].toString();
+            String division = res[0] == null ? null : res[0].toString();
+            String date = res[0] == null ? null : res[0].toString();
+            Boolean status = res[0] == null ? null : Boolean.getBoolean(res[0].toString());
+        }
+
+        return null;
     }
 }

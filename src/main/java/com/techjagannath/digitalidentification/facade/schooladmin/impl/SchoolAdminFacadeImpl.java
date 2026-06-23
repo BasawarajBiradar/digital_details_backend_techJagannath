@@ -3,6 +3,8 @@ package com.techjagannath.digitalidentification.facade.schooladmin.impl;
 import com.techjagannath.digitalidentification.facade.schooladmin.SchoolAdminFacade;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModelWrapper;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
@@ -11,7 +13,9 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retr
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
+import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,5 +59,10 @@ public class SchoolAdminFacadeImpl implements SchoolAdminFacade {
     @Override
     public SchoolAdminAttendancePieChartResultModelWrapper retrieveAttendancePieChartData(HttpServletRequest request, SchoolAdminAttendancePieChartRequestModel requestModel) {
         return this.schoolAdminService.serviceEntryPointForRetrieveAttendancePieChartData(request, requestModel);
+    }
+
+    @Override
+    public List<RetrieveAttendanceDetailsResultModel> facadeEntryPointForRetrieveAttendanceDetailsPage(HttpServletRequest request, RetrieveAttendanceDetailsRequestModel requestModel) {
+        return this.schoolAdminService.serviceEntryPointForRetrieveAttendanceDetailsPage(request, requestModel);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public class SchoolAdminCustomRepositoryImpl implements SchoolAdminCustomRepository {
@@ -71,5 +72,10 @@ public class SchoolAdminCustomRepositoryImpl implements SchoolAdminCustomReposit
             query.setParameter("division", division);
 
         return Integer.parseInt(query.getSingleResult().toString());
+    }
+
+    @Override
+    public List<Object[]> retreiveAttendanceDetailsPage(Long id, Integer roleId, String classLevel, String division, String dateFrom, String dateTo, Boolean isPresent) {
+        return List.of();
     }
 }

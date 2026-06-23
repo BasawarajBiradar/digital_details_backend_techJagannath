@@ -3,6 +3,8 @@ package com.techjagannath.digitalidentification.controller.schooladmin;
 import com.techjagannath.digitalidentification.facade.schooladmin.SchoolAdminFacade;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModelWrapper;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
@@ -69,6 +71,14 @@ public class SchoolAdminController {
     public ResponseEntity<ApiResponse<SchoolAdminAttendancePieChartResultModelWrapper>> retrieveAttendancePieChartData(
             HttpServletRequest request, @RequestBody SchoolAdminAttendancePieChartRequestModel requestModel) {
         return ResponseBuilder.success(this.schoolAdminFacade.retrieveAttendancePieChartData(request, requestModel), "Success");
+    }
+
+    @PostMapping("/retrieve/attendance-details")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
+    public ResponseEntity<ApiResponse<List<RetrieveAttendanceDetailsResultModel>>> retrieveAttendanceDetailsPageData(
+            HttpServletRequest request, @RequestBody RetrieveAttendanceDetailsRequestModel requestModel) {
+        return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForRetrieveAttendanceDetailsPage(request, requestModel)
+                , "Success");
     }
 
 }

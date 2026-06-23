@@ -2,6 +2,8 @@ package com.techjagannath.digitalidentification.facade.schooladmin;
 
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModelWrapper;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
@@ -9,7 +11,9 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retr
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
+import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -27,4 +31,6 @@ public interface SchoolAdminFacade {
     SchoolLogoRetrieveResultModel retrieveSchoolLogo(HttpServletRequest request);
 
     SchoolAdminAttendancePieChartResultModelWrapper retrieveAttendancePieChartData(HttpServletRequest request, SchoolAdminAttendancePieChartRequestModel requestModel);
+
+    List<RetrieveAttendanceDetailsResultModel> facadeEntryPointForRetrieveAttendanceDetailsPage(HttpServletRequest request, RetrieveAttendanceDetailsRequestModel requestModel);
 }
