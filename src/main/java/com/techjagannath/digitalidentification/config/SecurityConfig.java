@@ -57,7 +57,8 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of("http://192.168.1.59:4200",
                 "http://localhost:4200",
-                "https://tapaxe.techjagannath.com"));
+                "https://tapaxe.techjagannath.com",
+                "capacitor://localhost"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
