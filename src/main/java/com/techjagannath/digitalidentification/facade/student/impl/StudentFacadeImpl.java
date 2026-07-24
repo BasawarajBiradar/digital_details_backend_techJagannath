@@ -15,6 +15,7 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -64,8 +65,8 @@ public class StudentFacadeImpl implements StudentFacade {
     }
 
     @Override
-    public RecordNfcTapResultModel facadeEntryPointForRecordNfcTap(String uid, RecordNfcTapRequestModel requestModel) {
-        return this.studentService.serviceEntryPointForRecordNfcTap(uid, requestModel);
+    public RecordNfcTapResultModel facadeEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image) {
+        return this.studentService.serviceEntryPointForRecordNfcTap(uid, deviceId, image);
     }
 
 }

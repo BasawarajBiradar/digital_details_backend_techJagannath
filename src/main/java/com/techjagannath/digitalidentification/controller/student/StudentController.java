@@ -81,10 +81,10 @@ public class StudentController {
         return ResponseBuilder.success(studentFacade.uploadStudentProfileImage(request, file), "Success");
     }
 
-    @PostMapping("/uid/record-tap/{uid}")
-    public ResponseEntity<ApiResponse<RecordNfcTapResultModel>> registerStudentNfcUid(@PathVariable("uid") String uid
-            , @RequestBody RecordNfcTapRequestModel requestModel) {
-        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRecordNfcTap(uid, requestModel), "Success");
+    @PostMapping(value = "/uid/record-tap/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<RecordNfcTapResultModel>> registerStudentNfcUid(
+            @RequestParam String uid, @RequestParam Long deviceId, @RequestPart MultipartFile image) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRecordNfcTap(uid, deviceId, image), "Success");
     }
 
 }

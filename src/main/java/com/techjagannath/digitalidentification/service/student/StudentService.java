@@ -12,6 +12,7 @@ import com.techjagannath.digitalidentification.models.student.todayentries.Retri
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -31,5 +32,5 @@ public interface StudentService {
 
     StudentProfilePhotoUploadResultModel serviceEntryPointForUploadStudentProfileImages(HttpServletRequest request, MultipartFile file);
 
-    RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, RecordNfcTapRequestModel requestModel);
+    RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image);
 }

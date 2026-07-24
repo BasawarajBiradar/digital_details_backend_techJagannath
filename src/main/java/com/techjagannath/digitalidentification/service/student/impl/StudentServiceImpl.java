@@ -23,6 +23,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -249,10 +250,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, RecordNfcTapRequestModel requestModel) {
-        NfcReaderDeviceMaster deviceMaster =
-                this.nfcReaderDeviceMasterRepository
-                        .findById(requestModel.getDeviceId()).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
+    public RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image) {
+        NfcReaderDeviceMaster deviceMaster = null;
+
+        if (deviceId != null)
+            deviceMaster = this.nfcReaderDeviceMasterRepository
+                        .findById(deviceId).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
 
         NfcUidMaster nfc = this.nfcUidMasterRepository.findByUid(uid).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
         NfcCardTapsHistory history = new NfcCardTapsHistory(null, nfc.getMappedUser(),
