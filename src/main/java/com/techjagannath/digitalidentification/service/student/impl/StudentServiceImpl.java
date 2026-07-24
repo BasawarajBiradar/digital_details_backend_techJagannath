@@ -127,7 +127,8 @@ public class StudentServiceImpl implements StudentService {
         for (NfcCardTapsHistory entry : entries)
             resultModels.add(new RetrieveStudentHomePageTodayEntriesResultModel(
                     entry.getTimeStamp().format(dateFormatter), entry.getTimeStamp().format(timeFormatter),
-                    entry.getDevice().getRoomNumber() != null ? entry.getDevice().getSchool().getSchoolName() + entry.getDevice().getRoomNumber() : entry.getDevice().getSchool().getSchoolName()));
+                    entry.getDevice().getRoomNumber() != null ? entry.getDevice().getSchool().getSchoolName() + entry.getDevice().getRoomNumber() : entry.getDevice().getSchool().getSchoolName(),
+                    this.s3Utils.generatePreSignedUrl(entry.getFileUrl())));
 
         return resultModels;
     }
@@ -257,9 +258,12 @@ public class StudentServiceImpl implements StudentService {
             deviceMaster = this.nfcReaderDeviceMasterRepository
                         .findById(deviceId).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
 
+        String imageUrl = this.s3Utils.uploadTapRecordImage(image);
+
         NfcUidMaster nfc = this.nfcUidMasterRepository.findByUid(uid).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
         NfcCardTapsHistory history = new NfcCardTapsHistory(null, nfc.getMappedUser(),
-                nfc.getUid(), deviceMaster, LocalDateTime.now());
+                nfc.getUid(), deviceMaster, LocalDateTime.now(), imageUrl, image.getOriginalFilename(),
+                image.getContentType(), ".png", LocalDateTime.now());
 
         if (!Boolean.TRUE.equals(nfc.getMappedUser().getIsPresent())) {
             nfc.getMappedUser().setIsPresent(true);

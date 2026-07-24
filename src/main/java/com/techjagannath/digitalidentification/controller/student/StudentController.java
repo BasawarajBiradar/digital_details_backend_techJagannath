@@ -4,7 +4,6 @@ import com.techjagannath.digitalidentification.facade.student.StudentFacade;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
-import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapRequestModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
@@ -81,9 +80,9 @@ public class StudentController {
         return ResponseBuilder.success(studentFacade.uploadStudentProfileImage(request, file), "Success");
     }
 
-    @PostMapping(value = "/uid/record-tap/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/uid/record-tap")
     public ResponseEntity<ApiResponse<RecordNfcTapResultModel>> registerStudentNfcUid(
-            @RequestParam String uid, @RequestParam Long deviceId, @RequestPart MultipartFile image) {
+            @RequestParam String uid, @RequestParam Long deviceId, @RequestParam("image") MultipartFile image) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRecordNfcTap(uid, deviceId, image), "Success");
     }
 

@@ -30,4 +30,21 @@ public class NfcCardTapsHistory {
 
     @Column(name = "time_stamp")
     private LocalDateTime timeStamp;
+
+    /** image storage logs */
+
+    @Column(name = "file_url")
+    private String fileUrl;
+
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Column(name = "content_type")
+    private String contentType;
+
+    @Column(name = "file_extension")
+    private String fileExtension;
+
+    @Column(name = "uploaded_at")
+    private LocalDateTime uploadedAt;
 }

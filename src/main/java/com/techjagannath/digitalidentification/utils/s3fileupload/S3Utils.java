@@ -180,4 +180,67 @@ public class S3Utils {
         }
     }
 
+
+    public String uploadTapRecordImage(MultipartFile file) {
+        try {
+
+            if (file == null || file.isEmpty()) {
+                throw new FileUploadException("File is empty ");
+            }
+
+            String contentType = file.getContentType();
+            String originalFileName = file.getOriginalFilename();
+
+            if (originalFileName == null || !originalFileName.contains(".")) {
+                throw new FileUploadException("Invalid file name");
+            }
+
+            String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+            String fileName = UUID.randomUUID()+"."+extension;
+
+            String s3Key = "attendance-tap-image/"+ fileName;
+
+            PutObjectRequest putObjectRequest =
+                    PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(s3Key)
+                            .contentType(contentType)
+                            .build();
+
+            if ("image/svg+xml".equals(contentType)) {
+                s3Client.putObject(
+                        putObjectRequest,
+                        RequestBody.fromBytes(
+                                file.getBytes()
+                        )
+                );
+
+            } else {
+
+                ByteArrayOutputStream outputStream =
+                        new ByteArrayOutputStream();
+
+                Thumbnails.of(file.getInputStream())
+                        .size(500, 500)
+                        .outputQuality(0.7)
+                        .toOutputStream(outputStream);
+
+                s3Client.putObject(
+                        putObjectRequest,
+                        RequestBody.fromBytes(
+                                outputStream.toByteArray()
+                        )
+                );
+            }
+
+            return s3Key;
+
+        } catch (Exception e) {
+
+            throw new FileUploadException(
+                    "Failed to upload image"
+            );
+        }
+    }
+
 }
