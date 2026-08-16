@@ -268,8 +268,8 @@ public class StudentServiceImpl implements StudentService {
         if (!Boolean.TRUE.equals(nfc.getMappedUser().getIsPresent())) {
             nfc.getMappedUser().setIsPresent(true);
             this.userMasterRepository.save(nfc.getMappedUser());
-            this.whatsAppService.sendEntryAlert(nfc.getMappedUser().getMobileNumber(), nfc.getMappedUser().getFirstName(),
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")));
+//            this.whatsAppService.sendEntryAlert(nfc.getMappedUser().getMobileNumber(), nfc.getMappedUser().getFirstName(),
+//                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")));
         }
 
         this.nfcCardTapsHistoryRepository.save(history);
