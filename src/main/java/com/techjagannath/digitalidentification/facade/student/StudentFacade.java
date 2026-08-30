@@ -36,5 +36,5 @@ public interface StudentFacade {
 
     RecordNfcTapResultModel facadeEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image);
 
-    GetStudentAttendanceDataResponseModel facadeEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel);
+    List<GetStudentAttendanceDataResponseModel> facadeEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel);
 }

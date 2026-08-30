@@ -6,6 +6,7 @@ import com.techjagannath.digitalidentification.utils.apiresponse.ValidationError
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -193,4 +194,24 @@ public class GlobalExceptionHandler {
                 "An unexpected error occurred",
                 "INTERNAL_SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(
+            ValidationException ex,
+            HttpServletRequest request) {
+
+        log.warn("Validation exception at [{} {}]: {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                ex.getMessage());
+
+        return ResponseBuilder.error(
+                ex.getMessage() != null && !ex.getMessage().isBlank()
+                        ? ex.getMessage()
+                        : "Validation failed",
+                "VALIDATION_ERROR",
+                HttpStatus.BAD_REQUEST
+        );
+    }
+    
 }

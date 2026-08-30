@@ -88,9 +88,9 @@ public class StudentController {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRecordNfcTap(uid, deviceId, image), "Success");
     }
 
-    @PostMapping("/attendence-history")
+    @PostMapping("/attendance-history")
     @PreAuthorize("hasAuthority('STUDENT_READ')")
-    public ResponseEntity<ApiResponse<GetStudentAttendanceDataResponseModel>> getStudentAttendanceData(
+    public ResponseEntity<ApiResponse<List<GetStudentAttendanceDataResponseModel>>> getStudentAttendanceData(
             @RequestBody GetStudentAttendanceDataRequestModel requestModel, HttpServletRequest request) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveAttendanceData(request, requestModel), "Success");
     }

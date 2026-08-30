@@ -36,5 +36,5 @@ public interface StudentService {
 
     RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image);
 
-    GetStudentAttendanceDataResponseModel serviceEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel);
+    List<GetStudentAttendanceDataResponseModel> serviceEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel);
 }

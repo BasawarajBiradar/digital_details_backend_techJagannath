@@ -7,7 +7,6 @@ import com.techjagannath.digitalidentification.models.student.getstudentattendan
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
-import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapRequestModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
@@ -19,18 +18,19 @@ import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.service.whatsappservice.WhatsAppService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
+import com.techjagannath.digitalidentification.utils.dateutils.DateUtils;
 import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +51,8 @@ public class StudentServiceImpl implements StudentService {
     private final SchoolLogoRepoRepository schoolLogoRepoRepository;
     private final NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository;
     private final WhatsAppService whatsAppService;
+    private final AttendanceRecordsTableRepository attendanceRecordsTableRepository;
+
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
     private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
@@ -61,7 +63,8 @@ public class StudentServiceImpl implements StudentService {
                               AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
                               PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository,
-                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository, WhatsAppService whatsAppService) {
+                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository, WhatsAppService whatsAppService,
+                              AttendanceRecordsTableRepository attendanceRecordsTableRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
@@ -76,6 +79,7 @@ public class StudentServiceImpl implements StudentService {
         this.schoolLogoRepoRepository = schoolLogoRepoRepository;
         this.nfcReaderDeviceMasterRepository = nfcReaderDeviceMasterRepository;
         this.whatsAppService = whatsAppService;
+        this.attendanceRecordsTableRepository = attendanceRecordsTableRepository;
     }
 
     @Override
@@ -280,8 +284,17 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public GetStudentAttendanceDataResponseModel serviceEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel) {
-        /** fetch from attendance table not from nfc records */
-        return null;
+    public List<GetStudentAttendanceDataResponseModel> serviceEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel) {
+        UserMaster user = commonMethods.extractUser(request);
+        List<AttendanceRecordsTable> resultList = this.attendanceRecordsTableRepository.retrieveAttendanceData(
+                requestModel.getParsedFromDate(), requestModel.getParsedToDate(), user.getSchool(),  user, user.getRole());
+        List<GetStudentAttendanceDataResponseModel> response = new LinkedList<>();
+        for (AttendanceRecordsTable res : resultList)
+            response.add(new GetStudentAttendanceDataResponseModel(
+                    DateUtils.dateFormatter(res.getDate()),
+                    res.getStatus().getStatus(),
+                    DateUtils.formatTimeTo12Hour(res.getInTime()),
+                    DateUtils.formatTimeTo12Hour(res.getOutTime())));
+        return response;
     }
 }

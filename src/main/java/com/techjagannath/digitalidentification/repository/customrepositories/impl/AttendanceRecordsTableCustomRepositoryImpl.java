@@ -1,16 +1,21 @@
 package com.techjagannath.digitalidentification.repository.customrepositories.impl;
 
+import com.techjagannath.digitalidentification.entity.AttendanceRecordsTable;
+import com.techjagannath.digitalidentification.entity.RoleMaster;
+import com.techjagannath.digitalidentification.entity.SchoolMaster;
+import com.techjagannath.digitalidentification.entity.UserMaster;
 import com.techjagannath.digitalidentification.repository.customrepositories.AttendanceRecordsTableCustomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
-public class AttendanceRecordsTableCustomRepositoryImpl
-        implements AttendanceRecordsTableCustomRepository {
+public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRecordsTableCustomRepository {
 
     @PersistenceContext
     EntityManager em;
@@ -24,7 +29,7 @@ public class AttendanceRecordsTableCustomRepositoryImpl
         StringBuilder sql = new StringBuilder();
 
         sql.append("INSERT INTO attendance_records_table ")
-                .append(" (date, in_time, out_time, status, `user`, holiday_description) ");
+                .append(" (date, in_time, out_time, status, `user`, holiday_description, school, role) ");
 
         sql.append("SELECT :attendanceDate, ")
 
@@ -67,7 +72,11 @@ public class AttendanceRecordsTableCustomRepositoryImpl
                 .append(" WHEN DAYOFWEEK(:attendanceDate) = 1 ")
                 .append(" THEN 'Sunday' ")
                 .append(" ELSE NULL ")
-                .append(" END AS holiday_description ")
+                .append(" END AS holiday_description, ")
+
+                .append(" u.school AS school, ")
+
+                .append(" u.role AS role ")
 
                 // USER MASTER
                 .append(" FROM user_master u ")
@@ -95,5 +104,40 @@ public class AttendanceRecordsTableCustomRepositoryImpl
                 .setParameter("attendanceDate", attendanceDate)
                 .setParameter("nextDate", nextDate)
                 .executeUpdate();
+    }
+
+    @Override
+    public List<AttendanceRecordsTable> retrieveAttendanceData(
+            LocalDate fromDate, LocalDate toDate, SchoolMaster school, UserMaster user, RoleMaster role) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT obj FROM AttendanceRecordsTable obj WHERE obj.date BETWEEN :fromDate AND :toDate ");
+
+        if (school != null)
+            sql.append(" AND obj.school = :school ");
+        if (role != null)
+            sql.append(" AND obj.role = :role ");
+        if (user != null)
+            sql.append(" AND obj.user = :user ");
+
+        sql.append("ORDER BY ");
+        if (role != null)
+            sql.append(" role.id, ");
+        if (school != null)
+            sql.append(" school.id, ");
+
+        sql.append(" user.firstName, obj.date DESC ");
+
+        TypedQuery<AttendanceRecordsTable> query = this.em.createQuery(sql.toString(), AttendanceRecordsTable.class);
+        query.setParameter("fromDate", fromDate);
+        query.setParameter("toDate", toDate);
+
+        if (school != null)
+            query.setParameter("school", school);
+        if (role != null)
+            query.setParameter("role", role);
+        if (user != null)
+            query.setParameter("user", user);
+
+        return query.getResultList();
     }
 }

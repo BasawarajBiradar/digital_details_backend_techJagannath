@@ -15,11 +15,16 @@ import com.techjagannath.digitalidentification.models.student.todayentries.Retri
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.service.student.StudentService;
+import com.techjagannath.digitalidentification.utils.apiresponse.ValidationError;
+import com.techjagannath.digitalidentification.utils.dateutils.DateUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Component
@@ -72,13 +77,19 @@ public class StudentFacadeImpl implements StudentFacade {
     }
 
     @Override
-    public GetStudentAttendanceDataResponseModel facadeEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel) {
-        /** add the validations for the fromDate and toDate
-         * fromDate and toDate should not be null
-         * fromDate and toDate are both string
-         * check if both are valid dates and to date should be after fromDate
-         * */
+    public List<GetStudentAttendanceDataResponseModel> facadeEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel) {
+        this.validateAttendanceDataRequestModel(requestModel);
         return this.studentService.serviceEntryPointForRetrieveAttendanceData(request, requestModel);
+    }
+
+    private void validateAttendanceDataRequestModel(GetStudentAttendanceDataRequestModel requestModel) {
+        requestModel.setParsedFromDate(DateUtils.parseDate(requestModel.getFromDate()));
+        requestModel.setParsedToDate(DateUtils.parseDate(requestModel.getToDate()));
+        DateUtils.validateDateRange(requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        if (requestModel.getParsedToDate().isAfter(LocalDate.now()))
+            throw new ValidationException("To date cannot be after today's date");
+        if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
+            throw new ValidationException("From date cannot be before 2 years");
     }
 
 }

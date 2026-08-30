@@ -35,4 +35,12 @@ public class AttendanceRecordsTable {
 
     @Column(name = "holiday_description")
     private String holidayDescription;
+
+    @ManyToOne
+    @JoinColumn(name = "school")
+    private SchoolMaster school;
+
+    @ManyToOne
+    @JoinColumn(name = "role")
+    private RoleMaster role;
 }
