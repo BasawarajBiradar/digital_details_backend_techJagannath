@@ -1,6 +1,8 @@
 package com.techjagannath.digitalidentification.controller.student;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
+import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
+import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
@@ -84,6 +86,13 @@ public class StudentController {
     public ResponseEntity<ApiResponse<RecordNfcTapResultModel>> registerStudentNfcUid(
             @RequestParam String uid, @RequestParam Long deviceId, @RequestParam("image") MultipartFile image) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRecordNfcTap(uid, deviceId, image), "Success");
+    }
+
+    @PostMapping("/attendence-history")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<GetStudentAttendanceDataResponseModel>> getStudentAttendanceData(
+            @RequestBody GetStudentAttendanceDataRequestModel requestModel, HttpServletRequest request) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveAttendanceData(request, requestModel), "Success");
     }
 
 }

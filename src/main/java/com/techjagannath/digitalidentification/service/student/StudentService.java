@@ -1,5 +1,7 @@
 package com.techjagannath.digitalidentification.service.student;
 
+import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
+import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
@@ -33,4 +35,6 @@ public interface StudentService {
     StudentProfilePhotoUploadResultModel serviceEntryPointForUploadStudentProfileImages(HttpServletRequest request, MultipartFile file);
 
     RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image);
+
+    GetStudentAttendanceDataResponseModel serviceEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel);
 }

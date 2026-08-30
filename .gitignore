@@ -1,33 +1,128 @@
-HELP.md
+# ==============================
+# Maven
+# ==============================
 target/
-.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+.mvn/wrapper/maven-wrapper.jar
+
+
+# ==============================
+# Spring Boot / Application Config
+# ==============================
+
+# Ignore application properties containing secrets/configuration
+src/main/resources/application.properties
+src/main/resources/application.yml
+src/main/resources/application.yaml
+
+# Optional: ignore profile-specific configuration too
+src/main/resources/application-*.properties
+src/main/resources/application-*.yml
+src/main/resources/application-*.yaml
+
+
+# ==============================
+# Java
+# ==============================
+*.class
+*.log
+*.ctxt
+*.jar
+*.war
+*.ear
+
+
+# ==============================
+# Spring Tool Suite / Eclipse
+# ==============================
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+
+# ==============================
+# IntelliJ IDEA
+# ==============================
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+
+# ==============================
+# NetBeans
+# ==============================
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+
+# ==============================
+# Gradle
+# ==============================
+.gradle/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+
+# ==============================
+# VS Code
+# ==============================
 .vscode/
+
+
+# ==============================
+# OS Generated Files
+# ==============================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+
+# ==============================
+# Temporary / Backup Files
+# ==============================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
+
+
+# ==============================
+# Environment / Secrets
+# ==============================
+.env
+.env.*
+!.env.example
+
+*.pem
+*.key
+
+
+# ==============================
+# Logs
+# ==============================
+logs/
+*.log
+
+
+# ==============================
+# Generated Files
+# ==============================
+generated/
+out/

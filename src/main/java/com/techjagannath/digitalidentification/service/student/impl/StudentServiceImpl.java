@@ -2,6 +2,8 @@ package com.techjagannath.digitalidentification.service.student.impl;
 
 import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
+import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
+import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
@@ -275,5 +277,11 @@ public class StudentServiceImpl implements StudentService {
         this.nfcCardTapsHistoryRepository.save(history);
 
         return new RecordNfcTapResultModel(true);
+    }
+
+    @Override
+    public GetStudentAttendanceDataResponseModel serviceEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel) {
+        /** fetch from attendance table not from nfc records */
+        return null;
     }
 }

@@ -1,6 +1,8 @@
 package com.techjagannath.digitalidentification.facade.student.impl;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
+import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
+import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
@@ -67,6 +69,16 @@ public class StudentFacadeImpl implements StudentFacade {
     @Override
     public RecordNfcTapResultModel facadeEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image) {
         return this.studentService.serviceEntryPointForRecordNfcTap(uid, deviceId, image);
+    }
+
+    @Override
+    public GetStudentAttendanceDataResponseModel facadeEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel) {
+        /** add the validations for the fromDate and toDate
+         * fromDate and toDate should not be null
+         * fromDate and toDate are both string
+         * check if both are valid dates and to date should be after fromDate
+         * */
+        return this.studentService.serviceEntryPointForRetrieveAttendanceData(request, requestModel);
     }
 
 }
