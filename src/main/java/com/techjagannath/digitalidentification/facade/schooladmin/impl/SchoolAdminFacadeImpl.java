@@ -13,12 +13,13 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retr
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
-import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
+import com.techjagannath.digitalidentification.utils.dateutils.DateUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -63,6 +64,17 @@ public class SchoolAdminFacadeImpl implements SchoolAdminFacade {
 
     @Override
     public List<RetrieveAttendanceDetailsResultModel> facadeEntryPointForRetrieveAttendanceDetailsPage(HttpServletRequest request, RetrieveAttendanceDetailsRequestModel requestModel) {
+        this.validateAttendanceDataRequestModel(requestModel);
         return this.schoolAdminService.serviceEntryPointForRetrieveAttendanceDetailsPage(request, requestModel);
+    }
+
+    private void validateAttendanceDataRequestModel(RetrieveAttendanceDetailsRequestModel requestModel) {
+        requestModel.setParsedFromDate(DateUtils.parseDate(requestModel.getFromDate()));
+        requestModel.setParsedToDate(DateUtils.parseDate(requestModel.getToDate()));
+        DateUtils.validateDateRange(requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        if (requestModel.getParsedToDate().isAfter(LocalDate.now()))
+            throw new ValidationException("To date cannot be after today's date");
+        if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
+            throw new ValidationException("From date cannot be before 2 years");
     }
 }

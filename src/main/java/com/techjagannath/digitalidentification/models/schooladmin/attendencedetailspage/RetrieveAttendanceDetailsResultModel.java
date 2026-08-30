@@ -12,5 +12,7 @@ public class RetrieveAttendanceDetailsResultModel {
     private String classLevel;
     private String division;
     private String date;
-    private Boolean status;
+    private String status;
+    private String inTime;
+    private String outTime;
 }
