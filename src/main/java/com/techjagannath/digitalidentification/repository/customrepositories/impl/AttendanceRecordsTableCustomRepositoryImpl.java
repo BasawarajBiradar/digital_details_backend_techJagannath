@@ -120,12 +120,9 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
             sql.append(" AND obj.user = :user ");
 
         sql.append("ORDER BY ");
-        if (role != null)
-            sql.append(" role.id, ");
-        if (school != null)
-            sql.append(" school.id, ");
-
-        sql.append(" user.firstName, obj.date DESC ");
+        sql.append(" obj.date DESC, ");
+        sql.append(" obj.user.firstName ASC, ");
+        sql.append(" obj.user.lastName ASC ");
 
         TypedQuery<AttendanceRecordsTable> query = this.em.createQuery(sql.toString(), AttendanceRecordsTable.class);
         query.setParameter("fromDate", fromDate);
