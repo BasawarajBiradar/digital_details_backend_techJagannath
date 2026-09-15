@@ -12,6 +12,7 @@ import com.techjagannath.digitalidentification.models.student.registerstudentnfc
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.todayupdates.RetrieveStudentHomePageTodayUpdatesResultModel;
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.repository.*;
@@ -27,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ public class StudentServiceImpl implements StudentService {
     private final NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository;
     private final WhatsAppService whatsAppService;
     private final AttendanceRecordsTableRepository attendanceRecordsTableRepository;
+    private final YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository;
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
@@ -64,7 +67,8 @@ public class StudentServiceImpl implements StudentService {
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
                               PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository,
                               NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository, WhatsAppService whatsAppService,
-                              AttendanceRecordsTableRepository attendanceRecordsTableRepository) {
+                              AttendanceRecordsTableRepository attendanceRecordsTableRepository,
+                              YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
@@ -80,6 +84,7 @@ public class StudentServiceImpl implements StudentService {
         this.nfcReaderDeviceMasterRepository = nfcReaderDeviceMasterRepository;
         this.whatsAppService = whatsAppService;
         this.attendanceRecordsTableRepository = attendanceRecordsTableRepository;
+        this.yearlySchoolStartDateMasterRepository = yearlySchoolStartDateMasterRepository;
     }
 
     @Override
@@ -296,5 +301,29 @@ public class StudentServiceImpl implements StudentService {
                     DateUtils.formatTimeTo12Hour(res.getInTime()),
                     DateUtils.formatTimeTo12Hour(res.getOutTime())));
         return response;
+    }
+
+    @Override
+    public RetrieveStudentHomePageTodayUpdatesResultModel serviceEntryPointForRetrieveHomePageTodayUpdates(HttpServletRequest request) {
+        RetrieveStudentHomePageTodayUpdatesResultModel result = new RetrieveStudentHomePageTodayUpdatesResultModel();
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+
+        UserMaster user = commonMethods.extractUser(request);
+        YearlySchoolStartDateMaster schoolStartDate = this.yearlySchoolStartDateMasterRepository.findFirstBySchoolMasterOrderBySchoolStartDateDesc(user.getSchool());
+        NfcCardTapsHistory tapHistory = this.nfcCardTapsHistoryRepository.findTodayFirstEntry(user);
+        if (tapHistory == null)
+            result.setAttendanceStatus("ABSENT");
+        else {
+            result.setAttendanceStatus("PRESENT");
+            result.setEntryTime(tapHistory.getTimeStamp().format(timeFormatter));
+        }
+        if (schoolStartDate != null) {
+            Integer pendingHomeworkCount = this.studentDetailsMasterRepository.retrieveCountOfPendingHomework(user, schoolStartDate.getSchoolStartDate());
+            result.setPendingHomeWorkCount(pendingHomeworkCount);
+        }
+        // get total notice count date >= school start date  - school
+        // get teacher feedback title recent - user
+        // last week performance grade and percentage - user
+        return result;
     }
 }

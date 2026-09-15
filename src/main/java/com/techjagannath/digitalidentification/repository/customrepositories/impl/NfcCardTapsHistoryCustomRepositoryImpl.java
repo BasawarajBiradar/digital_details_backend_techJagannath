@@ -28,4 +28,20 @@ public class NfcCardTapsHistoryCustomRepositoryImpl implements NfcCardTapsHistor
         query.setParameter("timeStamp", timeStamp);
         return query.getResultList();
     }
+
+    @Override
+    public NfcCardTapsHistory findTodayFirstEntry(UserMaster user) {
+        LocalDateTime timeStamp = LocalDate.now().atStartOfDay();
+        StringBuilder jpql = new StringBuilder();
+        jpql.append("""
+        SELECT obj FROM NfcCardTapsHistory obj WHERE obj.studentUser = :user
+          AND obj.timeStamp >= :timeStamp ORDER BY obj.timeStamp ASC
+        """);
+        TypedQuery<NfcCardTapsHistory> query = em.createQuery(jpql.toString(), NfcCardTapsHistory.class);
+        query.setParameter("user", user);
+        query.setParameter("timeStamp", timeStamp);
+        query.setMaxResults(1);
+        List<NfcCardTapsHistory> result = query.getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
 }

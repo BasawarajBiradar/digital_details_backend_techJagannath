@@ -11,6 +11,7 @@ import com.techjagannath.digitalidentification.models.student.registerstudentnfc
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.todayupdates.RetrieveStudentHomePageTodayUpdatesResultModel;
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
@@ -45,6 +46,12 @@ public class StudentController {
     @PreAuthorize("hasAuthority('STUDENT_READ')")
     public ResponseEntity<ApiResponse<List<RetrieveStudentHomePageTodayEntriesResultModel>>> retrieveStudentHomePageTodayEntries(HttpServletRequest request) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveHomePageTodayEntries(request), "Success");
+    }
+
+    @GetMapping("/home-page/today-updates")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<RetrieveStudentHomePageTodayUpdatesResultModel>> retrieveStudentHomePageTodayUpdates(HttpServletRequest request) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveHomePageTodayUpdates(request), "Success");
     }
 
     @PostMapping("/uid/{uid}")
@@ -94,5 +101,7 @@ public class StudentController {
             @RequestBody GetStudentAttendanceDataRequestModel requestModel, HttpServletRequest request) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveAttendanceData(request, requestModel), "Success");
     }
+
+
 
 }

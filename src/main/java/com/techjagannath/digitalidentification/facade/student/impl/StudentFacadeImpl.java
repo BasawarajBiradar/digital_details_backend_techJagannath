@@ -12,6 +12,7 @@ import com.techjagannath.digitalidentification.models.student.registerstudentnfc
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.todayupdates.RetrieveStudentHomePageTodayUpdatesResultModel;
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.service.student.StudentService;
@@ -80,6 +81,11 @@ public class StudentFacadeImpl implements StudentFacade {
     public List<GetStudentAttendanceDataResponseModel> facadeEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel) {
         this.validateAttendanceDataRequestModel(requestModel);
         return this.studentService.serviceEntryPointForRetrieveAttendanceData(request, requestModel);
+    }
+
+    @Override
+    public RetrieveStudentHomePageTodayUpdatesResultModel facadeEntryPointForRetrieveHomePageTodayUpdates(HttpServletRequest request) {
+        return this.studentService.serviceEntryPointForRetrieveHomePageTodayUpdates(request);
     }
 
     private void validateAttendanceDataRequestModel(GetStudentAttendanceDataRequestModel requestModel) {

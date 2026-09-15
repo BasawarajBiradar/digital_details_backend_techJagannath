@@ -11,6 +11,7 @@ import com.techjagannath.digitalidentification.models.student.registerstudentnfc
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
+import com.techjagannath.digitalidentification.models.student.todayupdates.RetrieveStudentHomePageTodayUpdatesResultModel;
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,4 +38,6 @@ public interface StudentService {
     RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image);
 
     List<GetStudentAttendanceDataResponseModel> serviceEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel);
+
+    RetrieveStudentHomePageTodayUpdatesResultModel serviceEntryPointForRetrieveHomePageTodayUpdates(HttpServletRequest request);
 }
