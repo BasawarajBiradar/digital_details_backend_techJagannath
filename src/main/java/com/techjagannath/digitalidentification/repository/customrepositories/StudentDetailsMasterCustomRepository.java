@@ -6,5 +6,5 @@ import java.time.LocalDate;
 
 public interface StudentDetailsMasterCustomRepository {
 
-    Integer retrieveCountOfPendingHomework(UserMaster user, LocalDate schoolStartDate);
+    Long retrieveCountOfPendingHomework(UserMaster user, LocalDate schoolStartDate);
 }

@@ -318,7 +318,7 @@ public class StudentServiceImpl implements StudentService {
             result.setEntryTime(tapHistory.getTimeStamp().format(timeFormatter));
         }
         if (schoolStartDate != null) {
-            Integer pendingHomeworkCount = this.studentDetailsMasterRepository.retrieveCountOfPendingHomework(user, schoolStartDate.getSchoolStartDate());
+            Long pendingHomeworkCount = this.studentDetailsMasterRepository.retrieveCountOfPendingHomework(user, schoolStartDate.getSchoolStartDate());
             result.setPendingHomeWorkCount(pendingHomeworkCount);
         }
         // get total notice count date >= school start date  - school

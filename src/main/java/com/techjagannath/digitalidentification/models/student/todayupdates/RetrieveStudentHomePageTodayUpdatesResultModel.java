@@ -7,7 +7,7 @@ public class RetrieveStudentHomePageTodayUpdatesResultModel {
     private String attendanceStatus;
     private String entryTime;
     private Integer tapPhotoCount;
-    private Integer pendingHomeWorkCount;
+    private Long pendingHomeWorkCount;
     private Integer noticeCount;
     private String teacherFeedBack;
     private String weeklyPerformanceGrade;

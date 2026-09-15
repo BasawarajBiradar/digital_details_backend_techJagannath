@@ -15,17 +15,17 @@ public class StudentDetailsMasterCustomRepositoryImpl implements StudentDetailsM
     EntityManager em;
 
     @Override
-    public Integer retrieveCountOfPendingHomework(UserMaster user, LocalDate schoolStartDate) {
+    public Long retrieveCountOfPendingHomework(UserMaster user, LocalDate schoolStartDate) {
         LocalDateTime startDateTime = schoolStartDate.atStartOfDay();
 
         String sql ="""
-        SELECT COUNT(id) FROM home_work_detail_records WHERE assigned_date_and_time >= :schoolStartDate AND classLevel = :class AND division = :div
+        SELECT COUNT(id) FROM home_work_detail_records WHERE assigned_date_and_time >= :schoolStartDate AND class_level = :class AND division = :div
         """;
         Query query = em.createNativeQuery(sql);
         query.setParameter("schoolStartDate", startDateTime);
         query.setParameter("class", user.getStudentDetails().getClassLevel());
         query.setParameter("div", user.getStudentDetails().getDivision());
-        Integer totalCount = (Integer) query.getSingleResult();
+        Long totalCount = (Long) query.getSingleResult();
 
         sql = """
                SELECT COUNT(id) FROM student_home_work_status WHERE student = :studentId AND completion_date_time >= :schoolStartDate
@@ -33,7 +33,7 @@ public class StudentDetailsMasterCustomRepositoryImpl implements StudentDetailsM
         query = em.createNativeQuery(sql);
         query.setParameter("schoolStartDate", startDateTime);
         query.setParameter("studentId", user.getId());
-        Integer completeCount = (Integer) query.getSingleResult();
+        Long completeCount = (Long) query.getSingleResult();
 
         return totalCount - completeCount;
     }

@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("api/checks/**").permitAll()
                         .requestMatchers("/api/tapaxe-admin/add/admin").permitAll()
                         .requestMatchers("/api/student/uid/**").permitAll()
+                        .requestMatchers("/api/teacher/uid/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
