@@ -219,7 +219,7 @@ public class StudentServiceImpl implements StudentService {
 
         UserMaster newUser = new UserMaster(null, requestModel.getFirstName(), requestModel.getLastName(), requestModel.getMiddleName(),
                 requestModel.getMobileNumber(), passwordEncoder.encode(requestModel.getPassword()),
-                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, uid, false,
+                requestModel.getEmailId(), role, true, schoolMaster, savedStudentDetails, null, uid, false,
                 null, LocalDateTime.now());
         UserMaster savedUser = this.userMasterRepository.save(newUser);
 

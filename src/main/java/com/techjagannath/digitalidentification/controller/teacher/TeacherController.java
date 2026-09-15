@@ -2,6 +2,8 @@ package com.techjagannath.digitalidentification.controller.teacher;
 
 import com.techjagannath.digitalidentification.facade.teacher.TeacherFacade;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
+import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
+import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
 import com.techjagannath.digitalidentification.utils.apiresponse.ResponseBuilder;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +25,15 @@ public class TeacherController {
         return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForVerifyTeacherNfcUid(uid), "Success");
     }
 
-    /**
     @PostMapping("/uid/register/{uid}")
-    public ResponseEntity<ApiResponse<RegisterStudentUidResultModel>> registerStudentNfcUid(@PathVariable("uid") String uid
-            , @RequestBody RegisterStudentUidRequestModel requestModel) {
-        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRegisterStudentNfcUid(uid, requestModel), "Success");
+    public ResponseEntity<ApiResponse<RegisterTeacherUidResultModel>> registerStudentNfcUid(@PathVariable("uid") String uid
+            , @RequestBody RegisterTeacherUidRequestModel requestModel) {
+        return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForRegisterTeacherNfcUid(uid, requestModel), "Success");
     }
 
-    @PostMapping(value = "/uid/record-tap")
+    /**
+
+     @PostMapping(value = "/uid/record-tap")
     public ResponseEntity<ApiResponse<RecordNfcTapResultModel>> registerStudentNfcUid(
             @RequestParam String uid, @RequestParam Long deviceId, @RequestParam("image") MultipartFile image) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRecordNfcTap(uid, deviceId, image), "Success");

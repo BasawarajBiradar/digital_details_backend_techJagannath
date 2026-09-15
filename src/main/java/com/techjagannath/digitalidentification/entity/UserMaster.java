@@ -50,6 +50,10 @@ public class UserMaster {
     @JoinColumn(name = "student_details")
     private StudentDetailsMaster studentDetails; // only if user is student
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "teacher_details")
+    private TeacherDetailsMaster teacherDetails; // only if user is teacher
+
     @Column(name = "uid", unique = true)
     private String uid;
 
