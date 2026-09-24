@@ -1,5 +1,7 @@
 package com.techjagannath.digitalidentification.facade.student;
 
+import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
+import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
@@ -40,4 +42,6 @@ public interface StudentFacade {
     List<GetStudentAttendanceDataResponseModel> facadeEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel);
 
     RetrieveStudentHomePageTodayUpdatesResultModel facadeEntryPointForRetrieveHomePageTodayUpdates(HttpServletRequest request);
+
+    GetStudentAttendancePageOverviewResultModel facadeEntryPointForRetrieveAttendancePageOverviewData(HttpServletRequest request, GetStudentAttendancePageOverviewRequestModel requestModel);
 }

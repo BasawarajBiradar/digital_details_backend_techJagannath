@@ -2,6 +2,8 @@ package com.techjagannath.digitalidentification.service.student.impl;
 
 import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
+import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
+import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
@@ -28,7 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -325,5 +326,17 @@ public class StudentServiceImpl implements StudentService {
         // get teacher feedback title recent - user
         // last week performance grade and percentage - user
         return result;
+    }
+
+    @Override
+    public GetStudentAttendancePageOverviewResultModel serviceEntryPointForAttendancePageOverviewData(HttpServletRequest request, GetStudentAttendancePageOverviewRequestModel requestModel) {
+        GetStudentAttendancePageOverviewResultModel response = new GetStudentAttendancePageOverviewResultModel();
+        Integer presentDaysCount = this.attendanceRecordsTableRepository.retrieveCountByStatusBetweenDates(1, requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        Integer absentDaysCount = this.attendanceRecordsTableRepository.retrieveCountByStatusBetweenDates(2, requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        response.setPresentDays(presentDaysCount);
+        response.setAbsentDays(absentDaysCount);
+        if (presentDaysCount != 0 || absentDaysCount != 0)
+            response.setAttendancePercentage(presentDaysCount * 100.0 / (presentDaysCount + absentDaysCount));
+        return response;
     }
 }

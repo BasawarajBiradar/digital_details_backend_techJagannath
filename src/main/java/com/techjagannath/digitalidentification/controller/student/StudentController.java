@@ -1,6 +1,8 @@
 package com.techjagannath.digitalidentification.controller.student;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
+import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
+import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
@@ -102,6 +104,11 @@ public class StudentController {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveAttendanceData(request, requestModel), "Success");
     }
 
-
+    @PostMapping("/attendance-page/overview")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<GetStudentAttendancePageOverviewResultModel>> getStudentAttendancePageOverview(
+            @RequestBody GetStudentAttendancePageOverviewRequestModel requestModel, HttpServletRequest request) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveAttendancePageOverviewData(request, requestModel), "Success");
+    }
 
 }
