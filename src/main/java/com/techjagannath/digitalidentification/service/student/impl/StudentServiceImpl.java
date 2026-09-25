@@ -11,6 +11,8 @@ import com.techjagannath.digitalidentification.models.student.getstudentattendan
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.homeworkpage.overview.GetStudentHomeworkOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.homeworkpage.table.GetStudentHomeworkTableResultModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.udpatestatus.GetStudentHomeworkUpdateStatusRequestModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.udpatestatus.GetStudentHomeworkUpdateStatusResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
@@ -24,6 +26,7 @@ import com.techjagannath.digitalidentification.models.student.todayupdates.Retri
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.repository.*;
+import com.techjagannath.digitalidentification.repository.customrepositories.StudentHomeWorkStatusRepository;
 import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.service.whatsappservice.WhatsAppService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
@@ -65,6 +68,8 @@ public class StudentServiceImpl implements StudentService {
     private final AttendanceRecordsTableRepository attendanceRecordsTableRepository;
     private final YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository;
     private final HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository;
+    private final HomeWorkStatusRepository homeWorkStatusRepository;
+    private final StudentHomeWorkStatusRepository studentHomeWorkStatusRepository;
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
@@ -75,10 +80,10 @@ public class StudentServiceImpl implements StudentService {
                               SchoolMasterRepository schoolMasterRepository, RoleMasterRepository roleMasterRepository,
                               AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
-                              PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository,
+                              PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository, StudentHomeWorkStatusRepository studentHomeWorkStatusRepository,
                               NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository, WhatsAppService whatsAppService,
                               AttendanceRecordsTableRepository attendanceRecordsTableRepository, HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository,
-                              YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository) {
+                              YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository, HomeWorkStatusRepository homeWorkStatusRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
@@ -96,6 +101,8 @@ public class StudentServiceImpl implements StudentService {
         this.attendanceRecordsTableRepository = attendanceRecordsTableRepository;
         this.yearlySchoolStartDateMasterRepository = yearlySchoolStartDateMasterRepository;
         this.homeWorkDetailRecordsRepository = homeWorkDetailRecordsRepository;
+        this.homeWorkStatusRepository = homeWorkStatusRepository;
+        this.studentHomeWorkStatusRepository = studentHomeWorkStatusRepository;
     }
 
     @Override
@@ -404,9 +411,9 @@ public class StudentServiceImpl implements StudentService {
                 user.getId(), user.getStudentDetails().getClassLevel(), user.getStudentDetails().getDivision(), user.getSchool().getId(), schoolStartDate);
         List<GetStudentHomeworkTableResultModel> resultModel = new LinkedList<>();
         for (Object[] res : resultList) {
-            Long homeworkId = res[0] == null ? null : Long.parseLong(res[0].toString());
-            String title = res[1] == null ? null : res[1].toString();
-            String assignedDateAndTime = res[2] == null ? null : res[2].toString().split(" ")[0];
+            Long homeworkId = Long.parseLong(res[0].toString());
+            String title = res[1].toString();
+            String assignedDateAndTime = res[2].toString().split(" ")[0];
             String deadlineDate = res[3] == null ? null : res[3].toString();
             String status = res[4] == null ? null : res[4].toString();
             String subject = res[5] == null ? null : res[5].toString();
@@ -415,5 +422,16 @@ public class StudentServiceImpl implements StudentService {
             resultModel.add(new GetStudentHomeworkTableResultModel(homeworkId, title, assignedDateAndTime, deadlineDate, status, subject, description));
         }
         return resultModel;
+    }
+
+    @Override
+    public GetStudentHomeworkUpdateStatusResultModel serviceEntryPointForHomeworkPageUpdateStatus(HttpServletRequest request, GetStudentHomeworkUpdateStatusRequestModel requestModel) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        HomeWorkDetailRecords homework = this.homeWorkDetailRecordsRepository.findById(requestModel.getHomeworkId()).get();
+        HomeWorkStatus status = this.homeWorkStatusRepository.findById(requestModel.getStatus()).get();
+        StudentHomeworkStatus studentHomeworkStatus = new StudentHomeworkStatus(null, user,
+                homework, status, LocalDateTime.now());
+        this.studentHomeWorkStatusRepository.save(studentHomeworkStatus);
+        return new GetStudentHomeworkUpdateStatusResultModel(true);
     }
 }

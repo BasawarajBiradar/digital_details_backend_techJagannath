@@ -10,6 +10,8 @@ import com.techjagannath.digitalidentification.models.student.getstudentattendan
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.homeworkpage.overview.GetStudentHomeworkOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.homeworkpage.table.GetStudentHomeworkTableResultModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.udpatestatus.GetStudentHomeworkUpdateStatusRequestModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.udpatestatus.GetStudentHomeworkUpdateStatusResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
@@ -142,6 +144,11 @@ public class StudentFacadeImpl implements StudentFacade {
     @Override
     public List<GetStudentHomeworkTableResultModel> facadeEntryPointForRetrieveHomeworkTableData(HttpServletRequest request) {
         return this.studentService.serviceEntryPointForHomeworkTableData(request);
+    }
+
+    @Override
+    public GetStudentHomeworkUpdateStatusResultModel facadeEntryPointForRetrieveHomeworkUpdateStatus(GetStudentHomeworkUpdateStatusRequestModel requestModel, HttpServletRequest request) {
+        return this.studentService.serviceEntryPointForHomeworkPageUpdateStatus(request, requestModel);
     }
 
 }

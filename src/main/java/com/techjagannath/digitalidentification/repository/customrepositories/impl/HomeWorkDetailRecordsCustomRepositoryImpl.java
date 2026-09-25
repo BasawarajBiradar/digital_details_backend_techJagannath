@@ -47,7 +47,7 @@ public class HomeWorkDetailRecordsCustomRepositoryImpl implements HomeWorkDetail
                         "  FROM home_work_detail_records records ")
                 .append(" LEFT JOIN student_home_work_status completionLogs ")
                     .append(" ON completionLogs.home_work_details = records.id AND completionLogs.student = :userId ")
-                .append(" LEFT JOIN student_home_work_status status ON status.id = completionLogs.status ")
+                .append(" LEFT JOIN home_work_status status ON status.id = completionLogs.status ")
                 .append(" LEFT JOIN subjects_master subjectMaster ON subjectMaster.id = records.subjects_master ")
                 .append(" WHERE records.school_master = :schoolId " +
                         "AND records.class_level = :classLevel AND records.division = :division " +

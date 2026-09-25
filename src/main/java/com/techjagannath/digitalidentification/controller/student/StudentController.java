@@ -10,6 +10,8 @@ import com.techjagannath.digitalidentification.models.student.getstudentattendan
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.homeworkpage.overview.GetStudentHomeworkOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.homeworkpage.table.GetStudentHomeworkTableResultModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.udpatestatus.GetStudentHomeworkUpdateStatusRequestModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.udpatestatus.GetStudentHomeworkUpdateStatusResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
@@ -141,6 +143,13 @@ public class StudentController {
     @PreAuthorize("hasAuthority('STUDENT_READ')")
     public ResponseEntity<ApiResponse<List<GetStudentHomeworkTableResultModel>>> getStudentHomeworkTable(HttpServletRequest request) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveHomeworkTableData(request), "Success");
+    }
+
+    @PostMapping("/homework-page/update-status")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<GetStudentHomeworkUpdateStatusResultModel>> getStudentHomeworkUpdateStatus(
+            @RequestBody GetStudentHomeworkUpdateStatusRequestModel requestModel, HttpServletRequest request) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveHomeworkUpdateStatus(requestModel, request), "Success");
     }
 
 }
