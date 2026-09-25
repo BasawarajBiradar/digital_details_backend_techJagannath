@@ -1,6 +1,8 @@
 package com.techjagannath.digitalidentification.controller.student;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
+import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
+import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
@@ -109,6 +111,13 @@ public class StudentController {
     public ResponseEntity<ApiResponse<GetStudentAttendancePageOverviewResultModel>> getStudentAttendancePageOverview(
             @RequestBody GetStudentAttendancePageOverviewRequestModel requestModel, HttpServletRequest request) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveAttendancePageOverviewData(request, requestModel), "Success");
+    }
+
+    @PostMapping("/attendance-page/calendar-view")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<List<GetStudentAttendancePageCalendarViewResultModel>>> getStudentAttendancePageOverview(
+            @RequestBody GetStudentAttendancePageCalendarViewRequestModel requestModel, HttpServletRequest request) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveAttendancePageCalendarViewData(request, requestModel), "Success");
     }
 
 }

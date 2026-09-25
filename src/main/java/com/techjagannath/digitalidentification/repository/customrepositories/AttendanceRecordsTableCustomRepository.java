@@ -13,4 +13,6 @@ public interface AttendanceRecordsTableCustomRepository {
     void populateDataInAttendanceRecordsTable(LocalDate attendanceDate);
 
     List<AttendanceRecordsTable> retrieveAttendanceData(LocalDate fromDate, LocalDate toDate, SchoolMaster school, UserMaster user, RoleMaster role);
+
+    List<Object[]> retrieveCalendarViewData(LocalDate parsedFromDate, LocalDate parsedToDate, Long userId);
 }

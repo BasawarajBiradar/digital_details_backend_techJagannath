@@ -7,6 +7,7 @@ import com.techjagannath.digitalidentification.entity.UserMaster;
 import com.techjagannath.digitalidentification.repository.customrepositories.AttendanceRecordsTableCustomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
@@ -135,6 +136,19 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
         if (user != null)
             query.setParameter("user", user);
 
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Object[]> retrieveCalendarViewData(LocalDate parsedFromDate, LocalDate parsedToDate, Long userId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT date, status.status FROM attendance_records_table records ")
+                .append("JOIN attendance_status status ON status.id = records.status ")
+                .append("WHERE date BETWEEN :fromDate AND :toDate AND user = :userId ORDER BY date ");
+        Query query = em.createNativeQuery(sql.toString());
+        query.setParameter("fromDate", parsedFromDate);
+        query.setParameter("toDate", parsedToDate);
+        query.setParameter("userId", userId);
         return query.getResultList();
     }
 }

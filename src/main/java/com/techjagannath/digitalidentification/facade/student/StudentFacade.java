@@ -1,5 +1,7 @@
 package com.techjagannath.digitalidentification.facade.student;
 
+import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
+import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
@@ -44,4 +46,6 @@ public interface StudentFacade {
     RetrieveStudentHomePageTodayUpdatesResultModel facadeEntryPointForRetrieveHomePageTodayUpdates(HttpServletRequest request);
 
     GetStudentAttendancePageOverviewResultModel facadeEntryPointForRetrieveAttendancePageOverviewData(HttpServletRequest request, GetStudentAttendancePageOverviewRequestModel requestModel);
+
+    List<GetStudentAttendancePageCalendarViewResultModel> facadeEntryPointForRetrieveAttendancePageCalendarViewData(HttpServletRequest request, GetStudentAttendancePageCalendarViewRequestModel requestModel);
 }

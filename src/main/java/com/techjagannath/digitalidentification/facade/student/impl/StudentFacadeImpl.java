@@ -1,6 +1,8 @@
 package com.techjagannath.digitalidentification.facade.student.impl;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
+import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
+import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
@@ -110,6 +112,18 @@ public class StudentFacadeImpl implements StudentFacade {
         if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
             throw new ValidationException("From date cannot be before 2 years");
         return this.studentService.serviceEntryPointForAttendancePageOverviewData(request, requestModel);
+    }
+
+    @Override
+    public List<GetStudentAttendancePageCalendarViewResultModel> facadeEntryPointForRetrieveAttendancePageCalendarViewData(HttpServletRequest request, GetStudentAttendancePageCalendarViewRequestModel requestModel) {
+        requestModel.setParsedFromDate(DateUtils.parseDate(requestModel.getFromDate()));
+        requestModel.setParsedToDate(DateUtils.parseDate(requestModel.getToDate()));
+        DateUtils.validateDateRange(requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        if (requestModel.getParsedToDate().isAfter(LocalDate.now()))
+            throw new ValidationException("To date cannot be after today's date");
+        if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
+            throw new ValidationException("From date cannot be before 2 years");
+        return this.studentService.serviceEntryPointForAttendancePageCalendarViewData(request, requestModel);
     }
 
 }

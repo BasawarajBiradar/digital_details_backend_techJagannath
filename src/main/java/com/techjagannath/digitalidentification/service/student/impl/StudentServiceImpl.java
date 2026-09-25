@@ -2,6 +2,8 @@ package com.techjagannath.digitalidentification.service.student.impl;
 
 import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
+import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
+import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
@@ -22,6 +24,7 @@ import com.techjagannath.digitalidentification.service.student.StudentService;
 import com.techjagannath.digitalidentification.service.whatsappservice.WhatsAppService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import com.techjagannath.digitalidentification.utils.dateutils.DateUtils;
+import com.techjagannath.digitalidentification.utils.dateutils.StudentResponsePopulateDateUtils;
 import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -338,5 +341,18 @@ public class StudentServiceImpl implements StudentService {
         if (presentDaysCount != 0 || absentDaysCount != 0)
             response.setAttendancePercentage(presentDaysCount * 100.0 / (presentDaysCount + absentDaysCount));
         return response;
+    }
+
+    @Override
+    public List<GetStudentAttendancePageCalendarViewResultModel> serviceEntryPointForAttendancePageCalendarViewData(HttpServletRequest request, GetStudentAttendancePageCalendarViewRequestModel requestModel) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        List<Object[]> resultList = this.attendanceRecordsTableRepository.retrieveCalendarViewData(requestModel.getParsedFromDate(), requestModel.getParsedToDate(), user.getId());
+        List<GetStudentAttendancePageCalendarViewResultModel> response = new LinkedList<>();
+        for (Object[] res : resultList) {
+            String date = res[0].toString();
+            String status = res[1].toString();
+            response.add(new GetStudentAttendancePageCalendarViewResultModel(date, status));
+        }
+        return StudentResponsePopulateDateUtils.populateDatesInCalendarView(requestModel.getParsedFromDate(), requestModel.getParsedToDate(), response);
     }
 }
