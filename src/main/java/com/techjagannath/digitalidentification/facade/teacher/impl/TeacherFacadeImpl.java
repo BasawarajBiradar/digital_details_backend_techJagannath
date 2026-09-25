@@ -4,6 +4,7 @@ import com.techjagannath.digitalidentification.facade.teacher.TeacherFacade;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
 import com.techjagannath.digitalidentification.service.teacher.TeacherService;
@@ -34,5 +35,10 @@ public class TeacherFacadeImpl implements TeacherFacade {
     public TeacherAddHomeworkResultModel facadeEntryPointForAddHomework(HttpServletRequest request, TeacherAddHomeworkRequestModel requestModel) {
         requestModel.setParsedDeadlineDate(DateUtils.parseDate(requestModel.getDeadlineDate()));
         return this.teacherService.serviceEntryPointForAddHomework(request, requestModel);
+    }
+
+    @Override
+    public RetrieveTeacherHomePageInfoCardDetailsResultModel facadeEntryPointForRetrieveHomePageInfoCardDetails(HttpServletRequest request) {
+        return this.teacherService.serviceEntryPointForRetrieveHomePageInfoCardDetails(request);
     }
 }
