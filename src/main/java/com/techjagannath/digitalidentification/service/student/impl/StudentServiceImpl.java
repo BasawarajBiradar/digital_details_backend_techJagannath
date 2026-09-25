@@ -429,8 +429,10 @@ public class StudentServiceImpl implements StudentService {
         UserMaster user = this.commonMethods.extractUser(request);
         HomeWorkDetailRecords homework = this.homeWorkDetailRecordsRepository.findById(requestModel.getHomeworkId()).get();
         HomeWorkStatus status = this.homeWorkStatusRepository.findById(requestModel.getStatus()).get();
-        StudentHomeworkStatus studentHomeworkStatus = new StudentHomeworkStatus(null, user,
-                homework, status, LocalDateTime.now());
+        StudentHomeworkStatus studentHomeworkStatus = this.studentHomeWorkStatusRepository.findByHomeWorkDetailsAndStudent(homework, user);
+        if (studentHomeworkStatus == null)
+            studentHomeworkStatus = new StudentHomeworkStatus(null, user, homework, status, LocalDateTime.now());
+        studentHomeworkStatus.setStatus(status);
         this.studentHomeWorkStatusRepository.save(studentHomeworkStatus);
         return new GetStudentHomeworkUpdateStatusResultModel(true);
     }

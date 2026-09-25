@@ -18,7 +18,7 @@ public class HomeWorkDetailRecordsCustomRepositoryImpl implements HomeWorkDetail
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT COUNT(DISTINCT status.home_work_details) as completionCount FROM student_home_work_status status ")
                 .append(" JOIN home_work_detail_records records ON records.id = status.home_work_details ")
-                .append(" WHERE student = :userId AND records.assigned_date_and_time >= :schoolStartDate ");
+                .append(" WHERE student = :userId AND records.assigned_date_and_time >= :schoolStartDate AND status.status = 2 ");
         Query query = em.createNativeQuery(sql.toString());
         query.setParameter("userId", userId);
         query.setParameter("schoolStartDate", schoolStartDate);
