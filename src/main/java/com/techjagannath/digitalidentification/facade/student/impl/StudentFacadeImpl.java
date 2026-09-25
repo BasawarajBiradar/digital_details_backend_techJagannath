@@ -119,8 +119,6 @@ public class StudentFacadeImpl implements StudentFacade {
         requestModel.setParsedFromDate(DateUtils.parseDate(requestModel.getFromDate()));
         requestModel.setParsedToDate(DateUtils.parseDate(requestModel.getToDate()));
         DateUtils.validateDateRange(requestModel.getParsedFromDate(), requestModel.getParsedToDate());
-        if (requestModel.getParsedToDate().isAfter(LocalDate.now()))
-            throw new ValidationException("To date cannot be after today's date");
         if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
             throw new ValidationException("From date cannot be before 2 years");
         return this.studentService.serviceEntryPointForAttendancePageCalendarViewData(request, requestModel);
