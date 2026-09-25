@@ -347,9 +347,10 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public GetStudentAttendancePageOverviewResultModel serviceEntryPointForAttendancePageOverviewData(HttpServletRequest request, GetStudentAttendancePageOverviewRequestModel requestModel) {
+        UserMaster user = this.commonMethods.extractUser(request);
         GetStudentAttendancePageOverviewResultModel response = new GetStudentAttendancePageOverviewResultModel();
-        Integer presentDaysCount = this.attendanceRecordsTableRepository.retrieveCountByStatusBetweenDates(1, requestModel.getParsedFromDate(), requestModel.getParsedToDate());
-        Integer absentDaysCount = this.attendanceRecordsTableRepository.retrieveCountByStatusBetweenDates(2, requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        Integer presentDaysCount = this.attendanceRecordsTableRepository.retrieveCountByStatusBetweenDates(1, requestModel.getParsedFromDate(), requestModel.getParsedToDate(), user.getId());
+        Integer absentDaysCount = this.attendanceRecordsTableRepository.retrieveCountByStatusBetweenDates(2, requestModel.getParsedFromDate(), requestModel.getParsedToDate(), user.getId());
         response.setPresentDays(presentDaysCount);
         response.setAbsentDays(absentDaysCount);
         if (presentDaysCount != 0 || absentDaysCount != 0)

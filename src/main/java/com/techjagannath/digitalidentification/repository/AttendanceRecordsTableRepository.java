@@ -10,6 +10,6 @@ import java.time.LocalDate;
 public interface AttendanceRecordsTableRepository extends
         JpaRepository<AttendanceRecordsTable, Long>, AttendanceRecordsTableCustomRepository {
 
-    @Query(nativeQuery = true, value = "SELECT COUNT(id) FROM attendance_records_table WHERE date BETWEEN :fromDate AND :toDate AND status = :status ;")
-    Integer retrieveCountByStatusBetweenDates(int status, LocalDate fromDate, LocalDate toDate);
+    @Query(nativeQuery = true, value = "SELECT COUNT(id) FROM attendance_records_table WHERE user = :userId AND date BETWEEN :fromDate AND :toDate AND status = :status ;")
+    Integer retrieveCountByStatusBetweenDates(int status, LocalDate fromDate, LocalDate toDate, Long userId);
 }
