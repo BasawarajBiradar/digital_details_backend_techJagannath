@@ -15,6 +15,8 @@ import com.techjagannath.digitalidentification.models.student.recordnfctap.Recor
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
+import com.techjagannath.digitalidentification.models.student.tapphotopage.overview.GetStudentTapPhotoPageOverviewRequestModel;
+import com.techjagannath.digitalidentification.models.student.tapphotopage.overview.GetStudentTapPhotoPageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.todayupdates.RetrieveStudentHomePageTodayUpdatesResultModel;
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
@@ -354,5 +356,21 @@ public class StudentServiceImpl implements StudentService {
             response.add(new GetStudentAttendancePageCalendarViewResultModel(date, status));
         }
         return StudentResponsePopulateDateUtils.populateDatesInCalendarView(requestModel.getParsedFromDate(), requestModel.getParsedToDate(), response);
+    }
+
+    @Override
+    public List<GetStudentTapPhotoPageOverviewResultModel> serviceEntryPointForTapPhotoPageOverview(HttpServletRequest request, GetStudentTapPhotoPageOverviewRequestModel requestModel) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        List<Object[]> resultList = this.nfcCardTapsHistoryRepository.retrievePhotoTapRecordsByUser(user.getId(), requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        List<GetStudentTapPhotoPageOverviewResultModel> response = new LinkedList<>();
+        for (Object[] res : resultList) {
+            String timeStamp = res[0].toString();
+            String date = timeStamp.split(" ")[0];
+            String time = timeStamp.split(" ")[1];
+            String url = res[1] != null ? this.s3Utils.generatePreSignedUrl(res[1].toString()) : null;
+
+            response.add(new GetStudentTapPhotoPageOverviewResultModel(date, time, url));
+        }
+        return response;
     }
 }

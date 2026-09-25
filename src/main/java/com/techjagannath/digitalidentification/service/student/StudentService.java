@@ -9,17 +9,17 @@ import com.techjagannath.digitalidentification.models.student.getstudentattendan
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
-import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapRequestModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
+import com.techjagannath.digitalidentification.models.student.tapphotopage.overview.GetStudentTapPhotoPageOverviewRequestModel;
+import com.techjagannath.digitalidentification.models.student.tapphotopage.overview.GetStudentTapPhotoPageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.todayupdates.RetrieveStudentHomePageTodayUpdatesResultModel;
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -48,4 +48,6 @@ public interface StudentService {
     GetStudentAttendancePageOverviewResultModel serviceEntryPointForAttendancePageOverviewData(HttpServletRequest request, GetStudentAttendancePageOverviewRequestModel requestModel);
 
     List<GetStudentAttendancePageCalendarViewResultModel> serviceEntryPointForAttendancePageCalendarViewData(HttpServletRequest request, GetStudentAttendancePageCalendarViewRequestModel requestModel);
+
+    List<GetStudentTapPhotoPageOverviewResultModel> serviceEntryPointForTapPhotoPageOverview(HttpServletRequest request, GetStudentTapPhotoPageOverviewRequestModel requestModel);
 }

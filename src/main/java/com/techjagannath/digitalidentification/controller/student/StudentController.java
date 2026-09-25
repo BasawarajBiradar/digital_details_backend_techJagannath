@@ -14,6 +14,8 @@ import com.techjagannath.digitalidentification.models.student.recordnfctap.Recor
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
+import com.techjagannath.digitalidentification.models.student.tapphotopage.overview.GetStudentTapPhotoPageOverviewRequestModel;
+import com.techjagannath.digitalidentification.models.student.tapphotopage.overview.GetStudentTapPhotoPageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.todayupdates.RetrieveStudentHomePageTodayUpdatesResultModel;
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
@@ -118,6 +120,13 @@ public class StudentController {
     public ResponseEntity<ApiResponse<List<GetStudentAttendancePageCalendarViewResultModel>>> getStudentAttendancePageOverview(
             @RequestBody GetStudentAttendancePageCalendarViewRequestModel requestModel, HttpServletRequest request) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveAttendancePageCalendarViewData(request, requestModel), "Success");
+    }
+
+    @PostMapping("/tap-photo-page/overview")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<List<GetStudentTapPhotoPageOverviewResultModel>>> getStudentTapPhotoPageOverview(
+            @RequestBody GetStudentTapPhotoPageOverviewRequestModel requestModel, HttpServletRequest request) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveTapPhotoPageOverviewData(request, requestModel), "Success");
     }
 
 }

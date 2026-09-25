@@ -10,26 +10,24 @@ import com.techjagannath.digitalidentification.models.student.getstudentattendan
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
-import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapRequestModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
 import com.techjagannath.digitalidentification.models.student.retrieveschoollist.RetrieveSchoolListResultModel;
+import com.techjagannath.digitalidentification.models.student.tapphotopage.overview.GetStudentTapPhotoPageOverviewRequestModel;
+import com.techjagannath.digitalidentification.models.student.tapphotopage.overview.GetStudentTapPhotoPageOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.todayentries.RetrieveStudentHomePageTodayEntriesResultModel;
 import com.techjagannath.digitalidentification.models.student.todayupdates.RetrieveStudentHomePageTodayUpdatesResultModel;
 import com.techjagannath.digitalidentification.models.student.uploadprofilephoto.StudentProfilePhotoUploadResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.service.student.StudentService;
-import com.techjagannath.digitalidentification.utils.apiresponse.ValidationError;
 import com.techjagannath.digitalidentification.utils.dateutils.DateUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 
 @Component
@@ -122,6 +120,18 @@ public class StudentFacadeImpl implements StudentFacade {
         if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
             throw new ValidationException("From date cannot be before 2 years");
         return this.studentService.serviceEntryPointForAttendancePageCalendarViewData(request, requestModel);
+    }
+
+    @Override
+    public List<GetStudentTapPhotoPageOverviewResultModel> facadeEntryPointForRetrieveTapPhotoPageOverviewData(HttpServletRequest request, GetStudentTapPhotoPageOverviewRequestModel requestModel) {
+        requestModel.setParsedFromDate(DateUtils.parseDate(requestModel.getFromDate()));
+        requestModel.setParsedToDate(DateUtils.parseDate(requestModel.getToDate()));
+        DateUtils.validateDateRange(requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        if (requestModel.getParsedToDate().isAfter(LocalDate.now()))
+            throw new ValidationException("To date cannot be after today's date");
+        if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
+            throw new ValidationException("From date cannot be before 2 years");
+        return this.studentService.serviceEntryPointForTapPhotoPageOverview(request, requestModel);
     }
 
 }

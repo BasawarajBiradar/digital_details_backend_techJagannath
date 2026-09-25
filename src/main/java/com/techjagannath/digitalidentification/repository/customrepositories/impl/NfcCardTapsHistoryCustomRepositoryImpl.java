@@ -5,6 +5,7 @@ import com.techjagannath.digitalidentification.entity.UserMaster;
 import com.techjagannath.digitalidentification.repository.customrepositories.NfcCardTapsHistoryCustomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
@@ -43,5 +44,18 @@ public class NfcCardTapsHistoryCustomRepositoryImpl implements NfcCardTapsHistor
         query.setMaxResults(1);
         List<NfcCardTapsHistory> result = query.getResultList();
         return result.isEmpty() ? null : result.get(0);
+    }
+
+    @Override
+    public List<Object[]> retrievePhotoTapRecordsByUser(Long userId, LocalDate parsedFromDate, LocalDate parsedToDate) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT time_stamp, file_url FROM nfc_card_taps_history records ")
+                .append("WHERE time_stamp BETWEEN :fromDate AND :toDate ")
+                .append("AND student = :userId ORDER BY time_stamp ");
+        Query query = em.createNativeQuery(sql.toString());
+        query.setParameter("fromDate", parsedFromDate);
+        query.setParameter("toDate", parsedToDate);
+        query.setParameter("userId", userId);
+        return query.getResultList();
     }
 }
