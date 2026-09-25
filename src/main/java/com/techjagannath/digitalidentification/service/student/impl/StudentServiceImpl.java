@@ -10,6 +10,7 @@ import com.techjagannath.digitalidentification.models.student.getstudentattendan
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
 import com.techjagannath.digitalidentification.models.student.homeworkpage.overview.GetStudentHomeworkOverviewResultModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.table.GetStudentHomeworkTableResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
@@ -382,13 +383,42 @@ public class StudentServiceImpl implements StudentService {
     public GetStudentHomeworkOverviewResultModel serviceEntryPointForRetrieveHomeworkOverviewData(HttpServletRequest request) {
         UserMaster user = this.commonMethods.extractUser(request);
         YearlySchoolStartDateMaster schoolStartDateMaster = this.yearlySchoolStartDateMasterRepository.findFirstBySchoolMasterOrderBySchoolStartDateDesc(user.getSchool());
-        LocalDate schoolStartDate = LocalDate.now(); // i want start of year
+        LocalDate schoolStartDate = LocalDate.now().withDayOfYear(1);
         if (schoolStartDateMaster != null)
             schoolStartDate = schoolStartDateMaster.getSchoolStartDate();
         Long completedCount = this.homeWorkDetailRecordsRepository.retrieveHomeworkCompletedCount(
                 user.getStudentDetails().getClassLevel(), user.getStudentDetails().getDivision(), user.getId(), schoolStartDate);
         Long totalCount = this.homeWorkDetailRecordsRepository.retrieveHomeworkTotalCount(
-                user.getStudentDetails().getClassLevel(), user.getStudentDetails().getDivision(), user.getId(), schoolStartDate);
+                user.getStudentDetails().getClassLevel(), user.getStudentDetails().getDivision(), user.getSchool().getId(), schoolStartDate);
         return new GetStudentHomeworkOverviewResultModel(totalCount - completedCount, completedCount);
+    }
+
+    /**
+     records.id as homeworkId, records.title_or_topic, records.assigned_date_and_time, deadline_date, " +
+     " CASE WHEN status.status IS NOT NULL THEN status.status ELSE 'PENDING' " +
+     ", subjectMaster.subject
+     * */
+
+    @Override
+    public List<GetStudentHomeworkTableResultModel> serviceEntryPointForHomeworkTableData(HttpServletRequest request) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        YearlySchoolStartDateMaster schoolStartDateMaster = this.yearlySchoolStartDateMasterRepository.findFirstBySchoolMasterOrderBySchoolStartDateDesc(user.getSchool());
+        LocalDate schoolStartDate = LocalDate.now().withDayOfYear(1);
+        if (schoolStartDateMaster != null)
+            schoolStartDate = schoolStartDateMaster.getSchoolStartDate();
+        List<Object[]> resultList = this.homeWorkDetailRecordsRepository.retrieveHomeworkTableData(
+                user.getId(), user.getStudentDetails().getClassLevel(), user.getStudentDetails().getDivision(), user.getSchool().getId(), schoolStartDate);
+        List<GetStudentHomeworkTableResultModel> resultModel = new LinkedList<>();
+        for (Object[] res : resultList) {
+            Long homeworkId = res[0] == null ? null : Long.parseLong(res[0].toString());
+            String title = res[1] == null ? null : res[1].toString();
+            String assignedDateAndTime = res[2] == null ? null : res[2].toString().split(" ")[0];
+            String deadlineDate = res[3] == null ? null : res[3].toString();
+            String status = res[4] == null ? null : res[4].toString();
+            String subject = res[5] == null ? null : res[5].toString();
+
+            resultModel.add(new GetStudentHomeworkTableResultModel(homeworkId, title, assignedDateAndTime, deadlineDate, status, subject));
+        }
+        return resultModel;
     }
 }
