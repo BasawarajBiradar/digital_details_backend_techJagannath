@@ -9,6 +9,7 @@ import com.techjagannath.digitalidentification.models.student.attendancepage.ove
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.overview.GetStudentHomeworkOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
@@ -35,6 +36,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -61,6 +63,7 @@ public class StudentServiceImpl implements StudentService {
     private final WhatsAppService whatsAppService;
     private final AttendanceRecordsTableRepository attendanceRecordsTableRepository;
     private final YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository;
+    private final HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository;
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
@@ -73,7 +76,7 @@ public class StudentServiceImpl implements StudentService {
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
                               PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository,
                               NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository, WhatsAppService whatsAppService,
-                              AttendanceRecordsTableRepository attendanceRecordsTableRepository,
+                              AttendanceRecordsTableRepository attendanceRecordsTableRepository, HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository,
                               YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
@@ -91,6 +94,7 @@ public class StudentServiceImpl implements StudentService {
         this.whatsAppService = whatsAppService;
         this.attendanceRecordsTableRepository = attendanceRecordsTableRepository;
         this.yearlySchoolStartDateMasterRepository = yearlySchoolStartDateMasterRepository;
+        this.homeWorkDetailRecordsRepository = homeWorkDetailRecordsRepository;
     }
 
     @Override
@@ -372,5 +376,19 @@ public class StudentServiceImpl implements StudentService {
             response.add(new GetStudentTapPhotoPageOverviewResultModel(date, time, url));
         }
         return response;
+    }
+
+    @Override
+    public GetStudentHomeworkOverviewResultModel serviceEntryPointForRetrieveHomeworkOverviewData(HttpServletRequest request) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        YearlySchoolStartDateMaster schoolStartDateMaster = this.yearlySchoolStartDateMasterRepository.findFirstBySchoolMasterOrderBySchoolStartDateDesc(user.getSchool());
+        LocalDate schoolStartDate = LocalDate.now(); // i want start of year
+        if (schoolStartDateMaster != null)
+            schoolStartDate = schoolStartDateMaster.getSchoolStartDate();
+        Long completedCount = this.homeWorkDetailRecordsRepository.retrieveHomeworkCompletedCount(
+                user.getStudentDetails().getClassLevel(), user.getStudentDetails().getDivision(), user.getId(), schoolStartDate);
+        Long totalCount = this.homeWorkDetailRecordsRepository.retrieveHomeworkTotalCount(
+                user.getStudentDetails().getClassLevel(), user.getStudentDetails().getDivision(), user.getId(), schoolStartDate);
+        return new GetStudentHomeworkOverviewResultModel(totalCount - completedCount, completedCount);
     }
 }

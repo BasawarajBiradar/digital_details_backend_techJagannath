@@ -8,6 +8,7 @@ import com.techjagannath.digitalidentification.models.student.attendancepage.ove
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.overview.GetStudentHomeworkOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
@@ -127,6 +128,12 @@ public class StudentController {
     public ResponseEntity<ApiResponse<List<GetStudentTapPhotoPageOverviewResultModel>>> getStudentTapPhotoPageOverview(
             @RequestBody GetStudentTapPhotoPageOverviewRequestModel requestModel, HttpServletRequest request) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveTapPhotoPageOverviewData(request, requestModel), "Success");
+    }
+
+    @GetMapping("/homework-page/overview")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<GetStudentHomeworkOverviewResultModel>> getStudentHomeworkOverview(HttpServletRequest request) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveHomeworkOverviewData(request), "Success");
     }
 
 }

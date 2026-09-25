@@ -8,6 +8,7 @@ import com.techjagannath.digitalidentification.models.student.attendancepage.ove
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.overview.GetStudentHomeworkOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
@@ -130,6 +131,11 @@ public class StudentFacadeImpl implements StudentFacade {
         if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
             throw new ValidationException("From date cannot be before 2 years");
         return this.studentService.serviceEntryPointForTapPhotoPageOverview(request, requestModel);
+    }
+
+    @Override
+    public GetStudentHomeworkOverviewResultModel facadeEntryPointForRetrieveHomeworkOverviewData(HttpServletRequest request) {
+        return this.studentService.serviceEntryPointForRetrieveHomeworkOverviewData(request);
     }
 
 }

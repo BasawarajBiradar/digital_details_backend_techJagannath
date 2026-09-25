@@ -7,6 +7,7 @@ import com.techjagannath.digitalidentification.models.student.attendancepage.ove
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataRequestModel;
 import com.techjagannath.digitalidentification.models.student.getstudentattendance.GetStudentAttendanceDataResponseModel;
 import com.techjagannath.digitalidentification.models.student.homepageinfocard.RetrieveStudentHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.student.homeworkpage.overview.GetStudentHomeworkOverviewResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
@@ -50,4 +51,6 @@ public interface StudentService {
     List<GetStudentAttendancePageCalendarViewResultModel> serviceEntryPointForAttendancePageCalendarViewData(HttpServletRequest request, GetStudentAttendancePageCalendarViewRequestModel requestModel);
 
     List<GetStudentTapPhotoPageOverviewResultModel> serviceEntryPointForTapPhotoPageOverview(HttpServletRequest request, GetStudentTapPhotoPageOverviewRequestModel requestModel);
+
+    GetStudentHomeworkOverviewResultModel serviceEntryPointForRetrieveHomeworkOverviewData(HttpServletRequest request);
 }

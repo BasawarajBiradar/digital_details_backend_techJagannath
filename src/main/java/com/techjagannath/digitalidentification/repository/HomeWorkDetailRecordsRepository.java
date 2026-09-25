@@ -1,7 +1,8 @@
 package com.techjagannath.digitalidentification.repository;
 
 import com.techjagannath.digitalidentification.entity.HomeWorkDetailRecords;
+import com.techjagannath.digitalidentification.repository.customrepositories.HomeWorkDetailRecordsCustomRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface HomeWorkDetailRecordsRepository extends JpaRepository<HomeWorkDetailRecords, Long> {
+public interface HomeWorkDetailRecordsRepository extends JpaRepository<HomeWorkDetailRecords, Long>, HomeWorkDetailRecordsCustomRepository {
 }
