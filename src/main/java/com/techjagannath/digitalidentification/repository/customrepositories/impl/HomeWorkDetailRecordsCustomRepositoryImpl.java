@@ -43,7 +43,7 @@ public class HomeWorkDetailRecordsCustomRepositoryImpl implements HomeWorkDetail
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT records.id as homeworkId, records.title_or_topic, records.assigned_date_and_time, deadline_date, " +
                         " CASE WHEN status.status IS NOT NULL THEN status.status ELSE 'PENDING' END " +
-                        ", subjectMaster.subject "+
+                        ", subjectMaster.subject, description "+
                         "  FROM home_work_detail_records records ")
                 .append(" LEFT JOIN student_home_work_status completionLogs ")
                     .append(" ON completionLogs.home_work_details = records.id AND completionLogs.student = :userId ")

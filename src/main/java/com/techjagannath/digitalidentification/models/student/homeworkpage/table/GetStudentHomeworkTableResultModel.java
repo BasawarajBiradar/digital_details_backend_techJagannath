@@ -14,4 +14,5 @@ public class GetStudentHomeworkTableResultModel {
     private String deadlineDate;
     private String status;
     private String subjectName;
+    private String description;
 }
