@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -44,8 +45,8 @@ public class TeacherController {
     @PostMapping("/add/homework")
     @PreAuthorize("hasAuthority('TEACHER_READ')")
     public ResponseEntity<ApiResponse<TeacherAddHomeworkResultModel>> addHomework(HttpServletRequest request
-            , @RequestBody TeacherAddHomeworkRequestModel requestModel) {
-        return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForAddHomework(request, requestModel), "Success");
+            , @ModelAttribute TeacherAddHomeworkRequestModel requestModel,@RequestParam(value = "files", required = false) List<MultipartFile> files) {
+        return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForAddHomework(request, requestModel, files), "Success");
     }
 
     @GetMapping("/home-page/info-card")

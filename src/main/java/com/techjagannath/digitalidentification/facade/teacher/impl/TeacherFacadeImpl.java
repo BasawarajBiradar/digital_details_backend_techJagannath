@@ -15,6 +15,7 @@ import com.techjagannath.digitalidentification.service.teacher.TeacherService;
 import com.techjagannath.digitalidentification.utils.dateutils.DateUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,9 +39,9 @@ public class TeacherFacadeImpl implements TeacherFacade {
     }
 
     @Override
-    public TeacherAddHomeworkResultModel facadeEntryPointForAddHomework(HttpServletRequest request, TeacherAddHomeworkRequestModel requestModel) {
+    public TeacherAddHomeworkResultModel facadeEntryPointForAddHomework(HttpServletRequest request, TeacherAddHomeworkRequestModel requestModel, List<MultipartFile> files) {
         requestModel.setParsedDeadlineDate(DateUtils.parseDate(requestModel.getDeadlineDate()));
-        return this.teacherService.serviceEntryPointForAddHomework(request, requestModel);
+        return this.teacherService.serviceEntryPointForAddHomework(request, requestModel, files);
     }
 
     @Override

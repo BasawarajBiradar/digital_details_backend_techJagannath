@@ -11,6 +11,7 @@ import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overv
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface TeacherFacade {
 
     RegisterTeacherUidResultModel facadeEntryPointForRegisterTeacherNfcUid(String uid, RegisterTeacherUidRequestModel requestModel);
 
-    TeacherAddHomeworkResultModel facadeEntryPointForAddHomework(HttpServletRequest request, TeacherAddHomeworkRequestModel requestModel);
+    TeacherAddHomeworkResultModel facadeEntryPointForAddHomework(HttpServletRequest request, TeacherAddHomeworkRequestModel requestModel, List<MultipartFile> files);
 
     RetrieveTeacherHomePageInfoCardDetailsResultModel facadeEntryPointForRetrieveHomePageInfoCardDetails(HttpServletRequest request);
 

@@ -17,6 +17,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -31,6 +32,44 @@ public class S3Utils {
 
     @Value("${aws.region}")
     private String region;
+
+    public String uploadHomeworkImage(MultipartFile file) {
+        try {
+            String originalFileName = file.getOriginalFilename();
+
+            String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+
+            String fileName = UUID.randomUUID() + "." + extension;
+
+            String s3Key = "homework-images/" + fileName;
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+            Thumbnails.of(file.getInputStream())
+                    .size(500, 500)
+                    .outputQuality(0.7)
+                    .toOutputStream(outputStream);
+
+            PutObjectRequest putObjectRequest =
+                    PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(s3Key)
+                            .contentType(file.getContentType())
+                            .build();
+
+            s3Client.putObject(
+                    putObjectRequest,
+                    RequestBody.fromBytes(
+                            outputStream.toByteArray()
+                    )
+            );
+            return s3Key;
+
+        } catch (Exception e) {
+            throw new FileUploadException("Failed to upload image");
+        }
+    }
+
 
     public String uploadStudentProfileImage(MultipartFile file) {
         try {

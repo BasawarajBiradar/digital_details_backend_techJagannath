@@ -21,13 +21,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
@@ -47,6 +46,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final SchoolLogoRepoRepository schoolLogoRepoRepository;
     private final StudentHomeWorkStatusRepository studentHomeWorkStatusRepository;
     private final HomeWorkStatusRepository homeWorkStatusRepository;
+    private final HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository;
 
     private static final String UID_NOT_VALID = "Invalid UID";
     private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
@@ -56,7 +56,8 @@ public class TeacherServiceImpl implements TeacherService {
                               AddressMasterRepository addressMasterRepository, PasswordEncoder passwordEncoder, UserMasterRepository userMasterRepository,
                               SubjectsMasterRepository subjectsMasterRepository, CommonMethods commonMethods, HomeWorkDetailRecordsRepository homeworkDetailRecordsRepository,
                               S3Utils s3Utils, StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, SchoolLogoRepoRepository schoolLogoRepoRepository,
-                              StudentHomeWorkStatusRepository studentHomeWorkStatusRepository, HomeWorkStatusRepository homeWorkStatusRepository) {
+                              StudentHomeWorkStatusRepository studentHomeWorkStatusRepository, HomeWorkStatusRepository homeWorkStatusRepository,
+                              HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository) {
         this.nfcUidMasterRepository = nfcUidMasterRepository;
         this.schoolMasterRepository = schoolMasterRepository;
         this.roleMasterRepository = roleMasterRepository;
@@ -72,6 +73,7 @@ public class TeacherServiceImpl implements TeacherService {
         this.schoolLogoRepoRepository = schoolLogoRepoRepository;
         this.studentHomeWorkStatusRepository = studentHomeWorkStatusRepository;
         this.homeWorkStatusRepository = homeWorkStatusRepository;
+        this.homeWorkDetailsImagesRepository = homeWorkDetailsImagesRepository;
     }
 
     @Override
@@ -118,13 +120,25 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public TeacherAddHomeworkResultModel serviceEntryPointForAddHomework(HttpServletRequest request, TeacherAddHomeworkRequestModel requestModel) {
+    public TeacherAddHomeworkResultModel serviceEntryPointForAddHomework(HttpServletRequest request, TeacherAddHomeworkRequestModel requestModel
+            , List<MultipartFile> files) {
         UserMaster user = commonMethods.extractUser(request);
+
         Optional<SubjectsMaster> subjectsMaster = this.subjectsMasterRepository.findById(requestModel.getSubjectMasterId());
         HomeWorkDetailRecords recordDetail = new HomeWorkDetailRecords(null, subjectsMaster.orElse(new SubjectsMaster()),
                 LocalDateTime.now(), requestModel.getParsedDeadlineDate(), requestModel.getClassLevel(), requestModel.getDivision(),
                 user.getSchool(), user, requestModel.getHomeworkTitle(), requestModel.getDescription());
         HomeWorkDetailRecords savedRecords = this.homeworkDetailRecordsRepository.save(recordDetail);
+
+        List<HomeWorkDetailsImages> imagesList = new LinkedList<>();
+        int i = 1;
+        for (MultipartFile file : files) {
+            HomeWorkDetailsImages image = new HomeWorkDetailsImages(null, i++, user.getSchool(),
+                    savedRecords, this.s3Utils.uploadHomeworkImage(file), file.getContentType(),
+                    file.getOriginalFilename(), user, LocalDateTime.now());
+            imagesList.add(image);
+        }
+        this.homeWorkDetailsImagesRepository.saveAll(imagesList);
         return new TeacherAddHomeworkResultModel(savedRecords.getTitleOrTopic());
     }
 
