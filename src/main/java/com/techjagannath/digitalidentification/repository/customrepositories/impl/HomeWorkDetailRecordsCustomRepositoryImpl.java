@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class HomeWorkDetailRecordsCustomRepositoryImpl implements HomeWorkDetailRecordsCustomRepository {
@@ -59,5 +60,25 @@ public class HomeWorkDetailRecordsCustomRepositoryImpl implements HomeWorkDetail
         query.setParameter("division", division);
         query.setParameter("schoolStartDate", schoolStartDate);
         return query.getResultList();
+    }
+
+    @Override
+    public Integer retrieveThisMonthCountByUser(Long userId, LocalDateTime monthStart) {
+        String sql = "SELECT COUNT(id) FROM home_work_detail_records WHERE assigned_by = :userId AND assigned_date_and_time = :date ";
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("userId", userId);
+        query.setParameter("date", monthStart);
+        return query.getFirstResult();
+    }
+
+    @Override
+    public Integer retrieveUnderReviewHomework(Long userId) {
+        String sql = """
+                SELECT count(homeworkStatus.id) FROM student_home_work_status homeworkStatus \s
+                JOIN home_work_detail_records homework ON homework.id = homeworkStatus.home_work_details AND assigned_by = :userId
+                WHERE homeworkStatus = 3""";
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("userId", userId);
+        return query.getFirstResult();
     }
 }

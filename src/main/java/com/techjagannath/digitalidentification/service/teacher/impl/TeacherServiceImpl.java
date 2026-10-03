@@ -6,6 +6,7 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
 import com.techjagannath.digitalidentification.repository.*;
@@ -153,5 +154,14 @@ public class TeacherServiceImpl implements TeacherService {
                 teacher.getEmergencyContactName(), teacher.getEmergencyContactNumber(),
                 teacher.getEmergencyContactRelation(), teacher.getAlternateContactNumber(), user.getUid()
         );
+    }
+
+    @Override
+    public RetrieveTeacherHomeworkOverviewCardsResultModel serviceEntryPointForHomeworkPageOverview(HttpServletRequest request) {
+        LocalDateTime monthStart = LocalDateTime.now().withDayOfMonth(1);
+        UserMaster user = this.commonMethods.extractUser(request);
+        Integer thisMonthCount = this.homeworkDetailRecordsRepository.retrieveThisMonthCountByUser(user.getId(), monthStart);
+        Integer reviewRequestCount = this.homeworkDetailRecordsRepository.retrieveUnderReviewHomework(user.getId());
+        return new RetrieveTeacherHomeworkOverviewCardsResultModel(thisMonthCount, reviewRequestCount);
     }
 }

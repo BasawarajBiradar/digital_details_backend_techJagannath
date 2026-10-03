@@ -5,6 +5,7 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
 import com.techjagannath.digitalidentification.service.teacher.TeacherService;
@@ -40,5 +41,10 @@ public class TeacherFacadeImpl implements TeacherFacade {
     @Override
     public RetrieveTeacherHomePageInfoCardDetailsResultModel facadeEntryPointForRetrieveHomePageInfoCardDetails(HttpServletRequest request) {
         return this.teacherService.serviceEntryPointForRetrieveHomePageInfoCardDetails(request);
+    }
+
+    @Override
+    public RetrieveTeacherHomeworkOverviewCardsResultModel facadeEntryPointForHomeworkPageOverviewCards(HttpServletRequest request) {
+        return this.teacherService.serviceEntryPointForHomeworkPageOverview(request);
     }
 }

@@ -5,6 +5,7 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
@@ -46,5 +47,11 @@ public class TeacherController {
     @PreAuthorize("hasAuthority('TEACHER_READ')")
     public ResponseEntity<ApiResponse<RetrieveTeacherHomePageInfoCardDetailsResultModel>> retrieveStudentHomePageInfoCardDetails(HttpServletRequest request) {
         return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForRetrieveHomePageInfoCardDetails(request), "Success");
+    }
+
+    @GetMapping("/homework/overvie_cards")
+    @PreAuthorize("hasAuthority('TEACHER_READ')")
+    public ResponseEntity<ApiResponse<RetrieveTeacherHomeworkOverviewCardsResultModel>> retrieveHomePageOverviewCards(HttpServletRequest request) {
+        return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForHomeworkPageOverviewCards(request), "Success");
     }
 }
