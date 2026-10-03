@@ -49,7 +49,7 @@ public class TeacherController {
         return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForRetrieveHomePageInfoCardDetails(request), "Success");
     }
 
-    @GetMapping("/homework/overvie_cards")
+    @GetMapping("/homework/overview_cards")
     @PreAuthorize("hasAuthority('TEACHER_READ')")
     public ResponseEntity<ApiResponse<RetrieveTeacherHomeworkOverviewCardsResultModel>> retrieveHomePageOverviewCards(HttpServletRequest request) {
         return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForHomeworkPageOverviewCards(request), "Success");
