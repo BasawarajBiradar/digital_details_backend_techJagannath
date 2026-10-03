@@ -2,6 +2,7 @@ package com.techjagannath.digitalidentification.service.student.impl;
 
 import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
@@ -70,6 +71,7 @@ public class StudentServiceImpl implements StudentService {
     private final HomeWorkStatusRepository homeWorkStatusRepository;
     private final StudentHomeWorkStatusRepository studentHomeWorkStatusRepository;
     private final HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository;
+    private final NoticeRecordsRepository noticeRecordsRepository;
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
@@ -84,7 +86,7 @@ public class StudentServiceImpl implements StudentService {
                               NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository,
                               AttendanceRecordsTableRepository attendanceRecordsTableRepository, HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository,
                               YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository, HomeWorkStatusRepository homeWorkStatusRepository,
-                              HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository) {
+                              HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository, NoticeRecordsRepository noticeRecordsRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
@@ -104,6 +106,7 @@ public class StudentServiceImpl implements StudentService {
         this.homeWorkStatusRepository = homeWorkStatusRepository;
         this.studentHomeWorkStatusRepository = studentHomeWorkStatusRepository;
         this.homeWorkDetailsImagesRepository = homeWorkDetailsImagesRepository;
+        this.noticeRecordsRepository = noticeRecordsRepository;
     }
 
     @Override
@@ -443,5 +446,19 @@ public class StudentServiceImpl implements StudentService {
         studentHomeworkStatus.setStatus(status);
         this.studentHomeWorkStatusRepository.save(studentHomeworkStatus);
         return new GetStudentHomeworkUpdateStatusResultModel(true);
+    }
+
+    @Override
+    public List<GetNoticePageTableDataResultModel> serviceEntryPointForRetrieveNoticePageTable(HttpServletRequest request) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        List<GetNoticePageTableDataResultModel> resultModels = new LinkedList<>();
+        List<Object[]> resultList = this.noticeRecordsRepository.retrieveNoticePageTableForStudent(user.getSchool().getId(), user.getStudentDetails().getClassLevel());
+        for (Object[] res : resultList) {
+            String noticeTitle = res[0].toString();
+            String noticeDescription = res[1].toString();
+            String announcementDate = res[2].toString().split(" ")[0];
+            resultModels.add(new GetNoticePageTableDataResultModel(noticeTitle, announcementDate, noticeDescription));
+        }
+        return resultModels;
     }
 }

@@ -1,5 +1,6 @@
 package com.techjagannath.digitalidentification.facade.student;
 
+import com.techjagannath.digitalidentification.models.schooladmin.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
@@ -62,4 +63,6 @@ public interface StudentFacade {
     List<GetStudentHomeworkTableResultModel> facadeEntryPointForRetrieveHomeworkTableData(HttpServletRequest request);
 
     GetStudentHomeworkUpdateStatusResultModel facadeEntryPointForRetrieveHomeworkUpdateStatus(GetStudentHomeworkUpdateStatusRequestModel requestModel, HttpServletRequest request);
+
+    List<GetNoticePageTableDataResultModel> facadeEntryPointForRetrieveNoticePageTable(HttpServletRequest request);
 }

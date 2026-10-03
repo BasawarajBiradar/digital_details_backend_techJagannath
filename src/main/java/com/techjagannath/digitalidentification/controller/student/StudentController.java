@@ -1,6 +1,7 @@
 package com.techjagannath.digitalidentification.controller.student;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
@@ -150,6 +151,12 @@ public class StudentController {
     public ResponseEntity<ApiResponse<GetStudentHomeworkUpdateStatusResultModel>> getStudentHomeworkUpdateStatus(
             @RequestBody GetStudentHomeworkUpdateStatusRequestModel requestModel, HttpServletRequest request) {
         return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveHomeworkUpdateStatus(requestModel, request), "Success");
+    }
+
+    @GetMapping("/notice/table")
+    @PreAuthorize("hasAuthority('STUDENT_READ')")
+    public ResponseEntity<ApiResponse<List<GetNoticePageTableDataResultModel>>> getNoticePageTableData(HttpServletRequest request) {
+        return ResponseBuilder.success(this.studentFacade.facadeEntryPointForRetrieveNoticePageTable(request), "Success");
     }
 
 }

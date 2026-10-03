@@ -1,5 +1,6 @@
 package com.techjagannath.digitalidentification.service.student;
 
+import com.techjagannath.digitalidentification.models.schooladmin.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
@@ -60,4 +61,6 @@ public interface StudentService {
     List<GetStudentHomeworkTableResultModel> serviceEntryPointForHomeworkTableData(HttpServletRequest request);
 
     GetStudentHomeworkUpdateStatusResultModel serviceEntryPointForHomeworkPageUpdateStatus(HttpServletRequest request, GetStudentHomeworkUpdateStatusRequestModel requestModel);
+
+    List<GetNoticePageTableDataResultModel> serviceEntryPointForRetrieveNoticePageTable(HttpServletRequest request);
 }

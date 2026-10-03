@@ -1,6 +1,7 @@
 package com.techjagannath.digitalidentification.facade.student.impl;
 
 import com.techjagannath.digitalidentification.facade.student.StudentFacade;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
@@ -147,6 +148,11 @@ public class StudentFacadeImpl implements StudentFacade {
     @Override
     public GetStudentHomeworkUpdateStatusResultModel facadeEntryPointForRetrieveHomeworkUpdateStatus(GetStudentHomeworkUpdateStatusRequestModel requestModel, HttpServletRequest request) {
         return this.studentService.serviceEntryPointForHomeworkPageUpdateStatus(request, requestModel);
+    }
+
+    @Override
+    public List<GetNoticePageTableDataResultModel> facadeEntryPointForRetrieveNoticePageTable(HttpServletRequest request) {
+        return this.studentService.serviceEntryPointForRetrieveNoticePageTable(request);
     }
 
 }
