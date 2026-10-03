@@ -12,6 +12,8 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.atte
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.repository.*;
@@ -45,12 +47,14 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     private final SchoolLogoRepoRepository schoolLogoRepoRepository;
     private final SchoolAdminCustomRepository schoolAdminCustomRepository;
     private final AttendanceRecordsTableRepository attendanceRecordsTableRepository;
+    private final NoticeRecordsRepository noticeRecordsRepository;
 
     public SchoolAdminServiceImpl(CommonMethods commonMethods, UserMasterRepository userMasterRepository,
                                   PasswordEncoder passwordEncoder, RoleMasterRepository roleMasterRepository, S3Utils s3Utils,
                                   StudentDetailsMasterRepository studentDetailsMasterRepository, AddressMasterRepository addressMasterRepository,
                                   StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, AttendanceRecordsTableRepository attendanceRecordsTableRepository,
-                                  SchoolLogoRepoRepository schoolLogoRepoRepository, SchoolAdminCustomRepository schoolAdminCustomRepository) {
+                                  SchoolLogoRepoRepository schoolLogoRepoRepository, SchoolAdminCustomRepository schoolAdminCustomRepository,
+                                  NoticeRecordsRepository noticeRecordsRepository) {
         this.commonMethods = commonMethods;
         this.userMasterRepository = userMasterRepository;
         this.passwordEncoder = passwordEncoder;
@@ -62,6 +66,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         this.schoolLogoRepoRepository = schoolLogoRepoRepository;
         this.schoolAdminCustomRepository = schoolAdminCustomRepository;
         this.attendanceRecordsTableRepository = attendanceRecordsTableRepository;
+        this.noticeRecordsRepository = noticeRecordsRepository;
     }
 
     @Override
@@ -218,5 +223,14 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
                     DateUtils.formatTimeTo12Hour(res.getOutTime())));
         }
         return response;
+    }
+
+    @Override
+    public CreateNoticeResultModel serviceEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        NoticeRecords notice = new NoticeRecords(null, user.getSchool(), requestModel.getNoticeTitle(),
+                requestModel.getNoticeDescription(), LocalDateTime.now(), requestModel.getClassLevel());
+        this.noticeRecordsRepository.save(notice);
+        return new CreateNoticeResultModel(true);
     }
 }

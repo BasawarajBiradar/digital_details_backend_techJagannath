@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
@@ -22,10 +23,10 @@ public class NoticeRecords {
     @ManyToOne(fetch = FetchType.EAGER)
     private SchoolMaster schoolMaster;
 
-    @Column(name = "notice_title")
+    @Column(name = "notice_title", length = 500)
     private String noticeTitle;
 
-    @Column(name = "notice_description")
+    @Column(name = "notice_description", length = 1500)
     private String noticeDescription;
 
     @Column(name = "announcement_date")

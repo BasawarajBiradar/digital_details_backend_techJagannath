@@ -10,6 +10,8 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.atte
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
@@ -76,5 +78,10 @@ public class SchoolAdminFacadeImpl implements SchoolAdminFacade {
             throw new ValidationException("To date cannot be after today's date");
         if (requestModel.getParsedFromDate().isBefore(LocalDate.now().minusYears(2)))
             throw new ValidationException("From date cannot be before 2 years");
+    }
+
+    @Override
+    public CreateNoticeResultModel facadeEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel) {
+        return this.schoolAdminService.serviceEntryPointForCreateNotice(request, requestModel);
     }
 }

@@ -9,6 +9,8 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.atte
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
@@ -33,4 +35,6 @@ public interface SchoolAdminFacade {
     SchoolAdminAttendancePieChartResultModelWrapper retrieveAttendancePieChartData(HttpServletRequest request, SchoolAdminAttendancePieChartRequestModel requestModel);
 
     List<RetrieveAttendanceDetailsResultModel> facadeEntryPointForRetrieveAttendanceDetailsPage(HttpServletRequest request, RetrieveAttendanceDetailsRequestModel requestModel);
+
+    CreateNoticeResultModel facadeEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel);
 }

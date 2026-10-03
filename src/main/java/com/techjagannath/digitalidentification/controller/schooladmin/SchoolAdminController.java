@@ -10,6 +10,8 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.atte
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentbyid.RetrieveStudentByIdResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
@@ -79,6 +81,12 @@ public class SchoolAdminController {
             HttpServletRequest request, @RequestBody RetrieveAttendanceDetailsRequestModel requestModel) {
         return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForRetrieveAttendanceDetailsPage(request, requestModel)
                 , "Success");
+    }
+
+    @PostMapping("/notice/create_notice")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
+    public ResponseEntity<ApiResponse<CreateNoticeResultModel>> createNotice(HttpServletRequest request, @RequestBody CreateNoticeRequestModel requestModel) {
+        return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForCreateNotice(request, requestModel), "Success");
     }
 
 }

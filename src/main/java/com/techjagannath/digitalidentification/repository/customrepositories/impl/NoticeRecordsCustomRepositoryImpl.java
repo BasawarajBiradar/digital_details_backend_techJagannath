@@ -19,7 +19,7 @@ public class NoticeRecordsCustomRepositoryImpl implements NoticeRecordsCustomRep
         String sql =
                 new String("""
                         SELECT record.notice_title, record.notice_description, record.announcement_date\s
-                         FROM notice_records record WHERE records.school_master = :schoolId\s
+                         FROM notice_records record WHERE record.school_master = :schoolId\s
                          AND (record.class_level IS NULL OR record.class_level = :classLevel)
                          ORDER BY record.announcement_date DESC """);
         Query query = em.createNativeQuery(sql);
