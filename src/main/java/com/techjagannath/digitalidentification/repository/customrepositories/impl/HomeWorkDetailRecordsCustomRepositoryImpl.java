@@ -1,5 +1,6 @@
 package com.techjagannath.digitalidentification.repository.customrepositories.impl;
 
+import com.techjagannath.digitalidentification.entity.HomeWorkStatus;
 import com.techjagannath.digitalidentification.repository.customrepositories.HomeWorkDetailRecordsCustomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -64,21 +65,43 @@ public class HomeWorkDetailRecordsCustomRepositoryImpl implements HomeWorkDetail
 
     @Override
     public Integer retrieveThisMonthCountByUser(Long userId, LocalDateTime monthStart) {
-        String sql = "SELECT COUNT(id) FROM home_work_detail_records WHERE assigned_by = :userId AND assigned_date_and_time = :date ";
+        String sql = "SELECT COUNT(id) FROM home_work_detail_records WHERE assigned_by = :userId AND assigned_date_and_time >= :date ";
         Query query = em.createNativeQuery(sql);
         query.setParameter("userId", userId);
         query.setParameter("date", monthStart);
-        return query.getFirstResult();
+        Number result = (Number) query.getSingleResult();
+        return result.intValue();
     }
 
     @Override
     public Integer retrieveUnderReviewHomework(Long userId) {
         String sql = """
                 SELECT count(homeworkStatus.id) FROM student_home_work_status homeworkStatus \s
-                JOIN home_work_detail_records homework ON homework.id = homeworkStatus.home_work_details AND assigned_by = :userId
-                WHERE homeworkStatus = 3""";
+                JOIN home_work_detail_records homework ON homework.id = homeworkStatus.home_work_details
+                WHERE homeworkStatus.status = 3  AND homework.assigned_by = :userId""";
         Query query = em.createNativeQuery(sql);
         query.setParameter("userId", userId);
-        return query.getFirstResult();
+        Number result = (Number) query.getSingleResult();
+        return result.intValue();
+    }
+
+    @Override
+    public List<Object[]> retrieveUnderReviewHomeworkDetails(Long userId) {
+        String sql = """
+                SELECT homeworkStatus.id AS reviewRequestId, \s
+                CONCAT_WS(' ', student.first_name, student.middle_name, student.last_name) AS studentName,
+                homework.title_or_topic AS homeworkTitle, \s
+                homework.description AS homeworkDetails, \s
+                homework.assigned_date_and_time AS assignedDate, \s
+                homework.deadline_date AS deadlineDate, \s
+                homework.class_level AS classLevel, \s
+                homework.division AS division \s
+                FROM student_home_work_status homeworkStatus \s
+                JOIN user_master student ON homeworkStatus.student = student.id \s
+                JOIN home_work_detail_records homework ON homework.id = homeworkStatus.home_work_details AND assigned_by = :userId
+                WHERE homeworkStatus.status = 3""";
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("userId", userId);
+        return query.getResultList();
     }
 }

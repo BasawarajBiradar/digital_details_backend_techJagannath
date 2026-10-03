@@ -1,5 +1,6 @@
 package com.techjagannath.digitalidentification.repository.customrepositories;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,4 +15,6 @@ public interface HomeWorkDetailRecordsCustomRepository {
     Integer retrieveThisMonthCountByUser(Long userId, LocalDateTime monthStart);
 
     Integer retrieveUnderReviewHomework(Long id);
+
+    List<Object[]> retrieveUnderReviewHomeworkDetails(Long id);
 }

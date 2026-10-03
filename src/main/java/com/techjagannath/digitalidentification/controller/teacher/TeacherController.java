@@ -5,6 +5,7 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.revivewrequest.RetrieveTeacherHomeworkReviewRequestDetailsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
@@ -14,6 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -53,5 +56,11 @@ public class TeacherController {
     @PreAuthorize("hasAuthority('TEACHER_READ')")
     public ResponseEntity<ApiResponse<RetrieveTeacherHomeworkOverviewCardsResultModel>> retrieveHomePageOverviewCards(HttpServletRequest request) {
         return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForHomeworkPageOverviewCards(request), "Success");
+    }
+
+    @GetMapping("/homework/review_request/details")
+    @PreAuthorize("hasAuthority('TEACHER_READ')")
+    public ResponseEntity<ApiResponse<List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel>>> retrieveHomeworkReviewRequestDetails(HttpServletRequest request) {
+        return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForHomeworkReviewRequestDetails(request), "Success");
     }
 }

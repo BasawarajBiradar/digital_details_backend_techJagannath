@@ -6,6 +6,7 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.revivewrequest.RetrieveTeacherHomeworkReviewRequestDetailsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
@@ -18,8 +19,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -158,10 +162,31 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public RetrieveTeacherHomeworkOverviewCardsResultModel serviceEntryPointForHomeworkPageOverview(HttpServletRequest request) {
-        LocalDateTime monthStart = LocalDateTime.now().withDayOfMonth(1);
+        LocalDateTime monthStart = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         UserMaster user = this.commonMethods.extractUser(request);
         Integer thisMonthCount = this.homeworkDetailRecordsRepository.retrieveThisMonthCountByUser(user.getId(), monthStart);
         Integer reviewRequestCount = this.homeworkDetailRecordsRepository.retrieveUnderReviewHomework(user.getId());
         return new RetrieveTeacherHomeworkOverviewCardsResultModel(thisMonthCount, reviewRequestCount);
+    }
+
+    @Override
+    public List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel> serviceEntryPointForHomeworkReviewRequestDetails(HttpServletRequest request) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        List<Object[]> resultList = this.homeworkDetailRecordsRepository.retrieveUnderReviewHomeworkDetails(user.getId());
+        List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel> resultModels = new LinkedList<>();
+        for (Object[] res : resultList) {
+            Long id = Long.parseLong(res[0].toString());
+            String studentName = res[1].toString();
+            String title = res[2].toString();
+            String description = res[3] == null ? null : res[3].toString();
+            String assignedDateAndTime = res[4].toString();
+            String deadlineDate = res[5].toString();
+            String classLevel = res[6].toString();
+            String division = res[7] == null ? null : res[7].toString();
+
+            resultModels.add(new RetrieveTeacherHomeworkReviewRequestDetailsResultModel(id, studentName, title, description,
+                    assignedDateAndTime, deadlineDate, classLevel, division));
+        }
+        return resultModels;
     }
 }

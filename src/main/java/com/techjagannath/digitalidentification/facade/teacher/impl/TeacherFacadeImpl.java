@@ -5,6 +5,7 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.revivewrequest.RetrieveTeacherHomeworkReviewRequestDetailsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
@@ -12,6 +13,8 @@ import com.techjagannath.digitalidentification.service.teacher.TeacherService;
 import com.techjagannath.digitalidentification.utils.dateutils.DateUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class TeacherFacadeImpl implements TeacherFacade {
@@ -46,5 +49,10 @@ public class TeacherFacadeImpl implements TeacherFacade {
     @Override
     public RetrieveTeacherHomeworkOverviewCardsResultModel facadeEntryPointForHomeworkPageOverviewCards(HttpServletRequest request) {
         return this.teacherService.serviceEntryPointForHomeworkPageOverview(request);
+    }
+
+    @Override
+    public List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel> facadeEntryPointForHomeworkReviewRequestDetails(HttpServletRequest request) {
+        return this.teacherService.serviceEntryPointForHomeworkReviewRequestDetails(request);
     }
 }

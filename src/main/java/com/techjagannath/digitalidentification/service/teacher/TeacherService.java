@@ -4,10 +4,13 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.revivewrequest.RetrieveTeacherHomeworkReviewRequestDetailsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 public interface TeacherService {
 
@@ -20,4 +23,6 @@ public interface TeacherService {
     RetrieveTeacherHomePageInfoCardDetailsResultModel serviceEntryPointForRetrieveHomePageInfoCardDetails(HttpServletRequest request);
 
     RetrieveTeacherHomeworkOverviewCardsResultModel serviceEntryPointForHomeworkPageOverview(HttpServletRequest request);
+
+    List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel> serviceEntryPointForHomeworkReviewRequestDetails(HttpServletRequest request);
 }
