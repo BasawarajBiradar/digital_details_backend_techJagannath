@@ -6,11 +6,14 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.reviewrequestupdatestatus.RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.reviewrequestupdatestatus.RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.revivewrequest.RetrieveTeacherHomeworkReviewRequestDetailsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidResultModel;
 import com.techjagannath.digitalidentification.repository.*;
+import com.techjagannath.digitalidentification.repository.customrepositories.StudentHomeWorkStatusRepository;
 import com.techjagannath.digitalidentification.service.teacher.TeacherService;
 import com.techjagannath.digitalidentification.utils.CommonMethods;
 import com.techjagannath.digitalidentification.utils.s3fileupload.S3Utils;
@@ -42,6 +45,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final S3Utils s3Utils;
     private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
     private final SchoolLogoRepoRepository schoolLogoRepoRepository;
+    private final StudentHomeWorkStatusRepository studentHomeWorkStatusRepository;
+    private final HomeWorkStatusRepository homeWorkStatusRepository;
 
     private static final String UID_NOT_VALID = "Invalid UID";
     private static final String RESOURCE_NOT_FOUND = "Resource Not Found";
@@ -50,7 +55,8 @@ public class TeacherServiceImpl implements TeacherService {
                               RoleMasterRepository roleMasterRepository, TeacherDetailsMasterRepository teacherDetailsMasterRepository,
                               AddressMasterRepository addressMasterRepository, PasswordEncoder passwordEncoder, UserMasterRepository userMasterRepository,
                               SubjectsMasterRepository subjectsMasterRepository, CommonMethods commonMethods, HomeWorkDetailRecordsRepository homeworkDetailRecordsRepository,
-                              S3Utils s3Utils, StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, SchoolLogoRepoRepository schoolLogoRepoRepository) {
+                              S3Utils s3Utils, StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, SchoolLogoRepoRepository schoolLogoRepoRepository,
+                              StudentHomeWorkStatusRepository studentHomeWorkStatusRepository, HomeWorkStatusRepository homeWorkStatusRepository) {
         this.nfcUidMasterRepository = nfcUidMasterRepository;
         this.schoolMasterRepository = schoolMasterRepository;
         this.roleMasterRepository = roleMasterRepository;
@@ -64,6 +70,8 @@ public class TeacherServiceImpl implements TeacherService {
         this.s3Utils = s3Utils;
         this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
         this.schoolLogoRepoRepository = schoolLogoRepoRepository;
+        this.studentHomeWorkStatusRepository = studentHomeWorkStatusRepository;
+        this.homeWorkStatusRepository = homeWorkStatusRepository;
     }
 
     @Override
@@ -188,5 +196,14 @@ public class TeacherServiceImpl implements TeacherService {
                     assignedDateAndTime, deadlineDate, classLevel, division));
         }
         return resultModels;
+    }
+
+    @Override
+    public RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel serviceEntryPointForReviewRequestUpdateStatus(HttpServletRequest request, RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel requestModel) {
+        StudentHomeworkStatus reviewRequest = this.studentHomeWorkStatusRepository.findById(requestModel.getReviewRequestId()).get();
+        HomeWorkStatus status = this.homeWorkStatusRepository.findById(requestModel.getStatusId()).get();
+        reviewRequest.setStatus(status);
+        StudentHomeworkStatus updatedRequest = this.studentHomeWorkStatusRepository.save(reviewRequest);
+        return new RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel(true);
     }
 }

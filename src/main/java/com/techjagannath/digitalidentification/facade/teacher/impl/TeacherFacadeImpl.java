@@ -5,6 +5,8 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.reviewrequestupdatestatus.RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.reviewrequestupdatestatus.RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.revivewrequest.RetrieveTeacherHomeworkReviewRequestDetailsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
@@ -54,5 +56,11 @@ public class TeacherFacadeImpl implements TeacherFacade {
     @Override
     public List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel> facadeEntryPointForHomeworkReviewRequestDetails(HttpServletRequest request) {
         return this.teacherService.serviceEntryPointForHomeworkReviewRequestDetails(request);
+    }
+
+    @Override
+    public RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel facadeEntryPointForHomeworkReviewRequestUpdateStatus(HttpServletRequest request
+            , RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel requestModel) {
+        return this.teacherService.serviceEntryPointForReviewRequestUpdateStatus(request, requestModel);
     }
 }

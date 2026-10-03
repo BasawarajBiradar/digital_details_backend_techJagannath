@@ -5,6 +5,8 @@ import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNf
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.inforcard.RetrieveTeacherHomePageInfoCardDetailsResultModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.reviewrequestupdatestatus.RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel;
+import com.techjagannath.digitalidentification.models.teacher.homepage.reviewrequestupdatestatus.RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homepage.revivewrequest.RetrieveTeacherHomeworkReviewRequestDetailsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.homeworkpage.overviewcards.RetrieveTeacherHomeworkOverviewCardsResultModel;
 import com.techjagannath.digitalidentification.models.teacher.register.RegisterTeacherUidRequestModel;
@@ -62,5 +64,12 @@ public class TeacherController {
     @PreAuthorize("hasAuthority('TEACHER_READ')")
     public ResponseEntity<ApiResponse<List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel>>> retrieveHomeworkReviewRequestDetails(HttpServletRequest request) {
         return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForHomeworkReviewRequestDetails(request), "Success");
+    }
+
+    @PostMapping("/homework/review_request/update_status")
+    @PreAuthorize("hasAuthority('TEACHER_READ')")
+    public ResponseEntity<ApiResponse<RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel>> retrieveHomeworkReviewRequestDetails(
+            HttpServletRequest request,@RequestBody RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel requestModel) {
+        return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForHomeworkReviewRequestUpdateStatus(request, requestModel), "Success");
     }
 }

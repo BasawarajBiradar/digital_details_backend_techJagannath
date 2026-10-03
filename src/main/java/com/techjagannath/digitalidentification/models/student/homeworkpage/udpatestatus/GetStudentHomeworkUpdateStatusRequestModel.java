@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class GetStudentHomeworkUpdateStatusRequestModel {
-    private Integer status;
+    private Long status;
     private Long homeworkId;
 }

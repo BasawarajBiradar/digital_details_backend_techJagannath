@@ -64,7 +64,6 @@ public class StudentServiceImpl implements StudentService {
     private final StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository;
     private final SchoolLogoRepoRepository schoolLogoRepoRepository;
     private final NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository;
-    private final WhatsAppService whatsAppService;
     private final AttendanceRecordsTableRepository attendanceRecordsTableRepository;
     private final YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository;
     private final HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository;
@@ -81,7 +80,7 @@ public class StudentServiceImpl implements StudentService {
                               AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
                               PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository, StudentHomeWorkStatusRepository studentHomeWorkStatusRepository,
-                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository, WhatsAppService whatsAppService,
+                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository,
                               AttendanceRecordsTableRepository attendanceRecordsTableRepository, HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository,
                               YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository, HomeWorkStatusRepository homeWorkStatusRepository) {
         this.commonMethods = commonMethods;
@@ -97,7 +96,6 @@ public class StudentServiceImpl implements StudentService {
         this.studentProfilePhotoRepoRepository = studentProfilePhotoRepoRepository;
         this.schoolLogoRepoRepository = schoolLogoRepoRepository;
         this.nfcReaderDeviceMasterRepository = nfcReaderDeviceMasterRepository;
-        this.whatsAppService = whatsAppService;
         this.attendanceRecordsTableRepository = attendanceRecordsTableRepository;
         this.yearlySchoolStartDateMasterRepository = yearlySchoolStartDateMasterRepository;
         this.homeWorkDetailRecordsRepository = homeWorkDetailRecordsRepository;
