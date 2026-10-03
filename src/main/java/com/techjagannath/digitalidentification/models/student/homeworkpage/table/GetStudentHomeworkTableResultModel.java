@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,4 +17,5 @@ public class GetStudentHomeworkTableResultModel {
     private String status;
     private String subjectName;
     private String description;
+    private List<RetrieveHomeWorkImages> images;
 }
