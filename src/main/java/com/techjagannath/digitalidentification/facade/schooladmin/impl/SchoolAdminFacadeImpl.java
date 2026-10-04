@@ -81,7 +81,7 @@ public class SchoolAdminFacadeImpl implements SchoolAdminFacade {
     }
 
     @Override
-    public CreateNoticeResultModel facadeEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel) {
-        return this.schoolAdminService.serviceEntryPointForCreateNotice(request, requestModel);
+    public CreateNoticeResultModel facadeEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel, List<MultipartFile> files) {
+        return this.schoolAdminService.serviceEntryPointForCreateNotice(request, requestModel, files);
     }
 }

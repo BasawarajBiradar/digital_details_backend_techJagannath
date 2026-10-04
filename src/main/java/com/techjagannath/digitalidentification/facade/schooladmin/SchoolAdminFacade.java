@@ -36,5 +36,5 @@ public interface SchoolAdminFacade {
 
     List<RetrieveAttendanceDetailsResultModel> facadeEntryPointForRetrieveAttendanceDetailsPage(HttpServletRequest request, RetrieveAttendanceDetailsRequestModel requestModel);
 
-    CreateNoticeResultModel facadeEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel);
+    CreateNoticeResultModel facadeEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel, List<MultipartFile> files);
 }

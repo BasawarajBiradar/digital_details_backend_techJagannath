@@ -36,5 +36,5 @@ public interface SchoolAdminService {
 
     List<RetrieveAttendanceDetailsResultModel> serviceEntryPointForRetrieveAttendanceDetailsPage(HttpServletRequest request, RetrieveAttendanceDetailsRequestModel requestModel);
 
-    CreateNoticeResultModel serviceEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel);
+    CreateNoticeResultModel serviceEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel, List<MultipartFile> files);
 }

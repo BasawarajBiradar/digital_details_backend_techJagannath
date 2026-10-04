@@ -85,8 +85,10 @@ public class SchoolAdminController {
 
     @PostMapping("/notice/create_notice")
     @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
-    public ResponseEntity<ApiResponse<CreateNoticeResultModel>> createNotice(HttpServletRequest request, @RequestBody CreateNoticeRequestModel requestModel) {
-        return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForCreateNotice(request, requestModel), "Success");
+    public ResponseEntity<ApiResponse<CreateNoticeResultModel>> createNotice(HttpServletRequest request, @RequestParam String noticeTitle, @RequestParam String noticeDescription
+            , @RequestParam(required = false) String classLevel, @RequestParam(required = false) Boolean isStaff, @RequestParam(value = "files", required = false) List<MultipartFile> files) {
+        CreateNoticeRequestModel requestModel = new CreateNoticeRequestModel(noticeTitle, noticeDescription, classLevel, isStaff);
+        return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForCreateNotice(request, requestModel, files), "Success");
     }
 
 }

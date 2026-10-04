@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
@@ -34,4 +33,7 @@ public class NoticeRecords {
 
     @Column(name = "class_level")
     private String classLevel;
+
+    @Column(name = "is_staff")
+    private Boolean isStaff;
 }

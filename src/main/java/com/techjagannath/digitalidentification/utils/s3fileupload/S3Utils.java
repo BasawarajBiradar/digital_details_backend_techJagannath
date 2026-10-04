@@ -33,6 +33,55 @@ public class S3Utils {
     @Value("${aws.region}")
     private String region;
 
+
+    public String uploadNoticeAttachments(MultipartFile file) {
+        try {
+            String originalFileName = file.getOriginalFilename();
+            if (originalFileName == null || originalFileName.isBlank()) {
+                throw new FileUploadException("Invalid file name");
+            }
+
+            String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+            String fileName = UUID.randomUUID() + "." + extension;
+            String s3Key = "notice-attachments/" + fileName;
+            byte[] fileBytes;
+
+            if (file.getContentType() != null &&
+                    file.getContentType().startsWith("image/")) {
+
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+                Thumbnails.of(file.getInputStream())
+                        .scale(1.0)
+                        .outputQuality(0.90)
+                        .toOutputStream(outputStream);
+
+                fileBytes = outputStream.toByteArray();
+
+            } else {
+                // PDF / other non-image files
+                fileBytes = file.getBytes();
+            }
+
+            PutObjectRequest putObjectRequest =
+                    PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(s3Key)
+                            .contentType(file.getContentType())
+                            .build();
+
+            s3Client.putObject(
+                    putObjectRequest,
+                    RequestBody.fromBytes(fileBytes)
+            );
+
+            return s3Key;
+
+        } catch (Exception e) {
+            throw new FileUploadException("Failed to upload image");
+        }
+    }
+
     public String uploadHomeworkImage(MultipartFile file) {
         try {
             String originalFileName = file.getOriginalFilename();
@@ -46,8 +95,8 @@ public class S3Utils {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
             Thumbnails.of(file.getInputStream())
-                    .size(500, 500)
-                    .outputQuality(0.7)
+                    .scale(1.0)
+                    .outputQuality(0.90)
                     .toOutputStream(outputStream);
 
             PutObjectRequest putObjectRequest =

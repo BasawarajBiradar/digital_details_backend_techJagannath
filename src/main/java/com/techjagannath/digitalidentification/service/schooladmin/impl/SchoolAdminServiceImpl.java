@@ -48,13 +48,14 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     private final SchoolAdminCustomRepository schoolAdminCustomRepository;
     private final AttendanceRecordsTableRepository attendanceRecordsTableRepository;
     private final NoticeRecordsRepository noticeRecordsRepository;
+    private final NoticeRecordsAttachmentsRepository noticeRecordsAttachmentsRepository;
 
     public SchoolAdminServiceImpl(CommonMethods commonMethods, UserMasterRepository userMasterRepository,
                                   PasswordEncoder passwordEncoder, RoleMasterRepository roleMasterRepository, S3Utils s3Utils,
                                   StudentDetailsMasterRepository studentDetailsMasterRepository, AddressMasterRepository addressMasterRepository,
                                   StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, AttendanceRecordsTableRepository attendanceRecordsTableRepository,
                                   SchoolLogoRepoRepository schoolLogoRepoRepository, SchoolAdminCustomRepository schoolAdminCustomRepository,
-                                  NoticeRecordsRepository noticeRecordsRepository) {
+                                  NoticeRecordsRepository noticeRecordsRepository, NoticeRecordsAttachmentsRepository noticeRecordsAttachmentsRepository) {
         this.commonMethods = commonMethods;
         this.userMasterRepository = userMasterRepository;
         this.passwordEncoder = passwordEncoder;
@@ -67,6 +68,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         this.schoolAdminCustomRepository = schoolAdminCustomRepository;
         this.attendanceRecordsTableRepository = attendanceRecordsTableRepository;
         this.noticeRecordsRepository = noticeRecordsRepository;
+        this.noticeRecordsAttachmentsRepository = noticeRecordsAttachmentsRepository;
     }
 
     @Override
@@ -226,11 +228,20 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     }
 
     @Override
-    public CreateNoticeResultModel serviceEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel) {
+    public CreateNoticeResultModel serviceEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel, List<MultipartFile> files) {
         UserMaster user = this.commonMethods.extractUser(request);
         NoticeRecords notice = new NoticeRecords(null, user.getSchool(), requestModel.getNoticeTitle(),
-                requestModel.getNoticeDescription(), LocalDateTime.now(), requestModel.getClassLevel());
-        this.noticeRecordsRepository.save(notice);
+                requestModel.getNoticeDescription(), LocalDateTime.now(), requestModel.getClassLevel(), requestModel.getIsStaff());
+        NoticeRecords savedNotice = this.noticeRecordsRepository.save(notice);
+        List<NoticeRecordsAttachments> imagesList = new LinkedList<>();
+        int i = 1;
+        for (MultipartFile file : files) {
+            NoticeRecordsAttachments image = new NoticeRecordsAttachments(null, i++, user.getSchool(),
+                    savedNotice, this.s3Utils.uploadNoticeAttachments(file), file.getContentType(),
+                    file.getOriginalFilename(), user, LocalDateTime.now());
+            imagesList.add(image);
+        }
+        this.noticeRecordsAttachmentsRepository.saveAll(imagesList);
         return new CreateNoticeResultModel(true);
     }
 }
