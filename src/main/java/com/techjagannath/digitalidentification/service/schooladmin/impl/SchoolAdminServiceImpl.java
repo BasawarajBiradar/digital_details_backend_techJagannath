@@ -214,8 +214,12 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     @Override
     public List<RetrieveAttendanceDetailsResultModel> serviceEntryPointForRetrieveAttendanceDetailsPage(HttpServletRequest request, RetrieveAttendanceDetailsRequestModel requestModel) {
         UserMaster admin = this.commonMethods.extractUser(request);
+        RoleMaster role = null;
+        if (requestModel.getRoleId() != null)
+            role = this.roleMasterRepository.findById(requestModel.getRoleId()).get();
+
         List<AttendanceRecordsTable> resultList = this.attendanceRecordsTableRepository.retrieveAttendanceData(
-                requestModel.getParsedFromDate(), requestModel.getParsedToDate(), admin.getSchool(), null, null);
+                requestModel.getParsedFromDate(), requestModel.getParsedToDate(), admin.getSchool(), null, role, requestModel.getClassLevel(), requestModel.getDivision());
         Map<Long, RetrieveAttendanceDetailsResultModel> responseMap = new HashMap();
         for (AttendanceRecordsTable res : resultList) {
             UserMaster user = res.getUser();

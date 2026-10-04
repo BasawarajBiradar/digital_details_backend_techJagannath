@@ -318,7 +318,7 @@ public class StudentServiceImpl implements StudentService {
     public List<GetStudentAttendanceDataResponseModel> serviceEntryPointForRetrieveAttendanceData(HttpServletRequest request, GetStudentAttendanceDataRequestModel requestModel) {
         UserMaster user = commonMethods.extractUser(request);
         List<AttendanceRecordsTable> resultList = this.attendanceRecordsTableRepository.retrieveAttendanceData(
-                requestModel.getParsedFromDate(), requestModel.getParsedToDate(), user.getSchool(),  user, user.getRole());
+                requestModel.getParsedFromDate(), requestModel.getParsedToDate(), user.getSchool(),  user, user.getRole(), null, null);
         List<GetStudentAttendanceDataResponseModel> response = new LinkedList<>();
         for (AttendanceRecordsTable res : resultList)
             response.add(new GetStudentAttendanceDataResponseModel(

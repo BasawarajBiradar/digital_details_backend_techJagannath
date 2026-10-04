@@ -109,7 +109,7 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
 
     @Override
     public List<AttendanceRecordsTable> retrieveAttendanceData(
-            LocalDate fromDate, LocalDate toDate, SchoolMaster school, UserMaster user, RoleMaster role) {
+            LocalDate fromDate, LocalDate toDate, SchoolMaster school, UserMaster user, RoleMaster role, String classLevel, String division) {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT obj FROM AttendanceRecordsTable obj WHERE obj.date BETWEEN :fromDate AND :toDate ");
 
@@ -119,6 +119,10 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
             sql.append(" AND obj.role = :role ");
         if (user != null)
             sql.append(" AND obj.user = :user ");
+        if (classLevel != null)
+            sql.append(" AND user.studentDetails.classLevel = :classLevel ");
+        if (division != null)
+            sql.append(" AND user.studentDetails.division = :division ");
 
         sql.append("ORDER BY ");
         sql.append(" obj.date DESC, ");
@@ -135,6 +139,10 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
             query.setParameter("role", role);
         if (user != null)
             query.setParameter("user", user);
+        if (classLevel != null)
+            query.setParameter("classLevel", classLevel);
+        if (division != null)
+            query.setParameter("division", division);
 
         return query.getResultList();
     }
