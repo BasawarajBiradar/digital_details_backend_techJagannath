@@ -5,6 +5,7 @@ import com.techjagannath.digitalidentification.exception.ResourceNotFoundExcepti
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.addstudent.AddStudentBySchoolAdminResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsRequestModel;
+import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsResult;
 import com.techjagannath.digitalidentification.models.schooladmin.attendencedetailspage.RetrieveAttendanceDetailsResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.attendencepiechart.SchoolAdminAttendancePieChartResultModel;
@@ -27,10 +28,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SchoolAdminServiceImpl implements SchoolAdminService {
@@ -212,18 +216,22 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         UserMaster admin = this.commonMethods.extractUser(request);
         List<AttendanceRecordsTable> resultList = this.attendanceRecordsTableRepository.retrieveAttendanceData(
                 requestModel.getParsedFromDate(), requestModel.getParsedToDate(), admin.getSchool(), null, null);
-        List<RetrieveAttendanceDetailsResultModel> response = new LinkedList<>();
-
+        Map<Long, RetrieveAttendanceDetailsResultModel> responseMap = new HashMap();
         for (AttendanceRecordsTable res : resultList) {
             UserMaster user = res.getUser();
-            response.add(new RetrieveAttendanceDetailsResultModel(
-                    user.getFirstName() +" " + user.getLastName(),
-                    user.getStudentDetails() != null ? user.getStudentDetails().getClassLevel() : null,
-                    user.getStudentDetails() != null ? user.getStudentDetails().getDivision() : null,
-                    DateUtils.dateFormatter(res.getDate()),
-                    res.getStatus().getStatus(), DateUtils.formatTimeTo12Hour(res.getInTime()),
-                    DateUtils.formatTimeTo12Hour(res.getOutTime())));
+            if (!responseMap.containsKey(user.getId()))
+                responseMap.put(user.getId(), new RetrieveAttendanceDetailsResultModel(user.getFirstName() +" " + user.getLastName(), user.getStudentDetails() != null ? user.getStudentDetails().getClassLevel() : null, user.getStudentDetails() != null ? user.getStudentDetails().getDivision() : null, new LinkedList<>()));
+
+            responseMap.get(user.getId()).getChildResult().add(new RetrieveAttendanceDetailsResult(
+                    DateUtils.dateFormatter(res.getDate()), res.getStatus().getStatus(), DateUtils.formatTimeTo12Hour(res.getInTime()), DateUtils.formatTimeTo12Hour(res.getOutTime())));
+
         }
+        List<RetrieveAttendanceDetailsResultModel> response = new LinkedList<>(responseMap.values());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        for (RetrieveAttendanceDetailsResultModel res : response) {
+            res.getChildResult().sort((a, b) -> LocalDate.parse(a.getDate(), formatter).compareTo(LocalDate.parse(b.getDate(), formatter)));
+        }
+
         return response;
     }
 

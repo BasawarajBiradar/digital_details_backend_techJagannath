@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RetrieveAttendanceDetailsResultModel {
-    private String fullName;
-    private String classLevel;
-    private String division;
-    List<RetrieveAttendanceDetailsResult> childResult;
+public class RetrieveAttendanceDetailsResult {
+    private String date;
+    private String status;
+    private String inTime;
+    private String outTime;
 }
