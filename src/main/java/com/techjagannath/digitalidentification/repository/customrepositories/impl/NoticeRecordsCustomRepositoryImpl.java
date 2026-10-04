@@ -18,7 +18,7 @@ public class NoticeRecordsCustomRepositoryImpl implements NoticeRecordsCustomRep
     public List<Object[]> retrieveNoticePageTableForStudent(Long schoolId, String classLevel) {
         String sql =
                 new String("""
-                        SELECT record.notice_title, record.notice_description, record.announcement_date\s
+                        SELECT record.notice_title, record.notice_description, record.announcement_date, record.id AS noticeRecordId\s
                          FROM notice_records record WHERE record.school_master = :schoolId\s
                          AND (record.class_level IS NULL OR record.class_level = :classLevel)
                          AND is_staff = 0

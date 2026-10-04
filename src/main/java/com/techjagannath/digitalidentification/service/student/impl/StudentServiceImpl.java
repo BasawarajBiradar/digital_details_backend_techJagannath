@@ -2,7 +2,7 @@ package com.techjagannath.digitalidentification.service.student.impl;
 
 import com.techjagannath.digitalidentification.entity.*;
 import com.techjagannath.digitalidentification.exception.ResourceNotFoundException;
-import com.techjagannath.digitalidentification.models.schooladmin.notice.table.GetNoticePageTableDataResultModel;
+import com.techjagannath.digitalidentification.models.student.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewRequestModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.calendarview.GetStudentAttendancePageCalendarViewResultModel;
 import com.techjagannath.digitalidentification.models.student.attendancepage.overview.GetStudentAttendancePageOverviewRequestModel;
@@ -17,6 +17,7 @@ import com.techjagannath.digitalidentification.models.student.homeworkpage.udpat
 import com.techjagannath.digitalidentification.models.student.homeworkpage.udpatestatus.GetStudentHomeworkUpdateStatusResultModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapDetailsRequestModel;
 import com.techjagannath.digitalidentification.models.student.nfccardtap.RetrieveStudentNfcTapResultModel;
+import com.techjagannath.digitalidentification.models.student.notice.table.NoticeRecordsFilesResultModel;
 import com.techjagannath.digitalidentification.models.student.recordnfctap.RecordNfcTapResultModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidRequestModel;
 import com.techjagannath.digitalidentification.models.student.registerstudentnfc.RegisterStudentUidResultModel;
@@ -72,6 +73,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentHomeWorkStatusRepository studentHomeWorkStatusRepository;
     private final HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository;
     private final NoticeRecordsRepository noticeRecordsRepository;
+    private final NoticeRecordsAttachmentsRepository noticeRecordsAttachmentsRepository;
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
@@ -86,7 +88,8 @@ public class StudentServiceImpl implements StudentService {
                               NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository,
                               AttendanceRecordsTableRepository attendanceRecordsTableRepository, HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository,
                               YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository, HomeWorkStatusRepository homeWorkStatusRepository,
-                              HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository, NoticeRecordsRepository noticeRecordsRepository) {
+                              HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository, NoticeRecordsRepository noticeRecordsRepository,
+                              NoticeRecordsAttachmentsRepository noticeRecordsAttachmentsRepository) {
         this.commonMethods = commonMethods;
         this.nfcCardTapsHistoryRepository = nfcCardTapsHistoryRepository;
         this.userMasterRepository = userMasterRepository;
@@ -107,6 +110,7 @@ public class StudentServiceImpl implements StudentService {
         this.studentHomeWorkStatusRepository = studentHomeWorkStatusRepository;
         this.homeWorkDetailsImagesRepository = homeWorkDetailsImagesRepository;
         this.noticeRecordsRepository = noticeRecordsRepository;
+        this.noticeRecordsAttachmentsRepository = noticeRecordsAttachmentsRepository;
     }
 
     @Override
@@ -457,7 +461,14 @@ public class StudentServiceImpl implements StudentService {
             String noticeTitle = res[0].toString();
             String noticeDescription = res[1].toString();
             String announcementDate = res[2].toString().split(" ")[0];
-            resultModels.add(new GetNoticePageTableDataResultModel(noticeTitle, announcementDate, noticeDescription));
+            Long noticeId = Long.parseLong(res[3].toString());
+
+            List<NoticeRecordsAttachments> filesRaw = this.noticeRecordsAttachmentsRepository.findAllByNoticeRecordsId(noticeId);
+            List<NoticeRecordsFilesResultModel> imagesList = new LinkedList<>();
+            for (NoticeRecordsAttachments links : filesRaw)
+                imagesList.add(new NoticeRecordsFilesResultModel(links.getSrNo(), this.s3Utils.generatePreSignedUrl(links.getFileUrl()), links.getFileName()));
+
+            resultModels.add(new GetNoticePageTableDataResultModel(noticeTitle, announcementDate, noticeDescription, imagesList));
         }
         return resultModels;
     }
