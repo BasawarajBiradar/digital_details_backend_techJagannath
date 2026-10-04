@@ -78,6 +78,7 @@ public class S3Utils {
             return s3Key;
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new FileUploadException("Failed to upload image");
         }
     }

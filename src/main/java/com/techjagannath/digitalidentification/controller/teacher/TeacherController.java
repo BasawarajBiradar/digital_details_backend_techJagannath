@@ -1,6 +1,7 @@
 package com.techjagannath.digitalidentification.controller.teacher;
 
 import com.techjagannath.digitalidentification.facade.teacher.TeacherFacade;
+import com.techjagannath.digitalidentification.models.student.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
@@ -72,5 +73,11 @@ public class TeacherController {
     public ResponseEntity<ApiResponse<RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel>> retrieveHomeworkReviewRequestDetails(
             HttpServletRequest request,@RequestBody RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel requestModel) {
         return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForHomeworkReviewRequestUpdateStatus(request, requestModel), "Success");
+    }
+
+    @GetMapping("/notice/table")
+    @PreAuthorize("hasAuthority('TEACHER_READ')")
+    public ResponseEntity<ApiResponse<List<GetNoticePageTableDataResultModel>>> getNoticePageTableData(HttpServletRequest request) {
+        return ResponseBuilder.success(this.teacherFacade.facadeEntryPointForRetrieveNoticePageTable(request), "Success");
     }
 }

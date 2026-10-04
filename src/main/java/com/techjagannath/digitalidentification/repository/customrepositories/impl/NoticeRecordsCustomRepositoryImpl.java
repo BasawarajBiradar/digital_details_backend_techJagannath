@@ -28,4 +28,17 @@ public class NoticeRecordsCustomRepositoryImpl implements NoticeRecordsCustomRep
         query.setParameter("classLevel", classLevel);
         return query.getResultList();
     }
+
+    @Override
+    public List<Object[]> retrieveNoticePageTableForTeacher(Long schoolId) {
+        String sql =
+                new String("""
+                        SELECT record.notice_title, record.notice_description, record.announcement_date, record.id AS noticeRecordId\s
+                         FROM notice_records record WHERE record.school_master = :schoolId\s
+                         AND is_staff = 1
+                         ORDER BY record.announcement_date DESC """);
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("schoolId", schoolId);
+        return query.getResultList();
+    }
 }

@@ -1,5 +1,6 @@
 package com.techjagannath.digitalidentification.service.teacher;
 
+import com.techjagannath.digitalidentification.models.student.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
@@ -30,4 +31,6 @@ public interface TeacherService {
     List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel> serviceEntryPointForHomeworkReviewRequestDetails(HttpServletRequest request);
 
     RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel serviceEntryPointForReviewRequestUpdateStatus(HttpServletRequest request, RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel requestModel);
+
+    List<GetNoticePageTableDataResultModel> serviceEntryPointForRetrieveNoticePageTable(HttpServletRequest request);
 }

@@ -1,5 +1,6 @@
 package com.techjagannath.digitalidentification.facade.teacher;
 
+import com.techjagannath.digitalidentification.models.student.notice.table.GetNoticePageTableDataResultModel;
 import com.techjagannath.digitalidentification.models.student.verifyuid.VerifyNfcUidResultModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkRequestModel;
 import com.techjagannath.digitalidentification.models.teacher.addhomework.TeacherAddHomeworkResultModel;
@@ -30,4 +31,6 @@ public interface TeacherFacade {
     List<RetrieveTeacherHomeworkReviewRequestDetailsResultModel> facadeEntryPointForHomeworkReviewRequestDetails(HttpServletRequest request);
 
     RetrieveTeacherHomeworkReviewRequestUpdateStatusResultModel facadeEntryPointForHomeworkReviewRequestUpdateStatus(HttpServletRequest request, RetrieveTeacherHomeworkReviewRequestUpdateStatusRequestModel requestModel);
+
+    List<GetNoticePageTableDataResultModel> facadeEntryPointForRetrieveNoticePageTable(HttpServletRequest request);
 }
