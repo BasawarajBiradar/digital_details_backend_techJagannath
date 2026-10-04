@@ -218,8 +218,8 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
             UserMaster user = res.getUser();
             response.add(new RetrieveAttendanceDetailsResultModel(
                     user.getFirstName() +" " + user.getLastName(),
-                    user.getStudentDetails().getClassLevel(),
-                    user.getStudentDetails().getDivision(),
+                    user.getStudentDetails() != null ? user.getStudentDetails().getClassLevel() : null,
+                    user.getStudentDetails() != null ? user.getStudentDetails().getDivision() : null,
                     DateUtils.dateFormatter(res.getDate()),
                     res.getStatus().getStatus(), DateUtils.formatTimeTo12Hour(res.getInTime()),
                     DateUtils.formatTimeTo12Hour(res.getOutTime())));
