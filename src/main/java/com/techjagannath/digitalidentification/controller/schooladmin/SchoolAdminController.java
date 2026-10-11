@@ -92,7 +92,7 @@ public class SchoolAdminController {
         return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForCreateNotice(request, requestModel, files), "Success");
     }
 
-    @PostMapping("/notice/table")
+    @GetMapping("/notice/table")
     @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
     public ResponseEntity<ApiResponse<List<RetrieveNoticeTableResultModel>>> RetrieveNoticeTable(HttpServletRequest request) {
         return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForRetrieveNoticeTable(request), "Success");

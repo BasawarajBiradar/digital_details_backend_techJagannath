@@ -248,14 +248,16 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
                 requestModel.getNoticeDescription(), LocalDateTime.now(), requestModel.getClassLevel(), requestModel.getIsStaff());
         NoticeRecords savedNotice = this.noticeRecordsRepository.save(notice);
         List<NoticeRecordsAttachments> imagesList = new LinkedList<>();
-        int i = 1;
-        for (MultipartFile file : files) {
-            NoticeRecordsAttachments image = new NoticeRecordsAttachments(null, i++, user.getSchool(),
-                    savedNotice, this.s3Utils.uploadNoticeAttachments(file), file.getContentType(),
-                    file.getOriginalFilename(), user, LocalDateTime.now());
-            imagesList.add(image);
-        }
-        this.noticeRecordsAttachmentsRepository.saveAll(imagesList);
+       if (files != null && !files.isEmpty()) {
+           int i = 1;
+           for (MultipartFile file : files) {
+               NoticeRecordsAttachments image = new NoticeRecordsAttachments(null, i++, user.getSchool(),
+                       savedNotice, this.s3Utils.uploadNoticeAttachments(file), file.getContentType(),
+                       file.getOriginalFilename(), user, LocalDateTime.now());
+               imagesList.add(image);
+           }
+           this.noticeRecordsAttachmentsRepository.saveAll(imagesList);
+       }
         return new CreateNoticeResultModel(true);
     }
 
