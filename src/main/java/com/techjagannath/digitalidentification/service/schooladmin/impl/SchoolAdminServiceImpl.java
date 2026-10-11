@@ -15,8 +15,10 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retr
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.retrievenotices.RetrieveNoticeTableResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
+import com.techjagannath.digitalidentification.models.student.notice.table.NoticeRecordsFilesResultModel;
 import com.techjagannath.digitalidentification.repository.*;
 import com.techjagannath.digitalidentification.repository.customrepositories.SchoolAdminCustomRepository;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
@@ -255,5 +257,26 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         }
         this.noticeRecordsAttachmentsRepository.saveAll(imagesList);
         return new CreateNoticeResultModel(true);
+    }
+
+    @Override
+    public List<RetrieveNoticeTableResultModel> serviceEntryPointForRetrieveNoticeTable(HttpServletRequest request) {
+        UserMaster user = this.commonMethods.extractUser(request);
+        List<RetrieveNoticeTableResultModel> resultModels = new LinkedList<>();
+        List<Object[]> resultList = this.noticeRecordsRepository.retrieveNoticePageTableForSchoolAdmin(user.getSchool().getId());
+        for (Object[] res : resultList) {
+            String noticeTitle = res[0].toString();
+            String noticeDescription = res[1].toString();
+            String announcementDate = res[2].toString().split(" ")[0];
+            Long noticeId = Long.parseLong(res[3].toString());
+
+            List<NoticeRecordsAttachments> filesRaw = this.noticeRecordsAttachmentsRepository.findAllByNoticeRecordsId(noticeId);
+            List<NoticeRecordsFilesResultModel> imagesList = new LinkedList<>();
+            for (NoticeRecordsAttachments links : filesRaw)
+                imagesList.add(new NoticeRecordsFilesResultModel(links.getSrNo(), this.s3Utils.generatePreSignedUrl(links.getFileUrl()), links.getFileName()));
+
+            resultModels.add(new RetrieveNoticeTableResultModel(noticeTitle, announcementDate, noticeDescription, imagesList));
+        }
+        return resultModels;
     }
 }

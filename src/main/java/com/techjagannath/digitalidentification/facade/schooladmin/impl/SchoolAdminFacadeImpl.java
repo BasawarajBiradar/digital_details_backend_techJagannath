@@ -12,6 +12,7 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retr
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.retrievenotices.RetrieveNoticeTableResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.service.schooladmin.SchoolAdminService;
@@ -83,5 +84,10 @@ public class SchoolAdminFacadeImpl implements SchoolAdminFacade {
     @Override
     public CreateNoticeResultModel facadeEntryPointForCreateNotice(HttpServletRequest request, CreateNoticeRequestModel requestModel, List<MultipartFile> files) {
         return this.schoolAdminService.serviceEntryPointForCreateNotice(request, requestModel, files);
+    }
+
+    @Override
+    public List<RetrieveNoticeTableResultModel> facadeEntryPointForRetrieveNoticeTable(HttpServletRequest request) {
+        return this.schoolAdminService.serviceEntryPointForRetrieveNoticeTable(request);
     }
 }

@@ -12,6 +12,7 @@ import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retr
 import com.techjagannath.digitalidentification.models.schooladmin.dashboard.retrievestudentslist.RetrieveStudentsListResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeRequestModel;
 import com.techjagannath.digitalidentification.models.schooladmin.notice.createnotice.CreateNoticeResultModel;
+import com.techjagannath.digitalidentification.models.schooladmin.retrievenotices.RetrieveNoticeTableResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.retrieveschoollogo.SchoolLogoRetrieveResultModel;
 import com.techjagannath.digitalidentification.models.schooladmin.uploadschoollogo.SchoolLogoUploadResultModel;
 import com.techjagannath.digitalidentification.utils.apiresponse.ApiResponse;
@@ -89,6 +90,12 @@ public class SchoolAdminController {
             , @RequestParam(required = false) String classLevel, @RequestParam(required = false) Boolean isStaff, @RequestParam(value = "files", required = false) List<MultipartFile> files) {
         CreateNoticeRequestModel requestModel = new CreateNoticeRequestModel(noticeTitle, noticeDescription, classLevel, isStaff);
         return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForCreateNotice(request, requestModel, files), "Success");
+    }
+
+    @PostMapping("/notice/table")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN_WRITE')")
+    public ResponseEntity<ApiResponse<List<RetrieveNoticeTableResultModel>>> RetrieveNoticeTable(HttpServletRequest request) {
+        return ResponseBuilder.success(this.schoolAdminFacade.facadeEntryPointForRetrieveNoticeTable(request), "Success");
     }
 
 }

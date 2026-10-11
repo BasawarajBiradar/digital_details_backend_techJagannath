@@ -7,4 +7,6 @@ public interface NoticeRecordsCustomRepository {
     List<Object[]> retrieveNoticePageTableForStudent(Long id, String classLevel);
 
     List<Object[]> retrieveNoticePageTableForTeacher(Long id);
+
+    List<Object[]> retrieveNoticePageTableForSchoolAdmin(Long id);
 }
