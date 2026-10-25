@@ -382,7 +382,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<GetStudentTapPhotoPageOverviewResultModel> serviceEntryPointForTapPhotoPageOverview(HttpServletRequest request, GetStudentTapPhotoPageOverviewRequestModel requestModel) {
         UserMaster user = this.commonMethods.extractUser(request);
-        List<Object[]> resultList = this.nfcCardTapsHistoryRepository.retrievePhotoTapRecordsByUser(user.getId(), requestModel.getParsedFromDate(), requestModel.getParsedToDate());
+        List<Object[]> resultList = this.nfcCardTapsHistoryRepository.retrievePhotoTapRecordsByUser(user.getId(), requestModel.getParsedFromDate(), requestModel.getParsedToDate().plusDays(1));
         List<GetStudentTapPhotoPageOverviewResultModel> response = new LinkedList<>();
         for (Object[] res : resultList) {
             String timeStamp = res[0].toString();
