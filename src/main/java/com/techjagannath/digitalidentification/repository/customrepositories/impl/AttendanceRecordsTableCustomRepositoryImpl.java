@@ -24,16 +24,12 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
     @Override
     @Transactional
     public void populateDataInAttendanceRecordsTable(LocalDate attendanceDate) {
-
         LocalDate nextDate = attendanceDate.plusDays(1);
-
         StringBuilder sql = new StringBuilder();
-
         sql.append("INSERT INTO attendance_records_table ")
-                .append(" (date, in_time, out_time, status, `user`, holiday_description, school, role) ");
-
+                .append(" (date, in_time, out_time, status, `user`, ")
+                .append(" holiday_description, school, role) ");
         sql.append("SELECT :attendanceDate, ")
-
                 // IN TIME
                 .append(" CASE ")
                 .append(" WHEN h.date IS NOT NULL ")
@@ -41,7 +37,6 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
                 .append(" THEN NULL ")
                 .append(" ELSE TIME_FORMAT(MIN(n.time_stamp), '%H:%i:%s') ")
                 .append(" END AS in_time, ")
-
                 // OUT TIME
                 .append(" CASE ")
                 .append(" WHEN h.date IS NOT NULL ")
@@ -65,7 +60,6 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
 
                 // USER
                 .append(" u.id AS `user`, ")
-
                 // HOLIDAY DESCRIPTION
                 .append(" CASE ")
                 .append(" WHEN h.date IS NOT NULL ")
@@ -74,14 +68,12 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
                 .append(" THEN 'Sunday' ")
                 .append(" ELSE NULL ")
                 .append(" END AS holiday_description, ")
-
+                // SCHOOL
                 .append(" u.school AS school, ")
-
+                // ROLE
                 .append(" u.role AS role ")
-
                 // USER MASTER
                 .append(" FROM user_master u ")
-
                 // NFC TAPS FOR THE PARTICULAR DAY
                 .append(" LEFT JOIN nfc_card_taps_history n ")
                 .append(" ON n.student = u.id ")
@@ -92,14 +84,25 @@ public class AttendanceRecordsTableCustomRepositoryImpl implements AttendanceRec
                 .append(" LEFT JOIN common_public_holidays_list h ")
                 .append(" ON h.date = :attendanceDate ")
 
-                // ONLY ACTIVE USERS and Skip admin and school admin
-                .append(" WHERE u.is_active and u.role NOT IN (1, 2) ")
+                // ONLY ACTIVE USERS AND SKIP ADMIN / SCHOOL ADMIN
+                .append(" WHERE u.is_active ")
+                .append(" AND u.role NOT IN (1, 2) ")
 
                 // GROUP PER USER
                 .append(" GROUP BY ")
                 .append(" u.id, ")
                 .append(" h.date, ")
-                .append(" h.holiday_description ");
+                .append(" h.holiday_description ")
+
+                // INSERT OR UPDATE EXISTING RECORD
+                .append(" ON DUPLICATE KEY UPDATE ")
+
+                .append(" in_time = VALUES(in_time), ")
+                .append(" out_time = VALUES(out_time), ")
+                .append(" status = VALUES(status), ")
+                .append(" holiday_description = VALUES(holiday_description), ")
+                .append(" school = VALUES(school), ")
+                .append(" role = VALUES(role) ");
 
         em.createNativeQuery(sql.toString())
                 .setParameter("attendanceDate", attendanceDate)

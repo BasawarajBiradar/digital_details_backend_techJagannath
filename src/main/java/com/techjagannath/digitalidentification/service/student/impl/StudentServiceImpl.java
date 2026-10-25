@@ -74,6 +74,7 @@ public class StudentServiceImpl implements StudentService {
     private final HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository;
     private final NoticeRecordsRepository noticeRecordsRepository;
     private final NoticeRecordsAttachmentsRepository noticeRecordsAttachmentsRepository;
+    private final AttendanceStatusRepository attendanceStatusRepository;
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String UID_NOT_VALID = "Invalid UID";
@@ -85,7 +86,7 @@ public class StudentServiceImpl implements StudentService {
                               AddressMasterRepository addressMasterRepository, StudentDetailsMasterRepository studentDetailsMasterRepository,
                               StudentProfilePhotoRepoRepository studentProfilePhotoRepoRepository, S3Utils s3Utils,
                               PasswordEncoder passwordEncoder, SchoolLogoRepoRepository schoolLogoRepoRepository, StudentHomeWorkStatusRepository studentHomeWorkStatusRepository,
-                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository,
+                              NfcReaderDeviceMasterRepository nfcReaderDeviceMasterRepository, AttendanceStatusRepository attendanceStatusRepository,
                               AttendanceRecordsTableRepository attendanceRecordsTableRepository, HomeWorkDetailRecordsRepository homeWorkDetailRecordsRepository,
                               YearlySchoolStartDateMasterRepository yearlySchoolStartDateMasterRepository, HomeWorkStatusRepository homeWorkStatusRepository,
                               HomeWorkDetailsImagesRepository homeWorkDetailsImagesRepository, NoticeRecordsRepository noticeRecordsRepository,
@@ -111,6 +112,7 @@ public class StudentServiceImpl implements StudentService {
         this.homeWorkDetailsImagesRepository = homeWorkDetailsImagesRepository;
         this.noticeRecordsRepository = noticeRecordsRepository;
         this.noticeRecordsAttachmentsRepository = noticeRecordsAttachmentsRepository;
+        this.attendanceStatusRepository = attendanceStatusRepository;
     }
 
     @Override
@@ -289,28 +291,26 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public RecordNfcTapResultModel serviceEntryPointForRecordNfcTap(String uid, Long deviceId, MultipartFile image) {
+        AttendanceStatus attendanceStatus = this.attendanceStatusRepository.findById(1).get();
         NfcReaderDeviceMaster deviceMaster = null;
-
         if (deviceId != null)
             deviceMaster = this.nfcReaderDeviceMasterRepository
                         .findById(deviceId).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
-
         String imageUrl = this.s3Utils.uploadTapRecordImage(image);
-
         NfcUidMaster nfc = this.nfcUidMasterRepository.findByUid(uid).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND));
         NfcCardTapsHistory history = new NfcCardTapsHistory(null, nfc.getMappedUser(),
                 nfc.getUid(), deviceMaster, LocalDateTime.now(), imageUrl, image.getOriginalFilename(),
                 image.getContentType(), ".png", LocalDateTime.now());
-
         if (!Boolean.TRUE.equals(nfc.getMappedUser().getIsPresent())) {
             nfc.getMappedUser().setIsPresent(true);
             this.userMasterRepository.save(nfc.getMappedUser());
-//            this.whatsAppService.sendEntryAlert(nfc.getMappedUser().getMobileNumber(), nfc.getMappedUser().getFirstName(),
-//                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")));
+            AttendanceRecordsTable attendanceRecord = new AttendanceRecordsTable(
+                    null, LocalDate.now(), null,
+                    null, attendanceStatus, nfc.getMappedUser(),
+                    null, nfc.getMappedUser().getSchool(), nfc.getMappedUser().getRole());
+            attendanceRecordsTableRepository.save(attendanceRecord);
         }
-
         this.nfcCardTapsHistoryRepository.save(history);
-
         return new RecordNfcTapResultModel(true);
     }
 
